@@ -1,12 +1,16 @@
 package no.kristiania.reverseimagesearch.ViewModel
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import no.kristiania.reverseimagesearch.ResultItem
 
 class ResultViewModel : ViewModel() {
+    private val resultItems = mutableListOf(ResultItem("url1"), ResultItem("url2"))
+    val images: LiveData<List<ResultItem>> = MutableLiveData(resultItems)
 
-    /* TODO: 05.04.2022
-        * Legge til livedata med noen url-er / bilder.
-        * Lage en result klasse
-        *
-    * */
+    fun addItem(resultItem: ResultItem) = resultItems.add(resultItem)
+
+    fun removeItem(resultItem: ResultItem) = resultItems.remove(resultItem)
+
 }

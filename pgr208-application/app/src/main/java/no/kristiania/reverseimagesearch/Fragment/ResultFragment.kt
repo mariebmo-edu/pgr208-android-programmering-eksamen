@@ -1,10 +1,12 @@
 package no.kristiania.reverseimagesearch.Fragment
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import no.kristiania.reverseimagesearch.R
 import no.kristiania.reverseimagesearch.ViewModel.ResultViewModel
@@ -47,13 +49,21 @@ class ResultFragment : Fragment() {
         val viewModel = ViewModelProvider(this)[ResultViewModel::class.java]
         binding.viewModel = viewModel
 
-
+        // Observer endringer i view modellens liste av resultitems
+        viewModel.images.observe(viewLifecycleOwner, Observer {
+            newValue -> Log.i("result items changed",newValue.toString())
+        })
         // Til databinding med livedata
         val adapter = null // lage ResultItemAdapter
 
 
 
         return view
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 
     companion object {
