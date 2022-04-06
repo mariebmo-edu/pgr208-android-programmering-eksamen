@@ -1,4 +1,4 @@
-package no.kristiania.reverseimagesearch.view
+package no.kristiania.reverseimagesearch.view.fragment
 
 import android.os.Bundle
 import android.util.Log
@@ -40,7 +40,7 @@ class ResultFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Dette er "dataBinding/ViewBinding. Erstatter findById og er mer minne-effektiv
         _binding = FragmentResultBinding.inflate(inflater, container, false)
         val view = binding.root
@@ -50,7 +50,7 @@ class ResultFragment : Fragment() {
         binding.viewModel = viewModel
 
         // Observer endringer i view modellens liste av resultitems
-        viewModel.images.observe(viewLifecycleOwner, Observer {
+        viewModel.images.observe(viewLifecycleOwner, {
             newValue -> Log.i("result items changed",newValue.toString())
         })
         // Til databinding med livedata
