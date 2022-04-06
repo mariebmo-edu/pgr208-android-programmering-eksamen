@@ -3,7 +3,7 @@ package no.kristiania.reverseimagesearch.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import no.kristiania.reverseimagesearch.model.ResultItem
+import no.kristiania.reverseimagesearch.model.entity.ResultItem
 
 class ResultViewModel : ViewModel() {
     private val resultItems = mutableListOf(ResultItem("url1"), ResultItem("url2"))

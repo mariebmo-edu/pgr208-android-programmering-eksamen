@@ -1,10 +1,11 @@
-package no.kristiania.reverseimagesearch.model
+package no.kristiania.reverseimagesearch.model.db
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
+import no.kristiania.reverseimagesearch.model.entity.RequestImage
 
 @Dao
 interface RequestImageDao {

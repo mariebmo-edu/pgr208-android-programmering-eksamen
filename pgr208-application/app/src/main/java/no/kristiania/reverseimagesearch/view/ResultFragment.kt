@@ -1,4 +1,4 @@
-package no.kristiania.reverseimagesearch.fragment
+package no.kristiania.reverseimagesearch.view
 
 import android.os.Bundle
 import android.util.Log

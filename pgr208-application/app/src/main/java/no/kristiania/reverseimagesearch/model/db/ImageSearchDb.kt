@@ -1,9 +1,10 @@
-package no.kristiania.reverseimagesearch.model
+package no.kristiania.reverseimagesearch.model.db
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import no.kristiania.reverseimagesearch.model.entity.RequestImage
 
 @Database(entities = [RequestImage::class], version = 1, exportSchema = false)
 abstract class ImageSearchDb : RoomDatabase() {

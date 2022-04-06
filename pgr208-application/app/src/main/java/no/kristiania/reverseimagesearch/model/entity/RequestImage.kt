@@ -1,4 +1,4 @@
-package no.kristiania.reverseimagesearch.model
+package no.kristiania.reverseimagesearch.model.entity
 
 import android.util.Log
 import androidx.room.ColumnInfo
