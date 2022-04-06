@@ -31,7 +31,7 @@ class ResultItemAdapter : RecyclerView.Adapter<ResultItemAdapter.ResultItemViewH
     }
 
     // denne klassen har ansvar for å legge til data i hvert result_item.xml som benyttes i recyclerviewet, samt å inflate de
-    class ResultItemViewHolder(val rootView: CardView) : RecyclerView.ViewHolder(rootView){
+    class ResultItemViewHolder(rootView: CardView) : RecyclerView.ViewHolder(rootView){
         // TODO: 06.04.2022
         //  variabler til bilde-view, eventuelt annen tekst. Trenger vel på sikt både thumbnail og mulighet til expand,
         //  ser for meg at vi har et egen fragment til fullscreen view av bilde men idk
