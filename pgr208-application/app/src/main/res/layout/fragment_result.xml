@@ -8,7 +8,7 @@
 
         <variable
             name="viewModel"
-            type="no.kristiania.reverseimagesearch.ViewModel.ResultViewModel" />
+            type="no.kristiania.reverseimagesearch.viewmodel.ResultViewModel" />
     </data>
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"

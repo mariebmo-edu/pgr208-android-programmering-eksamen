@@ -1,4 +1,4 @@
-package no.kristiania.reverseimagesearch.Fragment
+package no.kristiania.reverseimagesearch.fragment
 
 import android.os.Bundle
 import android.util.Log
@@ -8,8 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import no.kristiania.reverseimagesearch.R
-import no.kristiania.reverseimagesearch.ViewModel.ResultViewModel
+import no.kristiania.reverseimagesearch.viewmodel.ResultViewModel
 import no.kristiania.reverseimagesearch.databinding.FragmentResultBinding
 
 // TODO: Rename parameter arguments, choose names that match
