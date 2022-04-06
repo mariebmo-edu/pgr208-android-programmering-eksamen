@@ -41,6 +41,7 @@ class ResultFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        // Dette er "dataBinding/ViewBinding. Erstatter findById og er mer minne-effektiv
         _binding = FragmentResultBinding.inflate(inflater, container, false)
         val view = binding.root
 
