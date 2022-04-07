@@ -12,6 +12,7 @@ import no.kristiania.reverseimagesearch.viewmodel.ResultViewModel
 import no.kristiania.reverseimagesearch.databinding.FragmentResultBinding
 import no.kristiania.reverseimagesearch.model.db.ImageSearchDb
 import no.kristiania.reverseimagesearch.view.adapter.ResultItemAdapter
+import no.kristiania.reverseimagesearch.viewmodel.ResultViewModelFactory
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -52,17 +53,17 @@ class ResultFragment : Fragment() {
         val application = requireNotNull(this.activity).application
         val dao = ImageSearchDb.getInstance(application).requestImageDao
 
-        // todo: legg til viewModelFactory for å ta inn dao(s)
-        val viewModel = ViewModelProvider(this)[ResultViewModel::class.java]
+        val resultViewModelFactory = ResultViewModelFactory(dao)
+        val viewModel = ViewModelProvider(this, resultViewModelFactory)[ResultViewModel::class.java]
         binding.viewModel = viewModel
-
+        binding.lifecycleOwner = viewLifecycleOwner
 
         // Til databinding med livedata
         val adapter = ResultItemAdapter()
         binding.resultItemsList.adapter = adapter
 
         // Observer endringer i view modellens liste av resultitems
-        viewModel.images.observe(viewLifecycleOwner, {
+        viewModel.resultItems.observe(viewLifecycleOwner, Observer {
                 newValue -> Log.i("result items changed",newValue.toString())
         })
 
