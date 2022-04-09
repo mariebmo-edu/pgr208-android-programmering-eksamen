@@ -2,4 +2,7 @@
     <string name="app_name">Reverse Image Search</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="search">SEARCH</string>
+    <string name="upload">UPLOAD</string>
+    <string name="saved">SAVED</string>
 </resources>
