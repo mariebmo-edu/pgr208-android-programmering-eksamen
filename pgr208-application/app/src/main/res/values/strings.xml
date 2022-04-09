@@ -1,5 +1,14 @@
 <resources>
     <string name="app_name">Reverse Image Search</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hello_blank_fragment">
+        Welcome to the Image Reverse Search!
+        To begin, upload an image from your phone - then click "SEARCH"
+        If you want to save your findings, select the image and click "SAVE".
+        You will find your saved images in the "save" button.
+    </string>
+    <string name="search">SEARCH</string>
+    <string name="upload">UPLOAD</string>
+    <string name="saved">SAVED</string>
+    <string name="image_from_upload">Image from upload</string>
 </resources>
