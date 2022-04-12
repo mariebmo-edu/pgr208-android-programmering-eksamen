@@ -1,12 +1,12 @@
 package no.kristiania.reverseimagesearch.view.adapter
 
 import androidx.recyclerview.widget.DiffUtil
-import no.kristiania.reverseimagesearch.model.entity.ResultItem
+import no.kristiania.reverseimagesearch.model.entity.ResultImage
 
 
 // Sammenlikner to lister med ResultItem objekter. Brukes for å oppdatere databindingen om noe endrer seg
-class ResultDiffItemCallback : DiffUtil.ItemCallback<ResultItem>() {
-    override fun areItemsTheSame(oldItem: ResultItem, newItem: ResultItem): Boolean = (oldItem.id == newItem.id)
+class ResultDiffItemCallback : DiffUtil.ItemCallback<ResultImage>() {
+    override fun areItemsTheSame(oldItem: ResultImage, newItem: ResultImage): Boolean = (oldItem.id == newItem.id)
 
-    override fun areContentsTheSame(oldItem: ResultItem, newItem: ResultItem): Boolean = (oldItem == newItem)
+    override fun areContentsTheSame(oldItem: ResultImage, newItem: ResultImage): Boolean = (oldItem == newItem)
 }

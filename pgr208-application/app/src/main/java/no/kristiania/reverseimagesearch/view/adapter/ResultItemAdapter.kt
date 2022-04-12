@@ -2,16 +2,14 @@ package no.kristiania.reverseimagesearch.view.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import no.kristiania.reverseimagesearch.R
 import no.kristiania.reverseimagesearch.databinding.ResultItemBinding
-import no.kristiania.reverseimagesearch.model.entity.ResultItem
+import no.kristiania.reverseimagesearch.model.entity.ResultImage
 
 
 // Denne klassen forteller recyclerview hvordan den skal vise data fra databasen.
-class ResultItemAdapter : ListAdapter<ResultItem, ResultItemAdapter.ResultItemViewHolder>(ResultDiffItemCallback()) {
+class ResultItemAdapter : ListAdapter<ResultImage, ResultItemAdapter.ResultItemViewHolder>(ResultDiffItemCallback()) {
 
     // Når den indre klassen under instansieres (dette fungerer som et rot-element for å stappe result_item xml-fila inn i.
     // Den blir inflatet i den indre klassen
@@ -34,8 +32,8 @@ class ResultItemAdapter : ListAdapter<ResultItem, ResultItemAdapter.ResultItemVi
                 return ResultItemViewHolder(binding)
             }
         }
-        fun bind(resultItem: ResultItem) {
-           binding.resultItem = resultItem
+        fun bind(resultImage: ResultImage) {
+           binding.resultItem = resultImage
         }
     }
 
