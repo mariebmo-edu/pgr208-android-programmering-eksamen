@@ -1,21 +1,11 @@
 package no.kristiania.reverseimagesearch
 
 import android.content.Intent
-import android.graphics.Bitmap
-import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.provider.MediaStore.Images.Media.getBitmap
 import android.widget.Button
-import android.widget.ImageView
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContentProviderCompat.requireContext
-import no.kristiania.reverseimagesearch.viewmodel.api.Http
-import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
-import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils.Companion.UriToBitmap
-import java.io.File
 
 class MainActivity : AppCompatActivity() {
 

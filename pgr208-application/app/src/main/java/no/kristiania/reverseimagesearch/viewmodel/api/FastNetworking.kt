@@ -11,8 +11,15 @@ import com.androidnetworking.error.ANError
 import com.androidnetworking.interfaces.StringRequestListener
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
 import no.kristiania.reverseimagesearch.viewmodel.utils.Endpoints
+import org.json.JSONObject
+import org.json.JSONArray
 
-class Http : Application(){
+import com.androidnetworking.interfaces.JSONArrayRequestListener
+
+
+
+
+class FastNetworking : Application(){
 
     override fun onCreate() {
         super.onCreate()
@@ -33,10 +40,43 @@ class Http : Application(){
             .getAsString(object : StringRequestListener {
                 override fun onResponse(response: String?) {
                     println(response)
+                    getImageFromProvider(response!!, ImageProvider.Google)
+                    getImageFromProvider(response!!, ImageProvider.Bing)
+                    getImageFromProvider(response!!, ImageProvider.TinyEye)
+
                 }
                 override fun onError(error: ANError?) {
                     println("upload error: " + error?.localizedMessage)
                 }
             })
+    }
+
+    enum class ImageProvider{
+        Google, Bing, TinyEye
+    }
+
+    fun getImageFromProvider(url: String, provider: ImageProvider) {
+
+        val endpoint = when (provider) {
+            ImageProvider.TinyEye -> Endpoints.get_tinyEye_url
+            ImageProvider.Bing -> Endpoints.get_bing_url
+            ImageProvider.Google -> Endpoints.get_google_url
+        }
+
+        AndroidNetworking.get(endpoint)
+            .addQueryParameter("url", url)
+            .setTag("getTest")
+            .setPriority(Priority.LOW)
+            .build()
+            .getAsJSONArray(object : JSONArrayRequestListener {
+                override fun onResponse(response: JSONArray) {
+                    println("success from ${provider}! response: ${response}")
+                }
+
+                override fun onError(error: ANError) {
+                    println("Error from ${provider}: $error")
+                }
+            })
+
     }
 }
