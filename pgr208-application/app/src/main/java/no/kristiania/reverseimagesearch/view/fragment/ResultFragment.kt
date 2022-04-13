@@ -14,38 +14,16 @@ import no.kristiania.reverseimagesearch.model.db.ImageSearchDb
 import no.kristiania.reverseimagesearch.view.adapter.ResultItemAdapter
 import no.kristiania.reverseimagesearch.viewmodel.ResultViewModelFactory
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-//private const val ARG_PARAM1 = "param1"
-//private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [ResultFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class ResultFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    // Sjekk opp hvordan parameter passes på denne måten. Kun sett på safe-args
 
-//    private var param1: String? = null
-//    private var param2: String? = null
-//
     private var _binding: FragmentResultBinding? = null
     private val binding get() = _binding!!
-
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        arguments?.let {
-//            param1 = it.getString(ARG_PARAM1)
-//            param2 = it.getString(ARG_PARAM2)
-//        }
-//    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        Log.d("debug", "debug logging")
         // Dette er "dataBinding/ViewBinding. Erstatter findById og er mer minne-effektiv
         _binding = FragmentResultBinding.inflate(inflater, container, false)
         val view = binding.root
@@ -61,10 +39,13 @@ class ResultFragment : Fragment() {
         // Til databinding med livedata
         val adapter = ResultItemAdapter()
         binding.resultItemsList.adapter = adapter
-
+        Log.i("ResultFragment", "Is the logger working???")
         // Observer endringer i view modellens liste av resultitems
-        viewModel.resultItems.observe(viewLifecycleOwner, Observer {
-                newValue -> Log.i("result items changed",newValue.toString())
+        viewModel.resultImages.observe(viewLifecycleOwner, Observer {
+            Log.i("ResultFragment", "Submitting list")
+            it?.let {
+                adapter.submitList(it)
+            }
         })
 
         return view
@@ -75,23 +56,4 @@ class ResultFragment : Fragment() {
         _binding = null
     }
 
-//    companion object {
-//        /**
-//         * Use this factory method to create a new instance of
-//         * this fragment using the provided parameters.
-//         *
-//         * @param param1 Parameter 1.
-//         * @param param2 Parameter 2.
-//         * @return A new instance of fragment ResultFragment.
-//         */
-//        // TODO: Rename and change types and number of parameters
-//        @JvmStatic
-//        fun newInstance(param1: String, param2: String) =
-//            ResultFragment().apply {
-//                arguments = Bundle().apply {
-//                    putString(ARG_PARAM1, param1)
-//                    putString(ARG_PARAM2, param2)
-//                }
-//            }
-//    }
 }

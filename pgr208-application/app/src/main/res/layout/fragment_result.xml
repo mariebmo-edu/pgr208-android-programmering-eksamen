@@ -2,7 +2,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ResultFragment">
+    tools:context="no.kristiania.reverseimagesearch.view.fragment.ResultFragment">
 
     <data>
 
@@ -11,25 +11,20 @@
             type="no.kristiania.reverseimagesearch.viewmodel.ResultViewModel" />
     </data>
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ResultFragment">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="@string/hello_blank_fragment" />
+        android:orientation="vertical">
 
         <!-- Sjekk ut andre layout managers! -->
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:id="@+id/result_items_list"
-            android:layout_weight="1"
+            android:layout_weight="2"
             android:layout_gravity="top"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:spanCount="2"/>
 
-    </FrameLayout>
+    </LinearLayout>
 </layout>
