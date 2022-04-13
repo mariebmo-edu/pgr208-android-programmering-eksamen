@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        searchBtn = findViewById(R.id.search_btn)
+        savedBtn = findViewById(R.id.saved_btn)
         uploadBtn = findViewById(R.id.upload_btn)
 
         uploadBtn.setOnClickListener {
@@ -45,7 +45,6 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         resultLauncher.launch(intent)
     }
-
 
     private val resultLauncher  =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {

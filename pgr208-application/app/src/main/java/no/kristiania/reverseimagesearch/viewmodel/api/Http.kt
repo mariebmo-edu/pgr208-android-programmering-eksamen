@@ -12,10 +12,11 @@ import com.androidnetworking.interfaces.StringRequestListener
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
 import no.kristiania.reverseimagesearch.viewmodel.utils.Endpoints
 
+class Http : Application(){
 
     override fun onCreate() {
         super.onCreate()
-        AndroidNetworking.initialize(getApplicationContext());
+        AndroidNetworking.initialize(getApplicationContext())
         AndroidNetworking.setParserFactory(JacksonParserFactory())
     }
 
