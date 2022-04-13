@@ -1,4 +1,4 @@
-package no.kristiania.reverseimagesearch
+package no.kristiania.reverseimagesearch.view.fragment
 
 import android.graphics.Bitmap
 import android.net.Uri
@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
+import no.kristiania.reverseimagesearch.R
 import no.kristiania.reverseimagesearch.viewmodel.api.FastNetworkingAPI
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils.Companion.UriToBitmap

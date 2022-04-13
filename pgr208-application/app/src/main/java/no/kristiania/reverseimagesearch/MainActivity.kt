@@ -6,6 +6,8 @@ import android.provider.MediaStore
 import android.widget.Button
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import no.kristiania.reverseimagesearch.view.fragment.ImageSearchFragment
+import no.kristiania.reverseimagesearch.view.fragment.NothingSelectedFragment
 
 class MainActivity : AppCompatActivity() {
 
