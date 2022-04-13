@@ -19,7 +19,7 @@ class Http : Application() {
         AndroidNetworking.initialize(getApplicationContext());
         AndroidNetworking.setParserFactory(JacksonParserFactory())
     }
-    
+
     fun uploadImage(bitmap: Bitmap, context: Context) {
 
         val file = BitmapUtils.bitmapToFile(bitmap, "image.png", context)
