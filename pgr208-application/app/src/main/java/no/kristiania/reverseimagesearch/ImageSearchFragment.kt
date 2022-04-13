@@ -9,7 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
-import no.kristiania.reverseimagesearch.viewmodel.api.FastNetworking
+import no.kristiania.reverseimagesearch.viewmodel.api.FastNetworkingAPI
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils.Companion.UriToBitmap
 
@@ -70,7 +70,7 @@ class ImageSearchFragment : Fragment() {
 
     private fun uploadImageToServer(bitmap : Bitmap) {
 
-        val http = FastNetworking()
+        val http = FastNetworkingAPI()
 
         val response = context?.let { http.uploadImage(bitmap, it) }
         println("response: $response")

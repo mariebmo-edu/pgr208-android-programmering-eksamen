@@ -19,7 +19,7 @@ import com.androidnetworking.interfaces.JSONArrayRequestListener
 
 
 
-class FastNetworking : Application(){
+class FastNetworkingAPI : Application(){
 
     override fun onCreate() {
         super.onCreate()
