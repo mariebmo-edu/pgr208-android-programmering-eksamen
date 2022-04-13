@@ -3,6 +3,7 @@ package no.kristiania.reverseimagesearch.viewmodel.utils
 import android.content.Context
 import android.content.ContextWrapper
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.drawable.VectorDrawable
 import android.net.Uri
@@ -41,6 +42,17 @@ class BitmapUtils {
             return decoder(context, id, uri)
         }
 
+        fun byteArrayToBitmap(byteArray: ByteArray) : Bitmap{
+            return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+        }
+
+        fun bitmapToByteArray(bitmap : Bitmap) : ByteArray{
+            val outputStream = ByteArrayOutputStream()
+
+            bitmap.compress(Bitmap.CompressFormat.PNG, 0, outputStream)
+            return outputStream.toByteArray()
+        }
+
 
         //FROM https://stackoverflow.com/questions/7769806/convert-bitmap-to-file
         fun bitmapToFile(bitmap : Bitmap, filename : String, context: Context) : File{
@@ -48,10 +60,7 @@ class BitmapUtils {
             val file = File(context.getCacheDir(), filename)
             file.createNewFile()
 
-            val outputStream = ByteArrayOutputStream()
-
-            bitmap.compress(Bitmap.CompressFormat.PNG, 0, outputStream)
-            val bitmapdata = outputStream.toByteArray()
+            val bitmapdata = bitmapToByteArray(bitmap)
 
             val fileOutputStream = FileOutputStream(file)
             fileOutputStream.write(bitmapdata)
@@ -59,8 +68,8 @@ class BitmapUtils {
             fileOutputStream.close()
 
             return file
-
         }
+
 
     }
 }
