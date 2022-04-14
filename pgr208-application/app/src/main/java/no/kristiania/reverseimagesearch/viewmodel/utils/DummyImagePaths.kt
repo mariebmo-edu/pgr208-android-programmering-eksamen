@@ -1,4 +1,4 @@
-package no.kristiania.reverseimagesearch.model.entity
+package no.kristiania.reverseimagesearch.viewmodel.utils
 
 object DummyImagePaths {
     val IMAGES = hashMapOf<String, String>(

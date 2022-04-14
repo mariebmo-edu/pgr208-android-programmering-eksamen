@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import no.kristiania.reverseimagesearch.model.db.RequestImageDao
-import no.kristiania.reverseimagesearch.model.entity.DummyImagePaths
+import no.kristiania.reverseimagesearch.viewmodel.utils.DummyImagePaths
 import no.kristiania.reverseimagesearch.model.entity.ResultImage
 
 class ResultViewModel(private val requestImageDao: RequestImageDao) : ViewModel() {
