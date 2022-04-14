@@ -20,7 +20,7 @@ import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils.Companion.Ur
 
 
 class ImageSearchFragment : Fragment() {
-    private lateinit var savedBtn: Button
+    //private lateinit var savedBtn: Button
     private lateinit var uploadBtn: Button
     private lateinit var searchBtn: Button
     private lateinit var imagePreview: ImageView
@@ -43,7 +43,7 @@ class ImageSearchFragment : Fragment() {
 
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_image_search, container, false)
-        savedBtn = view.findViewById(R.id.saved_btn)
+       // savedBtn = view.findViewById(R.id.saved_btn)
         uploadBtn = view.findViewById(R.id.upload_btn)
         searchBtn = view.findViewById(R.id.search_btn)
         imagePreview = view.findViewById(R.id.uploaded_image)
