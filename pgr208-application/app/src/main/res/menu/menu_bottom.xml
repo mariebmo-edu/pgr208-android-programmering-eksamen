@@ -2,11 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/searchFragment"
-        android:icon="@android:drawable/ic_dialog_email"
+        android:icon="@android:drawable/ic_search_category_default"
         android:title="Search"/>
     <item
         android:id="@+id/resultFragment"
-        android:icon="@android:drawable/ic_menu_send"
+        android:icon="@android:drawable/btn_star_big_on"
         android:title="Saved results"/>
 
 </menu>
