@@ -23,7 +23,6 @@ class ResultFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        Log.d("debug", "debug logging")
         // Dette er "dataBinding/ViewBinding. Erstatter findById og er mer minne-effektiv
         _binding = FragmentResultBinding.inflate(inflater, container, false)
         val view = binding.root
@@ -39,7 +38,6 @@ class ResultFragment : Fragment() {
         // Til databinding med livedata
         val adapter = ResultItemAdapter()
         binding.resultItemsList.adapter = adapter
-        Log.i("ResultFragment", "Is the logger working???")
         // Observer endringer i view modellens liste av resultitems
         viewModel.resultImages.observe(viewLifecycleOwner, Observer {
             Log.i("ResultFragment", "Submitting list")

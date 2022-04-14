@@ -13,6 +13,7 @@ import android.widget.Button
 import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.fragment.findNavController
 import no.kristiania.reverseimagesearch.R
 import no.kristiania.reverseimagesearch.viewmodel.api.FastNetworkingAPI
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
@@ -89,6 +90,14 @@ class ImageSearchFragment : Fragment() {
 
         val response = context?.let { http.uploadImage(bitmap, it) }
         println("response: $response")
+
+        // When done, navigate to ResultFragment and pass either image url or objects from google etc.
+//        view?.let {
+//            val action = ImageSearchFragmentDirections
+//                .actionSearchFragmentToResultFragment("**RESPONSE FROM SERVER**")
+//            this.findNavController().navigate(R.id.action_searchFragment_to_resultFragment)
+//        }
+
     }
 
     private fun pickImageGallery() {
