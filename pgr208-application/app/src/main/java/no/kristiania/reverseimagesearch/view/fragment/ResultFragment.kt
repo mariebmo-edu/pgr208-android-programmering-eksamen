@@ -27,6 +27,15 @@ class ResultFragment : Fragment() {
         _binding = FragmentResultBinding.inflate(inflater, container, false)
         val view = binding.root
 
+        val hostedImageServerUrl = ResultFragmentArgs.fromBundle(requireArguments()).responseUrl
+
+        /* TODO:
+        *   * Do call to other api-s with hostedImageServer url
+        *   * Process JSON to a List<ResultImage> entity
+        *   * Set result to viewmodel (probably need to change the field to public and get rid of getter)
+        *   * ViewModel should update recyclerview automatically
+        * */
+
         val application = requireNotNull(this.activity).application
         val dao = ImageSearchDb.getInstance(application).requestImageDao
 
