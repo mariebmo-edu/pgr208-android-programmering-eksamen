@@ -15,9 +15,7 @@ import no.kristiania.reverseimagesearch.viewmodel.utils.Endpoints
 import org.json.JSONArray
 import com.androidnetworking.interfaces.JSONArrayRequestListener
 import com.google.gson.JsonArray
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 
 
 class FastNetworkingAPI : Application() {
@@ -89,31 +87,25 @@ class FastNetworkingAPI : Application() {
     }
 
     fun getImagesFromAllProviders(url: String): JSONArray {
-        val jsonResponse = JSONArray();
+        val jsonResponse = JSONArray()
 
         fun addToResponse(arr: JSONArray) {
+            println("in add to response: " + arr.length())
             for (i in 0 until arr.length()) {
                 jsonResponse.put(arr[i])
-                println(arr[i])
             }
         }
-
-        val googleArr = getImageFromProvider(url, ImageProvider.Google)
-        val bingArr = getImageFromProvider(url, ImageProvider.Bing)
-        val tinyEyeArr = getImageFromProvider(url, ImageProvider.TinyEye)
-
-        //må legge til en await her?
 
         runBlocking {
-            launch {
-                delay(10000)
-                addToResponse(googleArr)
-                addToResponse(bingArr)
-                addToResponse(tinyEyeArr)
-                println("AllProviders: $jsonResponse")
-            }
+            val requests = listOf(
+                async(Dispatchers.IO) { addToResponse(getImageFromProvider(url, ImageProvider.Google))},// get first GET synchronous in own coroutine
+                async(Dispatchers.IO) { addToResponse(getImageFromProvider(url, ImageProvider.Bing))}, // get second GET synchronous in own coroutine
+                async(Dispatchers.IO) { addToResponse(getImageFromProvider(url, ImageProvider.TinyEye))} // get third GET synchronous in own coroutine
+            )
+            requests.awaitAll()
         }
 
+        println("AllProviders: $jsonResponse")
         return jsonResponse
     }
 }
