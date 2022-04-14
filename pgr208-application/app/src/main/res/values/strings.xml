@@ -11,4 +11,7 @@
     <string name="upload">UPLOAD</string>
     <string name="saved">SAVED</string>
     <string name="image_from_upload">Image from upload</string>
+    <string name="help">Help</string>
+    <string name="fragment_search">Search</string>
+    <string name="fragment_result">Results</string>
 </resources>
