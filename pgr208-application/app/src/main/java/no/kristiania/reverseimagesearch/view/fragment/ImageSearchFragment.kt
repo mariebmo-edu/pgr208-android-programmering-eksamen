@@ -99,7 +99,9 @@ class ImageSearchFragment : Fragment() {
     private val resultLauncher  =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == AppCompatActivity.RESULT_OK && it.data != null) {
-
+                this.uri = it.data?.data!!
+                selectedImage = BitmapUtils.getBitmap(requireContext(), null, uri.toString(), ::UriToBitmap)
+                imagePreview.setImageBitmap(selectedImage)
 //                supportFragmentManager.beginTransaction().apply{
 //                    replace(R.id.fragmentContainerView, ImageSearchFragment.newInstance(it.data?.data!!))
 //                    addToBackStack(null)
