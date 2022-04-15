@@ -3,9 +3,11 @@ package no.kristiania.reverseimagesearch.viewmodel.api
 import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
+import android.util.Log
 import com.jacksonandroidnetworking.JacksonParserFactory
 
 import com.androidnetworking.AndroidNetworking
+import com.androidnetworking.common.ANResponse
 import com.androidnetworking.common.Priority
 import com.androidnetworking.error.ANError
 import com.androidnetworking.interfaces.StringRequestListener
@@ -49,6 +51,16 @@ class FastNetworkingAPI : Application(){
                     println("upload error: " + error?.localizedMessage)
                 }
             })
+    }
+
+    suspend fun uploadImageSynchronous(bitmap: Bitmap, context: Context): ANResponse<Any> {
+        val file = BitmapUtils.bitmapToFile(bitmap, "image.png", context)
+
+        val req = AndroidNetworking.upload(Endpoints.upload_url)
+            .addMultipartFile("image", file)
+            .build()
+        Log.d("FN API", "Executed upload")
+        return req.executeForString()
     }
 
     enum class ImageProvider{
