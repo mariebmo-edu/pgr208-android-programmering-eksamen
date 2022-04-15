@@ -15,10 +15,7 @@ import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.findNavController
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import no.kristiania.reverseimagesearch.R
 import no.kristiania.reverseimagesearch.viewmodel.api.FastNetworkingAPI
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
@@ -89,6 +86,7 @@ class ImageSearchFragment : Fragment() {
         }
     }
 
+
     private fun uploadImageToServer(bitmap: Bitmap) {
 
         val http = FastNetworkingAPI()
@@ -96,53 +94,42 @@ class ImageSearchFragment : Fragment() {
         //val response = context?.let { http.uploadImage(bitmap, it) }
         //Log.d("UploadImageToServer", "response: $response")
         val navController = this.findNavController()
-        val response = http.uploadImageSynchronous(bitmap, context!!)
-        if (response.isSuccess) {
-            Log.d("Thread ${Thread.currentThread()}", "response is success")
-            val url = response.result
-            Log.d("url from server:", url.toString())
-            view?.let {
-                val action = ImageSearchFragmentDirections
-                    .actionSearchFragmentToResultFragment(url.toString())
-                navController
-                    .navigate(action)
+
+        fun getUrl(): String? {
+            val response = http.uploadImageSynchronous(bitmap, context!!)
+            Log.d("SearchFragment", "Runs blocking")
+
+            if (response.isSuccess) {
+                Log.d("Thread ${Thread.currentThread()}", "response is success")
+                val url = response.result
+                Log.d("url from server:", url.toString())
+                return url.toString()
+            } else {
+                Log.e("Thread ${Thread.currentThread()}", response.error.toString())
+                return null
             }
-        } else {
-            Log.e("Thread ${Thread.currentThread()}", response.error.toString())
         }
 
-//        runBlocking {
-//            launch(Dispatchers.IO) {
-//                val response = http.uploadImageSynchronous(bitmap, context!!)
-//                Log.d("SearchFragment", "Runs blocking")
-//
-//                if (response.isSuccess) {
-//                    Log.d("Thread ${Thread.currentThread()}", "response is success")
-//                    val url = response.result
-//                    Log.d("url from server:", url.toString())
-//
-//                    withContext(Dispatchers.Main) {
-//                        Log.d("Thread ${Thread.currentThread()}", "Executing navigation")
-//                        view?.let {
-//                            val action = ImageSearchFragmentDirections
-//                                .actionSearchFragmentToResultFragment(response?.res!!)
-//                            navController
-//                                .navigate(action)
-//                        }
-//                    }
-//                } else {
-//                    Log.e("Thread ${Thread.currentThread()}", response.error.toString())
-//                }
-//            }
-//
-//        }
+        runBlocking(Dispatchers.IO) {
+            val req = async { getUrl() }
 
-        // When done, navigate to ResultFragment and pass either image url or objects from google etc.
-//        view?.let {
-//            val action = ImageSearchFragmentDirections
-//                .actionSearchFragmentToResultFragment("**RESPONSE FROM SERVER**")
-//            this.findNavController().navigate(R.id.action_searchFragment_to_resultFragment)
-//        }
+            val res = req.await()
+            res?.let {
+                Log.d("Thread ${Thread.currentThread()}", "Executing navigation")
+                view?.let {
+                    val action = ImageSearchFragmentDirections
+                        .actionSearchFragmentToResultFragment(it.toString())
+
+                    withContext(Dispatchers.Main) {
+                        navController
+                            .navigate(action)
+                    }
+
+                }
+            }
+
+        }
+
 
     }
 
