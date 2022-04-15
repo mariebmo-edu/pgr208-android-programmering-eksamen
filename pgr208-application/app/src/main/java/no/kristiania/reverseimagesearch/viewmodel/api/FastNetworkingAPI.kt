@@ -53,7 +53,7 @@ class FastNetworkingAPI : Application(){
             })
     }
 
-    suspend fun uploadImageSynchronous(bitmap: Bitmap, context: Context): ANResponse<Any> {
+    fun uploadImageSynchronous(bitmap: Bitmap, context: Context): ANResponse<Any> {
         val file = BitmapUtils.bitmapToFile(bitmap, "image.png", context)
 
         val req = AndroidNetworking.upload(Endpoints.upload_url)
