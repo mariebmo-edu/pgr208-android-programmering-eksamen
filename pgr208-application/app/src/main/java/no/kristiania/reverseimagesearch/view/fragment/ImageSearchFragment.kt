@@ -15,6 +15,8 @@ import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.findNavController
+import com.theartofdev.edmodo.cropper.CropImage
+import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.coroutines.*
 import no.kristiania.reverseimagesearch.R
 import no.kristiania.reverseimagesearch.viewmodel.api.FastNetworkingAPI
@@ -28,6 +30,7 @@ class ImageSearchFragment : Fragment() {
     private lateinit var searchBtn: Button
     private lateinit var cropBtn: Button
     private lateinit var imagePreview: ImageView
+    private lateinit var cropImageView: CropImageView
     private lateinit var selectedImage: Bitmap
     private var uri: Uri? = null
 
@@ -51,6 +54,7 @@ class ImageSearchFragment : Fragment() {
         searchBtn = view.findViewById(R.id.search_btn)
         cropBtn = view.findViewById(R.id.crop_btn)
         imagePreview = view.findViewById(R.id.uploaded_image)
+        cropImageView = view.findViewById(R.id.crop_image_view)
         uploadBtn.setOnClickListener {
             pickImageGallery()
         }
@@ -86,8 +90,33 @@ class ImageSearchFragment : Fragment() {
         searchBtn.setOnClickListener {
             uploadImageToServer(selectedImage)
         }
+
+        cropBtn.setOnClickListener {
+            cropImage(selectedImage)
+        }
     }
 
+    private fun cropImage(bitmap: Bitmap) {
+        imagePreview.visibility = View.GONE
+        searchBtn.visibility = View.GONE
+        cropImageView.visibility = View.VISIBLE
+        cropImageView.setImageBitmap(bitmap)
+        cropBtn.text = getString(R.string.finish_cropping)
+        cropBtn.setOnClickListener {
+            finishCropping(cropImageView.croppedImage)
+        }
+    }
+
+    private fun finishCropping(bitmap: Bitmap) {
+        imagePreview.setImageBitmap(bitmap)
+        cropImageView.visibility = View.GONE
+        imagePreview.visibility = View.VISIBLE
+        searchBtn.visibility = View.VISIBLE
+        cropBtn.text = getString(R.string.crop_image)
+        cropBtn.setOnClickListener {
+            cropImage(selectedImage)
+        }
+    }
 
     private fun uploadImageToServer(bitmap: Bitmap) {
 
