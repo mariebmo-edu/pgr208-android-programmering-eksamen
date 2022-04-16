@@ -109,7 +109,7 @@ class ImageSearchFragment : Fragment() {
                 val bingRes = bingReq.await()
                 val tinEyeRes = tinEyeReq.await()
 
-                val mergedJson = JsonArrUtils().multipleJsonArraysToOne(googleRes?, bingRes?, tinEyeRes?)
+                val mergedJson = JsonArrUtils().multipleJsonArraysToOne(googleRes, bingRes, tinEyeRes)
 
             }
         }
