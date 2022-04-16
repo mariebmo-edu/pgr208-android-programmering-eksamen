@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -14,10 +15,16 @@ import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.findNavController
+import com.google.gson.JsonArray
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 import no.kristiania.reverseimagesearch.R
 import no.kristiania.reverseimagesearch.viewmodel.api.FastNetworkingAPI
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils.Companion.UriToBitmap
+import no.kristiania.reverseimagesearch.viewmodel.utils.JsonArrUtils
+import org.json.JSONArray
 
 
 class ImageSearchFragment : Fragment() {
@@ -86,17 +93,28 @@ class ImageSearchFragment : Fragment() {
 
     private fun uploadImageToServer(bitmap : Bitmap) {
 
-        val http = FastNetworkingAPI()
+        val http = FastNetworkingAPI(context!!)
 
-        val response = context?.let { http.uploadImage(bitmap, it) }
-        println("response: $response")
+        runBlocking(Dispatchers.IO) {
+            val res = async { http.uploadImage(bitmap) }
+            val url = res.await()
 
-        // When done, navigate to ResultFragment and pass either image url or objects from google etc.
-//        view?.let {
-//            val action = ImageSearchFragmentDirections
-//                .actionSearchFragmentToResultFragment("**RESPONSE FROM SERVER**")
-//            this.findNavController().navigate(R.id.action_searchFragment_to_resultFragment)
-//        }
+            url?.let{
+                Log.i("UPLOAD_URL", url)
+                val googleReq = async { http.getImageFromProvider(url, FastNetworkingAPI.ImageProvider.Google) }
+                val bingReq = async { http.getImageFromProvider(url, FastNetworkingAPI.ImageProvider.Bing) }
+                val tinEyeReq = async { http.getImageFromProvider(url, FastNetworkingAPI.ImageProvider.TinEye) }
+
+                val googleRes = googleReq.await()
+                val bingRes = bingReq.await()
+                val tinEyeRes = tinEyeReq.await()
+
+                val mergedJson = JsonArrUtils().multipleJsonArraysToOne(googleRes!!, bingRes!!, tinEyeRes!!)
+
+            }
+        }
+
+
 
     }
 
