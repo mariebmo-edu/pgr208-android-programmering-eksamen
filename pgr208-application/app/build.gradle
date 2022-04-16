@@ -60,4 +60,7 @@ dependencies {
     implementation 'com.amitshekhar.android:android-networking:1.0.2'
     implementation 'com.amitshekhar.android:jackson-android-networking:1.0.2'
 
+    def android_image_cropper_version = "2.8.+"
+    api 'com.theartofdev.edmodo:android-image-cropper:2.8.+'
+
 }

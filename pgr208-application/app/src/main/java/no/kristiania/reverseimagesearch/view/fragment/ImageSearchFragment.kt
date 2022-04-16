@@ -26,6 +26,7 @@ class ImageSearchFragment : Fragment() {
     //private lateinit var savedBtn: Button
     private lateinit var uploadBtn: Button
     private lateinit var searchBtn: Button
+    private lateinit var cropBtn: Button
     private lateinit var imagePreview: ImageView
     private lateinit var selectedImage: Bitmap
     private var uri: Uri? = null
@@ -48,6 +49,7 @@ class ImageSearchFragment : Fragment() {
         // savedBtn = view.findViewById(R.id.saved_btn)
         uploadBtn = view.findViewById(R.id.upload_btn)
         searchBtn = view.findViewById(R.id.search_btn)
+        cropBtn = view.findViewById(R.id.crop_btn)
         imagePreview = view.findViewById(R.id.uploaded_image)
         uploadBtn.setOnClickListener {
             pickImageGallery()
@@ -145,6 +147,8 @@ class ImageSearchFragment : Fragment() {
                 selectedImage =
                     BitmapUtils.getBitmap(requireContext(), null, uri.toString(), ::UriToBitmap)
                 imagePreview.setImageBitmap(selectedImage)
+                searchBtn.visibility = View.VISIBLE
+                cropBtn.visibility = View.VISIBLE
 //                supportFragmentManager.beginTransaction().apply{
 //                    replace(R.id.fragmentContainerView, ImageSearchFragment.newInstance(it.data?.data!!))
 //                    addToBackStack(null)
