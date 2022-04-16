@@ -3,7 +3,7 @@ package no.kristiania.reverseimagesearch.viewmodel.utils
 import org.json.JSONArray
 
 class JsonArrUtils {
-    fun multipleJsonArraysToOne(vararg jarr : JSONArray): JSONArray {
+    fun multipleJsonArraysToOne(vararg jarr : JSONArray?): JSONArray {
         val jsonResponse = JSONArray()
 
         fun addToResponse(arr: JSONArray) {
@@ -14,7 +14,9 @@ class JsonArrUtils {
         }
 
         for(i in jarr.indices){
-            addToResponse(jarr[i])
+            if(jarr[i] != null){
+                addToResponse(jarr[i]!!)
+            }
         }
 
         println("AllProviders: $jsonResponse")
