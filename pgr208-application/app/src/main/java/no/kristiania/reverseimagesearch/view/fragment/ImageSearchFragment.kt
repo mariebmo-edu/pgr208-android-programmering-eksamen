@@ -7,6 +7,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -19,6 +20,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.navigation.fragment.findNavController
 import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.coroutines.*
@@ -28,6 +30,7 @@ import no.kristiania.reverseimagesearch.viewmodel.SearchViewModel
 import no.kristiania.reverseimagesearch.viewmodel.api.FastNetworkingAPI
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils.Companion.UriToBitmap
+import java.io.File
 
 
 class ImageSearchFragment : Fragment() {
@@ -43,6 +46,7 @@ class ImageSearchFragment : Fragment() {
     private lateinit var imagePreview: ImageView
     private lateinit var cropImageView: CropImageView
     private lateinit var selectedImage: Bitmap
+    private lateinit var tempImgFile: File
     private var uri: Uri? = null
 
 
@@ -125,22 +129,38 @@ class ImageSearchFragment : Fragment() {
 
     private fun pickImageCamera() {
         if (ContextCompat.checkSelfPermission(this.context!!, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            cameraResultLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
+            getBmpFromCamera()
         } else {
             cameraPermissionRequest.launch(Manifest.permission.CAMERA)
         }
     }
 
+    private fun getBmpFromCamera() {
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        tempImgFile = File.createTempFile(
+            "tempImg",
+            ".jpg",
+            this.context?.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        )
+        val fileProvider = FileProvider.getUriForFile(
+            this.context!!,
+            "no.kristiania.reverseimagesearch.fileprovider",
+            tempImgFile
+        )
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider)
+        cameraResultLauncher.launch(intent)
+    }
+
     private val cameraPermissionRequest = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
         if (it) {
-            cameraResultLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
+            getBmpFromCamera()
         }
     }
 
     private val cameraResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == AppCompatActivity.RESULT_OK) {
-                selectedImage = it.data?.extras?.get("data") as Bitmap
+                selectedImage = BitmapFactory.decodeFile(tempImgFile.absolutePath)
                 imagePreview.setImageBitmap(selectedImage)
                 searchBtn.visibility = View.VISIBLE
                 cropBtn.visibility = View.VISIBLE
