@@ -1,7 +1,10 @@
 package no.kristiania.reverseimagesearch.view.fragment
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -15,7 +18,9 @@ import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
+import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.coroutines.*
 import no.kristiania.reverseimagesearch.R
 import no.kristiania.reverseimagesearch.databinding.FragmentImageSearchBinding
@@ -31,9 +36,11 @@ class ImageSearchFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var uploadBtn: Button
+    private lateinit var cameraBtn: Button
     private lateinit var searchBtn: Button
     private lateinit var cropBtn: Button
     private lateinit var imagePreview: ImageView
+    private lateinit var cropImageView: CropImageView
     private lateinit var selectedImage: Bitmap
     private var uri: Uri? = null
 
@@ -57,12 +64,20 @@ class ImageSearchFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
         // savedBtn = view.findViewById(R.id.saved_btn)
         uploadBtn = view.findViewById(R.id.upload_btn)
+        cameraBtn = view.findViewById(R.id.camera_btn)
         searchBtn = view.findViewById(R.id.search_btn)
         cropBtn = view.findViewById(R.id.crop_btn)
         imagePreview = view.findViewById(R.id.uploaded_image)
+        cropImageView = view.findViewById(R.id.crop_image_view)
+
         uploadBtn.setOnClickListener {
             pickImageGallery()
         }
+
+        cameraBtn.setOnClickListener {
+            pickImageCamera()
+        }
+
         if (uri != null) {
             selectedImage =
                 BitmapUtils.getBitmap(requireContext(), null, uri.toString(), ::UriToBitmap)
@@ -99,10 +114,30 @@ class ImageSearchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         // noen grunn til at click listener var her?
     }
 
+    private fun cropImage(bitmap: Bitmap) {
+        imagePreview.visibility = View.GONE
+        searchBtn.visibility = View.GONE
+        cropImageView.visibility = View.VISIBLE
+        cropImageView.setImageBitmap(bitmap)
+        cropBtn.text = getString(R.string.finish_cropping)
+        cropBtn.setOnClickListener {
+            finishCropping(cropImageView.croppedImage)
+        }
+    }
+
+    private fun finishCropping(bitmap: Bitmap) {
+        imagePreview.setImageBitmap(bitmap)
+        cropImageView.visibility = View.GONE
+        imagePreview.visibility = View.VISIBLE
+        searchBtn.visibility = View.VISIBLE
+        cropBtn.text = getString(R.string.crop_image)
+        cropBtn.setOnClickListener {
+            cropImage(selectedImage)
+        }
+    }
 
     private fun uploadImageToServer(bitmap: Bitmap, viewModel: SearchViewModel) {
 
@@ -154,10 +189,36 @@ class ImageSearchFragment : Fragment() {
 
     private fun pickImageGallery() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        resultLauncher.launch(intent)
+        galleryResultLauncher.launch(intent)
     }
 
-    private val resultLauncher =
+    private fun pickImageCamera() {
+        if (ContextCompat.checkSelfPermission(this.context!!, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            cameraResultLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
+        } else {
+            cameraPermissionRequest.launch(Manifest.permission.CAMERA)
+        }
+    }
+
+    private val cameraPermissionRequest = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+        if (it) {
+            cameraResultLauncher.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
+        }
+    }
+
+    private val cameraResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+
+            if (it.resultCode == AppCompatActivity.RESULT_OK) {
+
+                selectedImage = it.data?.extras?.get("data") as Bitmap
+                imagePreview.setImageBitmap(selectedImage)
+                searchBtn.visibility = View.VISIBLE
+                cropBtn.visibility = View.VISIBLE
+            }
+        }
+
+    private val galleryResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == AppCompatActivity.RESULT_OK && it.data != null) {
                 this.uri = it.data?.data!!

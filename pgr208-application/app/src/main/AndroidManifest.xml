@@ -4,9 +4,12 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <!-- For Android Image Cropper: -->
+    <!-- For Android Image Cropper and camera: -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+    <!-- For camera: -->
+    <uses-permission android:name="android.permission.CAMERA"/>
 
     <application
         android:usesCleartextTraffic="true"
