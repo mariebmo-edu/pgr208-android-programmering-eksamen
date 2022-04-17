@@ -100,7 +100,7 @@ class ImageSearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-       // noen grunn til at click listener var her?
+        // noen grunn til at click listener var her?
     }
 
 
@@ -115,7 +115,7 @@ class ImageSearchFragment : Fragment() {
             if (response.isSuccess) {
                 Log.d("Thread ${Thread.currentThread()}", "response is success")
                 val url = response.result
-                viewModel.setUrl(url.toString())
+
                 Log.d("url from server:", url.toString())
                 return url.toString()
             } else {
@@ -125,9 +125,13 @@ class ImageSearchFragment : Fragment() {
         }
         //val navController = this.findNavController()
         runBlocking(Dispatchers.IO) {
-           // val req = async { getUrl() }
-            getUrl()
-//            val res = req.await()
+            val req = async { getUrl() }
+
+            withContext(Dispatchers.Main) {
+                val res = req.await()
+                viewModel.setUrl(res.toString())
+            }
+
 //            res?.let {
 //                Log.d("Thread ${Thread.currentThread()}", "Executing navigation")
 //                view?.let {
