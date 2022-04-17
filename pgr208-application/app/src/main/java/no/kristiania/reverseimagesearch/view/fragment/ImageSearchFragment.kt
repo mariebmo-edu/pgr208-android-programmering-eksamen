@@ -124,11 +124,12 @@ class ImageSearchFragment : Fragment() {
             }
         }
         //val navController = this.findNavController()
-        runBlocking(Dispatchers.IO) {
+        GlobalScope.launch(Dispatchers.IO) {
             val req = async { getUrl() }
 
-            withContext(Dispatchers.Main) {
+            launch(Dispatchers.Main) {
                 val res = req.await()
+                Log.d("main", "Running on main")
                 viewModel.setUrl(res.toString())
             }
 
