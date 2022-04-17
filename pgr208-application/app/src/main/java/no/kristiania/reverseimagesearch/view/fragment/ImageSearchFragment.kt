@@ -31,7 +31,7 @@ import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils.Companion.Ur
 
 
 class ImageSearchFragment : Fragment() {
-    //private lateinit var savedBtn: Button
+
     private var _binding: FragmentImageSearchBinding? = null
     private val binding get() = _binding!!
 
@@ -63,12 +63,12 @@ class ImageSearchFragment : Fragment() {
         // binding.viewModel = viewModel ....hvorfor satte man denne igjen? om ting ikke funker, sjekk opp
         binding.lifecycleOwner = viewLifecycleOwner
         // savedBtn = view.findViewById(R.id.saved_btn)
-        uploadBtn = view.findViewById(R.id.upload_btn)
-        cameraBtn = view.findViewById(R.id.camera_btn)
-        searchBtn = view.findViewById(R.id.search_btn)
-        cropBtn = view.findViewById(R.id.crop_btn)
-        imagePreview = view.findViewById(R.id.uploaded_image)
-        cropImageView = view.findViewById(R.id.crop_image_view)
+        uploadBtn = binding.uploadBtn
+        cameraBtn = binding.cameraBtn
+        searchBtn = binding.searchBtn
+        cropBtn = binding.cropBtn
+        imagePreview = binding.uploadedImage
+        cropImageView = binding.cropImageView
 
         uploadBtn.setOnClickListener {
             pickImageGallery()
@@ -91,11 +91,7 @@ class ImageSearchFragment : Fragment() {
         searchBtn.setOnClickListener {
             uploadImageToServer(selectedImage, viewModel)
         }
-//        supportFragmentManager.beginTransaction().apply{
-//            replace(R.id.fragmentContainerView, NothingSelectedFragment())
-//            addToBackStack(null)
-//            commit()
-//        }
+
         return view
     }
 
@@ -168,20 +164,6 @@ class ImageSearchFragment : Fragment() {
                 viewModel.setUrl(res.toString())
             }
 
-//            res?.let {
-//                Log.d("Thread ${Thread.currentThread()}", "Executing navigation")
-//                view?.let {
-//                    val action = ImageSearchFragmentDirections
-//                        .actionSearchFragmentToResultFragment(it.toString())
-//
-//                    withContext(Dispatchers.Main) {
-//                        navController
-//                            .navigate(action)
-//                    }
-//
-//                }
-//           }
-
         }
 
 
@@ -208,9 +190,7 @@ class ImageSearchFragment : Fragment() {
 
     private val cameraResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-
             if (it.resultCode == AppCompatActivity.RESULT_OK) {
-
                 selectedImage = it.data?.extras?.get("data") as Bitmap
                 imagePreview.setImageBitmap(selectedImage)
                 searchBtn.visibility = View.VISIBLE
@@ -227,11 +207,6 @@ class ImageSearchFragment : Fragment() {
                 imagePreview.setImageBitmap(selectedImage)
                 searchBtn.visibility = View.VISIBLE
                 cropBtn.visibility = View.VISIBLE
-//                supportFragmentManager.beginTransaction().apply{
-//                    replace(R.id.fragmentContainerView, ImageSearchFragment.newInstance(it.data?.data!!))
-//                    addToBackStack(null)
-//                    commit()
-//                }
 
             } else {
                 println("error: result is not OK, or data is empty")
