@@ -16,4 +16,5 @@
     <string name="fragment_result">Results</string>
     <string name="crop_image">CROP IMAGE</string>
     <string name="finish_cropping">Finish cropping</string>
+    <string name="camera">CAMERA</string>
 </resources>

@@ -14,9 +14,19 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:text="@string/upload"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/camera_btn"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/camera_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="@string/camera"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/upload_btn"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 <!--    <Button
         android:id="@+id/saved_btn"
