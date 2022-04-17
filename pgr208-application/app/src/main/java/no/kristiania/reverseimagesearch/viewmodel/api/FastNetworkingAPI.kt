@@ -17,8 +17,7 @@ import org.json.JSONObject
 import org.json.JSONArray
 
 import com.androidnetworking.interfaces.JSONArrayRequestListener
-
-
+import no.kristiania.reverseimagesearch.viewmodel.ResultViewModel
 
 
 class FastNetworkingAPI : Application(){
@@ -42,9 +41,9 @@ class FastNetworkingAPI : Application(){
             .getAsString(object : StringRequestListener {
                 override fun onResponse(response: String?) {
                     println(response)
-                    getImageFromProvider(response!!, ImageProvider.Google)
-                    getImageFromProvider(response!!, ImageProvider.Bing)
-                    getImageFromProvider(response!!, ImageProvider.TinyEye)
+//                    getImageFromProvider(response!!, ImageProvider.Google)
+//                    getImageFromProvider(response!!, ImageProvider.Bing)
+//                    getImageFromProvider(response!!, ImageProvider.TinyEye)
 
                 }
                 override fun onError(error: ANError?) {
@@ -67,7 +66,7 @@ class FastNetworkingAPI : Application(){
         Google, Bing, TinyEye
     }
 
-    fun getImageFromProvider(url: String, provider: ImageProvider) {
+    fun getImageFromProvider(url: String, provider: ImageProvider, viewModel: ResultViewModel) {
 
         val endpoint = when (provider) {
             ImageProvider.TinyEye -> Endpoints.get_tinyEye_url
@@ -82,6 +81,7 @@ class FastNetworkingAPI : Application(){
             .build()
             .getAsJSONArray(object : JSONArrayRequestListener {
                 override fun onResponse(response: JSONArray) {
+                    viewModel.fetchImagesFromSearch(response)
                     println("success from ${provider}! response: ${response}")
                 }
 

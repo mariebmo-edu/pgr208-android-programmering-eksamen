@@ -13,6 +13,8 @@ import no.kristiania.reverseimagesearch.databinding.FragmentResultBinding
 import no.kristiania.reverseimagesearch.model.db.ImageSearchDb
 import no.kristiania.reverseimagesearch.view.adapter.ResultItemAdapter
 import no.kristiania.reverseimagesearch.viewmodel.ResultViewModelFactory
+import no.kristiania.reverseimagesearch.viewmodel.api.FastNetworkingAPI
+import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
 
 class ResultFragment : Fragment() {
 
@@ -28,6 +30,8 @@ class ResultFragment : Fragment() {
         val view = binding.root
 
         val hostedImageServerUrl = ResultFragmentArgs.fromBundle(requireArguments()).responseUrl
+        val api = FastNetworkingAPI()
+        Log.d("ResultFragment", hostedImageServerUrl)
 
         /* TODO:
         *   * Do call to other api-s with hostedImageServer url
@@ -41,6 +45,10 @@ class ResultFragment : Fragment() {
 
         val resultViewModelFactory = ResultViewModelFactory(dao)
         val viewModel = ViewModelProvider(this, resultViewModelFactory)[ResultViewModel::class.java]
+
+        val result = api.getImageFromProvider(hostedImageServerUrl, FastNetworkingAPI.ImageProvider.Google, viewModel)
+
+        Log.d("ResultFragment", result.toString())
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
