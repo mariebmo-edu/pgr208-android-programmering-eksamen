@@ -17,11 +17,14 @@ import android.widget.Button
 import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.coroutines.*
 import no.kristiania.reverseimagesearch.R
+import no.kristiania.reverseimagesearch.databinding.FragmentImageSearchBinding
+import no.kristiania.reverseimagesearch.viewmodel.SearchViewModel
 import no.kristiania.reverseimagesearch.viewmodel.api.FastNetworkingAPI
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils.Companion.UriToBitmap
@@ -29,6 +32,9 @@ import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils.Companion.Ur
 
 class ImageSearchFragment : Fragment() {
     //private lateinit var savedBtn: Button
+    private var _binding: FragmentImageSearchBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var uploadBtn: Button
     private lateinit var cameraBtn: Button
     private lateinit var searchBtn: Button
@@ -50,9 +56,12 @@ class ImageSearchFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
+        _binding = FragmentImageSearchBinding.inflate(inflater, container, false)
+        val view = binding.root
 
-        // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_image_search, container, false)
+        val viewModel = ViewModelProvider(this)[SearchViewModel::class.java]
+        // binding.viewModel = viewModel ....hvorfor satte man denne igjen? om ting ikke funker, sjekk opp
+        binding.lifecycleOwner = viewLifecycleOwner
         // savedBtn = view.findViewById(R.id.saved_btn)
         uploadBtn = view.findViewById(R.id.upload_btn)
         cameraBtn = view.findViewById(R.id.camera_btn)
@@ -73,6 +82,14 @@ class ImageSearchFragment : Fragment() {
             selectedImage =
                 BitmapUtils.getBitmap(requireContext(), null, uri.toString(), ::UriToBitmap)
             imagePreview.setImageBitmap(selectedImage)
+        }
+        viewModel.url.observe(viewLifecycleOwner, { url ->
+            val action = ImageSearchFragmentDirections
+                .actionSearchFragmentToResultFragment(url)
+            this.findNavController().navigate(action)
+        })
+        searchBtn.setOnClickListener {
+            uploadImageToServer(selectedImage, viewModel)
         }
 //        supportFragmentManager.beginTransaction().apply{
 //            replace(R.id.fragmentContainerView, NothingSelectedFragment())
@@ -97,14 +114,7 @@ class ImageSearchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        searchBtn.setOnClickListener {
-            uploadImageToServer(selectedImage)
-        }
-
-        cropBtn.setOnClickListener {
-            cropImage(selectedImage)
-        }
+        // noen grunn til at click listener var her?
     }
 
     private fun cropImage(bitmap: Bitmap) {
@@ -129,13 +139,9 @@ class ImageSearchFragment : Fragment() {
         }
     }
 
-    private fun uploadImageToServer(bitmap: Bitmap) {
+    private fun uploadImageToServer(bitmap: Bitmap, viewModel: SearchViewModel) {
 
         val http = FastNetworkingAPI()
-
-        //val response = context?.let { http.uploadImage(bitmap, it) }
-        //Log.d("UploadImageToServer", "response: $response")
-        val navController = this.findNavController()
 
         fun getUrl(): String? {
             val response = http.uploadImageSynchronous(bitmap, context!!)
@@ -144,6 +150,7 @@ class ImageSearchFragment : Fragment() {
             if (response.isSuccess) {
                 Log.d("Thread ${Thread.currentThread()}", "response is success")
                 val url = response.result
+
                 Log.d("url from server:", url.toString())
                 return url.toString()
             } else {
@@ -151,24 +158,29 @@ class ImageSearchFragment : Fragment() {
                 return null
             }
         }
-
-        runBlocking(Dispatchers.IO) {
+        //val navController = this.findNavController()
+        GlobalScope.launch(Dispatchers.IO) {
             val req = async { getUrl() }
 
-            val res = req.await()
-            res?.let {
-                Log.d("Thread ${Thread.currentThread()}", "Executing navigation")
-                view?.let {
-                    val action = ImageSearchFragmentDirections
-                        .actionSearchFragmentToResultFragment(it.toString())
-
-                    withContext(Dispatchers.Main) {
-                        navController
-                            .navigate(action)
-                    }
-
-                }
+            launch(Dispatchers.Main) {
+                val res = req.await()
+                Log.d("main", "Running on main")
+                viewModel.setUrl(res.toString())
             }
+
+//            res?.let {
+//                Log.d("Thread ${Thread.currentThread()}", "Executing navigation")
+//                view?.let {
+//                    val action = ImageSearchFragmentDirections
+//                        .actionSearchFragmentToResultFragment(it.toString())
+//
+//                    withContext(Dispatchers.Main) {
+//                        navController
+//                            .navigate(action)
+//                    }
+//
+//                }
+//           }
 
         }
 
