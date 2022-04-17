@@ -66,7 +66,6 @@ class ImageSearchFragment : Fragment() {
         }
 
         cameraBtn.setOnClickListener {
-
             pickImageCamera()
         }
 
@@ -198,18 +197,12 @@ class ImageSearchFragment : Fragment() {
     private val cameraResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
 
-            println("Camera open")
+            if (it.resultCode == AppCompatActivity.RESULT_OK) {
 
-            if (it.data != null) {
-
-                println("data is not null")
-
-                selectedImage = BitmapUtils.byteArrayToBitmap(it.data!!.getByteArrayExtra("image_arr")!!)
+                selectedImage = it.data?.extras?.get("data") as Bitmap
                 imagePreview.setImageBitmap(selectedImage)
                 searchBtn.visibility = View.VISIBLE
                 cropBtn.visibility = View.VISIBLE
-            } else {
-                println("error: data is empty")
             }
         }
 
