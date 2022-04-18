@@ -83,11 +83,9 @@ class ImageSearchFragment : Fragment() {
             imagePreview.setImageBitmap(selectedImage)
         }
 
-        // TODO: Vi må sende med path til orginalbildet også siden det kanskje blir litt teit å laste ned bildet fra serveren
-        // når søket skal lagres
         viewModel.url.observe(viewLifecycleOwner, { url ->
             val action = ImageSearchFragmentDirections
-                .actionSearchFragmentToResultFragment(url)
+                .actionSearchFragmentToResultFragment(url, uri.toString())
             this.findNavController().navigate(action)
         })
         searchBtn.setOnClickListener {

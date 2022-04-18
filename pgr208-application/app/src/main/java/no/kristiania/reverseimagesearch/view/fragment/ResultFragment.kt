@@ -14,7 +14,6 @@ import no.kristiania.reverseimagesearch.model.db.ImageSearchDb
 import no.kristiania.reverseimagesearch.view.adapter.ResultItemAdapter
 import no.kristiania.reverseimagesearch.viewmodel.ResultViewModelFactory
 import no.kristiania.reverseimagesearch.viewmodel.api.FastNetworkingAPI
-import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
 
 class ResultFragment : Fragment() {
 
@@ -35,9 +34,11 @@ class ResultFragment : Fragment() {
 
 
         val application = requireNotNull(this.activity).application
-        val dao = ImageSearchDb.getInstance(application).requestImageDao
+        val db = ImageSearchDb.getInstance(application)
+        val requestImageDao = db.requestImageDao
+        val resultImageDao = db.resultImageDao
 
-        val resultViewModelFactory = ResultViewModelFactory(dao)
+        val resultViewModelFactory = ResultViewModelFactory(requestImageDao, resultImageDao)
         val viewModel = ViewModelProvider(this, resultViewModelFactory)[ResultViewModel::class.java]
 
         api.getImageFromProvider(hostedImageServerUrl, FastNetworkingAPI.ImageProvider.Bing, viewModel)
@@ -59,6 +60,15 @@ class ResultFragment : Fragment() {
 
         binding.saveResultButton.setOnClickListener {
             Log.d("Button Clicked!", adapter.selectedImagesForSave.toString())
+
+            // TODO: Get bitmap from URI param
+            // Create instance of requestImage
+            // Save it
+            // update ID on all selected resultItem(s)
+            // Save them
+            // ??
+            // Profit
+
         }
 
 
