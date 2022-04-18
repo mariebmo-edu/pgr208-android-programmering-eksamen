@@ -1,5 +1,6 @@
 package no.kristiania.reverseimagesearch.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -15,20 +16,18 @@ class ResultViewModel(private val requestImageDao: RequestImageDao) : ViewModel(
     val resultImages: LiveData<List<ResultImage>>
         get() = _resultImages
 
-    init {
-        val paths = mutableListOf<ResultImage>()
-        DummyImagePaths.IMAGES.values.forEachIndexed { i, v ->
-            paths.add(ResultImage(id = i * 1L, serverPath = v))
-        }
-        _resultImages.value = paths
-    }
-
     fun fetchImagesFromSearch(response: JSONArray) {
         val imageObjs = mutableListOf<ResultImage>()
 
-        for (i in 0 .. response.length()) {
-            //imageObjs.add(ResultImage(serverPath = response.get(i).))
+        for (i in 0 until response.length()) {
+            val currentJsonObj = response.getJSONObject(i)
+            val imageLink = currentJsonObj.getString("image_link")
+            val thumbnailLink = currentJsonObj.getString("thumbnail_link")
+            Log.d("fetchImagesFromSearch", currentJsonObj.toString())
+            imageObjs.add(ResultImage(serverPath = imageLink))
         }
+
+        _resultImages.value = imageObjs
     }
     //fun addItem(resultItem: ResultItem) = requestImageDao.add(resultItem)
 

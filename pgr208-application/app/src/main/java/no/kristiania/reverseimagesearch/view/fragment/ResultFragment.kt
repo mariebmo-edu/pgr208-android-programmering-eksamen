@@ -46,9 +46,9 @@ class ResultFragment : Fragment() {
         val resultViewModelFactory = ResultViewModelFactory(dao)
         val viewModel = ViewModelProvider(this, resultViewModelFactory)[ResultViewModel::class.java]
 
-        val result = api.getImageFromProvider(hostedImageServerUrl, FastNetworkingAPI.ImageProvider.Google, viewModel)
+        api.getImageFromProvider(hostedImageServerUrl, FastNetworkingAPI.ImageProvider.Bing, viewModel)
 
-        Log.d("ResultFragment", result.toString())
+
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
