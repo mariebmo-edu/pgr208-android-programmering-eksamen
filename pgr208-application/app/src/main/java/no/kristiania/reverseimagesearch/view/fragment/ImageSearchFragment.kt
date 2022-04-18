@@ -68,6 +68,7 @@ class ImageSearchFragment : Fragment() {
         imagePreview = binding.uploadedImage
         cropImageView = binding.cropImageView
 
+
         uploadBtn.setOnClickListener {
             pickImageGallery()
         }

@@ -33,12 +33,6 @@ class ResultFragment : Fragment() {
         val api = FastNetworkingAPI()
         Log.d("ResultFragment", hostedImageServerUrl)
 
-        /* TODO:
-        *   * Do call to other api-s with hostedImageServer url
-        *   * Process JSON to a List<ResultImage> entity
-        *   * Set result to viewmodel (probably need to change the field to public and get rid of getter)
-        *   * ViewModel should update recyclerview automatically
-        * */
 
         val application = requireNotNull(this.activity).application
         val dao = ImageSearchDb.getInstance(application).requestImageDao
@@ -51,7 +45,7 @@ class ResultFragment : Fragment() {
 
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
-
+        //binding.resultItemsList.
         // Til databinding med livedata
         val adapter = ResultItemAdapter()
         binding.resultItemsList.adapter = adapter
@@ -62,6 +56,12 @@ class ResultFragment : Fragment() {
                 adapter.submitList(it)
             }
         })
+
+        binding.saveResultButton.setOnClickListener {
+            Log.d("Button Clicked!", adapter.selectedImagesForSave.toString())
+        }
+
+
 
         return view
     }

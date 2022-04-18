@@ -3,6 +3,7 @@ package no.kristiania.reverseimagesearch.view.adapter
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -14,7 +15,7 @@ import java.util.logging.Level.INFO
 // Denne klassen forteller recyclerview hvordan den skal vise data fra databasen.
 class ResultItemAdapter :
     ListAdapter<ResultImage, ResultItemAdapter.ResultItemViewHolder>(ResultDiffItemCallback()) {
-
+    val selectedImagesForSave = mutableListOf<ImageView>()
     // Når den indre klassen under instansieres (dette fungerer som et rot-element for å stappe result_item xml-fila inn i.
     // Den blir inflatet i den indre klassen
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ResultItemViewHolder =
@@ -25,6 +26,14 @@ class ResultItemAdapter :
     override fun onBindViewHolder(holder: ResultItemViewHolder, position: Int) {
         Log.i("onBind", "binding item")
         val item = getItem(position)
+        val image = holder.binding.image
+
+        holder.binding.saveResult.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) selectedImagesForSave.add(image)
+            else if (!isChecked && selectedImagesForSave.contains(image)){
+                selectedImagesForSave.remove(image)
+            }
+        }
         holder.bind(item)
     }
 
