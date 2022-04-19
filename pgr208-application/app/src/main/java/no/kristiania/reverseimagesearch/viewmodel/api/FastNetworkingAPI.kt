@@ -54,6 +54,7 @@ class FastNetworkingAPI(val context: Context) {
             ImageProvider.Bing -> Endpoints.get_bing_url
             ImageProvider.Google -> Endpoints.get_google_url
         }
+        Log.d("getImageFromProviderSync", endpoint)
 
         val request = AndroidNetworking.get(endpoint)
             .addQueryParameter("url", url)
@@ -68,7 +69,7 @@ class FastNetworkingAPI(val context: Context) {
             return response.result as JSONArray
 
         } else {
-            Log.i("GET_ERROR", "get error from $provider: " + ANError().errorBody)
+            Log.i("GET_ERROR", "get error from $provider: " + response.error)
         }
         return null
     }
