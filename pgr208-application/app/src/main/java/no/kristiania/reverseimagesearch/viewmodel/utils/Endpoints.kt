@@ -9,5 +9,5 @@ object Endpoints {
     //GET
     const val get_google_url = base_url + "google"
     const val get_bing_url = base_url + "bing"
-    const val get_tinyEye_url = base_url + "tinyeye"
+    const val get_tinEye_url = base_url + "tineye"
 }
