@@ -8,18 +8,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import no.kristiania.reverseimagesearch.viewmodel.ResultViewModel
 import no.kristiania.reverseimagesearch.databinding.FragmentResultBinding
 import no.kristiania.reverseimagesearch.model.db.ImageSearchDb
+import no.kristiania.reverseimagesearch.model.entity.RequestImage
 import no.kristiania.reverseimagesearch.view.adapter.ResultItemAdapter
 import no.kristiania.reverseimagesearch.viewmodel.ResultViewModelFactory
 import no.kristiania.reverseimagesearch.viewmodel.api.FastNetworkingAPI
-import no.kristiania.reverseimagesearch.viewmodel.utils.JsonArrUtils
-import org.json.JSONArray
+import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
+import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils.Companion.UriToBitmap
 
 class ResultFragment : Fragment() {
 
@@ -34,23 +31,24 @@ class ResultFragment : Fragment() {
         _binding = FragmentResultBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        val hostedImageServerUrl = ResultFragmentArgs.fromBundle(requireArguments()).responseUrl
+
         val api = context?.let { FastNetworkingAPI(it) }
-        Log.d("ResultFragment", hostedImageServerUrl)
 
 
         val application = requireNotNull(this.activity).application
         val db = ImageSearchDb.getInstance(application)
         val requestImageDao = db.requestImageDao
         val resultImageDao = db.resultImageDao
-
         val resultViewModelFactory = ResultViewModelFactory(requestImageDao, resultImageDao)
         val viewModel = ViewModelProvider(this, resultViewModelFactory)[ResultViewModel::class.java]
+        viewModel.hostedImageServerUrl = ResultFragmentArgs.fromBundle(requireArguments()).responseUrl
+        viewModel.requestImageLocalPath = ResultFragmentArgs.fromBundle(requireArguments()).requestImagePath
+        Log.d("ResultFragment", viewModel.hostedImageServerUrl)
+
 
         if (api != null) {
-            viewModel.getResultFromUrl(hostedImageServerUrl, api)
+            viewModel.getResultFromUrl(viewModel.hostedImageServerUrl, api)
         }
-
 
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
@@ -67,19 +65,8 @@ class ResultFragment : Fragment() {
         })
 
         binding.saveResultButton.setOnClickListener {
-            Log.d("Button Clicked!", adapter.selectedImagesForSave.toString())
-
-            // TODO: Get bitmap from URI param
-            // Create instance of requestImage
-            // Save it
-            // update ID on all selected resultItem(s)
-            // Save them
-            // ??
-            // Profit
-
+            viewModel.saveResult(requireContext(),adapter.selectedImagesForSave)
         }
-
-
 
         return view
     }

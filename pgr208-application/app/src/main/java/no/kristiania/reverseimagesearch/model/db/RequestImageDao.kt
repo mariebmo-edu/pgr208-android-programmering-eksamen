@@ -10,7 +10,7 @@ import no.kristiania.reverseimagesearch.model.entity.RequestImage
 @Dao
 interface RequestImageDao {
     @Insert
-    suspend fun insert(requestImage: RequestImage)
+    suspend fun insert(requestImage: RequestImage): Long
 
     @Update
     suspend fun update(requestImage: RequestImage)
