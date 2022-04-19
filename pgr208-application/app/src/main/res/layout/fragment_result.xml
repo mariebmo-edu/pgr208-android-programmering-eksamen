@@ -11,7 +11,7 @@
             type="no.kristiania.reverseimagesearch.viewmodel.ResultViewModel" />
     </data>
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -20,13 +20,19 @@
 
 
         <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
             android:id="@+id/result_items_list"
-            android:layout_weight="6"
+            android:layout_width="0dp"
+            android:layout_height="642dp"
             android:layout_gravity="top"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_weight="6"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            app:spanCount="2"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:spanCount="2" />
 
         <Button
             android:id="@+id/save_result_button"
@@ -34,8 +40,11 @@
             android:layout_height="0dp"
             android:layout_gravity="center_horizontal"
             android:layout_weight="1"
-            android:text="@string/save_search_result" />
-    </LinearLayout>
+            android:text="@string/save_search_result"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/result_items_list" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </layout>

@@ -14,23 +14,24 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:elevation="4dp"
-        app:cardCornerRadius="4dp">
+        app:cardCornerRadius="8dp">
 
         <ImageView
             android:id="@+id/image"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="top"
-            />
+            android:layout_gravity="top" />
 
         <CheckBox
             android:id="@+id/save_result"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_gravity="bottom"
-            android:checked="false" />
-
-
+            android:layout_marginLeft="15dp"
+            android:buttonTint="@color/lm_primary_color"
+            android:checked="false"
+            android:minWidth="48dp"
+            android:minHeight="48dp" />
 
 
     </androidx.cardview.widget.CardView>
