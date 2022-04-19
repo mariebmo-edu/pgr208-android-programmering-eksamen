@@ -8,5 +8,4 @@
         android:id="@+id/savedSearchesFragment"
         android:icon="@android:drawable/btn_star_big_on"
         android:title="Saved results"/>
-
 </menu>
