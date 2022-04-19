@@ -107,6 +107,7 @@
             android:layout_width="228dp"
             android:layout_height="48dp"
             android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="20dp"
             android:layout_weight="1"
             android:text="@string/save_search_result"
             app:layout_constraintBottom_toBottomOf="parent"
