@@ -6,40 +6,29 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import no.kristiania.reverseimagesearch.viewmodel.api.FastNetworkingAPI
+import no.kristiania.reverseimagesearch.viewmodel.utils.JsonArrUtils
 
 class SearchViewModel : ViewModel() {
     private val _url = MutableLiveData<String>()
     val url: LiveData<String>
         get() = _url
 
-    fun uploadImageAndFetchUrl(bitmap: Bitmap, context: Context): Unit {
-        val http = FastNetworkingAPI()
-
+    fun uploadImageForUrl(bitmap:Bitmap, context: Context){
+        val http = FastNetworkingAPI(context)
 
         GlobalScope.launch(Dispatchers.IO) {
-            val response = http.uploadImageSynchronous(bitmap, context!!)
-            Log.d("SearchFragment", "Runs on IO")
+            val res = async { http.uploadImageSynchronous(bitmap) }
+            val url = res.await()
 
-            if (response.isSuccess) {
-                Log.d("Thread ${Thread.currentThread()}", "response is success")
-                val url = response.result
-
-                // Publishes result to UI
+            url?.let {
                 launch(Dispatchers.Main) {
-                    Log.d("main", "Running on main")
-                    _url.value = response.result.toString()
+                    _url.value = it
                 }
-                Log.d("url from server:", url.toString())
-            } else {
-                // TODO: Error handling
-                Log.e("Thread ${Thread.currentThread()}", response.error.toString())
             }
-
         }
+
+
     }
 }

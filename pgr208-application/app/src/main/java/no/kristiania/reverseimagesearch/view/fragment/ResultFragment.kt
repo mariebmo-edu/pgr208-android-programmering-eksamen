@@ -29,7 +29,6 @@ class ResultFragment : Fragment() {
         val view = binding.root
 
         val hostedImageServerUrl = ResultFragmentArgs.fromBundle(requireArguments()).responseUrl
-        val api = FastNetworkingAPI()
         Log.d("ResultFragment", hostedImageServerUrl)
 
 
@@ -41,7 +40,11 @@ class ResultFragment : Fragment() {
         val resultViewModelFactory = ResultViewModelFactory(requestImageDao, resultImageDao)
         val viewModel = ViewModelProvider(this, resultViewModelFactory)[ResultViewModel::class.java]
 
-        api.getImageFromProvider(hostedImageServerUrl, FastNetworkingAPI.ImageProvider.Bing, viewModel)
+        context?.let { FastNetworkingAPI(it) }?.getImageFromProviderSynchronous(
+            hostedImageServerUrl,
+            FastNetworkingAPI.ImageProvider.Bing,
+            viewModel
+        )
 
 
         binding.viewModel = viewModel

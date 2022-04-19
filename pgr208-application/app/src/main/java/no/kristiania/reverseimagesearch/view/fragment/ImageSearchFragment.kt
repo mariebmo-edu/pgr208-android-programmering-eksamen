@@ -22,7 +22,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.navigation.fragment.findNavController
-import com.google.gson.JsonArray
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
@@ -35,7 +34,6 @@ import no.kristiania.reverseimagesearch.viewmodel.api.FastNetworkingAPI
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils.Companion.UriToBitmap
 import no.kristiania.reverseimagesearch.viewmodel.utils.JsonArrUtils
-import org.json.JSONArray
 import java.io.File
 
 class ImageSearchFragment : Fragment() {
@@ -94,12 +92,11 @@ class ImageSearchFragment : Fragment() {
             this.findNavController().navigate(action)
         })
         searchBtn.setOnClickListener {
-            viewModel.uploadImageAndFetchUrl(selectedImage, requireContext())
+            viewModel.uploadImageForUrl(selectedImage, requireContext())
         }
 
         return view
     }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -117,98 +114,83 @@ class ImageSearchFragment : Fragment() {
         }
     }
 
-    private fun uploadImageToServer(bitmap : Bitmap) {
 
-        val http = FastNetworkingAPI(context!!)
 
-        runBlocking(Dispatchers.IO) {
-            val res = async { http.uploadImage(bitmap) }
-            val url = res.await()
 
-            url?.let{
-                Log.i("UPLOAD_URL", url)
-                val googleReq = async { http.getImageFromProvider(url, FastNetworkingAPI.ImageProvider.Google) }
-                val bingReq = async { http.getImageFromProvider(url, FastNetworkingAPI.ImageProvider.Bing) }
-                val tinEyeReq = async { http.getImageFromProvider(url, FastNetworkingAPI.ImageProvider.TinEye) }
-
-                val googleRes = googleReq.await()
-                val bingRes = bingReq.await()
-                val tinEyeRes = tinEyeReq.await()
-
-                val mergedJson = JsonArrUtils().multipleJsonArraysToOne(googleRes, bingRes, tinEyeRes)
-
+        private fun finishCropping(bitmap: Bitmap) {
+            imagePreview.setImageBitmap(bitmap)
+            cropImageView.visibility = View.GONE
+            imagePreview.visibility = View.VISIBLE
+            searchBtn.visibility = View.VISIBLE
+            cropBtn.text = getString(R.string.crop_image)
+            cropBtn.setOnClickListener {
+                cropImage(selectedImage)
             }
         }
 
-
-    private fun finishCropping(bitmap: Bitmap) {
-        imagePreview.setImageBitmap(bitmap)
-        cropImageView.visibility = View.GONE
-        imagePreview.visibility = View.VISIBLE
-        searchBtn.visibility = View.VISIBLE
-        cropBtn.text = getString(R.string.crop_image)
-        cropBtn.setOnClickListener {
-            cropImage(selectedImage)
-        }
-    }
-
-    private fun pickImageGallery() {
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        galleryResultLauncher.launch(intent)
-    }
-
-    private fun pickImageCamera() {
-        if (ContextCompat.checkSelfPermission(this.context!!, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            getBmpFromCamera()
-        } else {
-            cameraPermissionRequest.launch(Manifest.permission.CAMERA)
-        }
-    }
-
-    private fun getBmpFromCamera() {
-        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        tempImgFile = File.createTempFile(
-            "tempImg",
-            ".jpg",
-            this.context?.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        )
-        val fileProvider = FileProvider.getUriForFile(
-            this.context!!,
-            "no.kristiania.reverseimagesearch.fileprovider",
-            tempImgFile
-        )
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider)
-        cameraResultLauncher.launch(intent)
-    }
-
-    private val cameraPermissionRequest = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-        if (it) {
-            getBmpFromCamera()
-        }
-    }
-
-    private val cameraResultLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            if (it.resultCode == AppCompatActivity.RESULT_OK) {
-                selectedImage = BitmapFactory.decodeFile(tempImgFile.absolutePath)
-                imagePreview.setImageBitmap(selectedImage)
-                searchBtn.visibility = View.VISIBLE
-                cropBtn.visibility = View.VISIBLE
-            }
+        private fun pickImageGallery() {
+            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            galleryResultLauncher.launch(intent)
         }
 
-    private val galleryResultLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            if (it.resultCode == AppCompatActivity.RESULT_OK && it.data != null) {
-                this.uri = it.data?.data!!
-                selectedImage =
-                    BitmapUtils.getBitmap(requireContext(), null, uri.toString(), ::UriToBitmap)
-                imagePreview.setImageBitmap(selectedImage)
-                searchBtn.visibility = View.VISIBLE
-                cropBtn.visibility = View.VISIBLE
-
+        private fun pickImageCamera() {
+            if (ContextCompat.checkSelfPermission(
+                    this.context!!,
+                    Manifest.permission.CAMERA
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                getBmpFromCamera()
             } else {
-                println("error: result is not OK, or data is empty")
+                cameraPermissionRequest.launch(Manifest.permission.CAMERA)
             }
         }
-}
+
+        private fun getBmpFromCamera() {
+            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            tempImgFile = File.createTempFile(
+                "tempImg",
+                ".jpg",
+                this.context?.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+            )
+            val fileProvider = FileProvider.getUriForFile(
+                this.context!!,
+                "no.kristiania.reverseimagesearch.fileprovider",
+                tempImgFile
+            )
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider)
+            cameraResultLauncher.launch(intent)
+        }
+
+        private val cameraPermissionRequest =
+            registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+                if (it) {
+                    getBmpFromCamera()
+                }
+            }
+
+        private val cameraResultLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                if (it.resultCode == AppCompatActivity.RESULT_OK) {
+                    selectedImage = BitmapFactory.decodeFile(tempImgFile.absolutePath)
+                    imagePreview.setImageBitmap(selectedImage)
+                    searchBtn.visibility = View.VISIBLE
+                    cropBtn.visibility = View.VISIBLE
+                }
+            }
+
+        private val galleryResultLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                if (it.resultCode == AppCompatActivity.RESULT_OK && it.data != null) {
+                    this.uri = it.data?.data!!
+                    selectedImage =
+                        BitmapUtils.getBitmap(requireContext(), null, uri.toString(), ::UriToBitmap)
+                    imagePreview.setImageBitmap(selectedImage)
+                    searchBtn.visibility = View.VISIBLE
+                    cropBtn.visibility = View.VISIBLE
+
+                } else {
+                    println("error: result is not OK, or data is empty")
+                }
+
+            }
+    }
