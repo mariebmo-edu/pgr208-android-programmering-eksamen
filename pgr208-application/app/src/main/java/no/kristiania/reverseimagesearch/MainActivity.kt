@@ -14,7 +14,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
 
-
+    // TODO: Legg til binding i denne også
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
