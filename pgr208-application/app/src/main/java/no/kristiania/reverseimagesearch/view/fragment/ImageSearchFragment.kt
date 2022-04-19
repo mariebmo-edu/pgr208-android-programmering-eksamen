@@ -22,6 +22,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.navigation.fragment.findNavController
+import com.google.gson.JsonArray
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.coroutines.*
 import no.kristiania.reverseimagesearch.R
@@ -30,8 +34,9 @@ import no.kristiania.reverseimagesearch.viewmodel.SearchViewModel
 import no.kristiania.reverseimagesearch.viewmodel.api.FastNetworkingAPI
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils.Companion.UriToBitmap
+import no.kristiania.reverseimagesearch.viewmodel.utils.JsonArrUtils
+import org.json.JSONArray
 import java.io.File
-
 
 class ImageSearchFragment : Fragment() {
 
@@ -111,6 +116,30 @@ class ImageSearchFragment : Fragment() {
             finishCropping(cropImageView.croppedImage)
         }
     }
+
+    private fun uploadImageToServer(bitmap : Bitmap) {
+
+        val http = FastNetworkingAPI(context!!)
+
+        runBlocking(Dispatchers.IO) {
+            val res = async { http.uploadImage(bitmap) }
+            val url = res.await()
+
+            url?.let{
+                Log.i("UPLOAD_URL", url)
+                val googleReq = async { http.getImageFromProvider(url, FastNetworkingAPI.ImageProvider.Google) }
+                val bingReq = async { http.getImageFromProvider(url, FastNetworkingAPI.ImageProvider.Bing) }
+                val tinEyeReq = async { http.getImageFromProvider(url, FastNetworkingAPI.ImageProvider.TinEye) }
+
+                val googleRes = googleReq.await()
+                val bingRes = bingReq.await()
+                val tinEyeRes = tinEyeReq.await()
+
+                val mergedJson = JsonArrUtils().multipleJsonArraysToOne(googleRes, bingRes, tinEyeRes)
+
+            }
+        }
+
 
     private fun finishCropping(bitmap: Bitmap) {
         imagePreview.setImageBitmap(bitmap)
