@@ -1,9 +1,13 @@
 package no.kristiania.reverseimagesearch.view.fragment
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -14,80 +18,102 @@ import android.widget.Button
 import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.navigation.fragment.findNavController
 import com.google.gson.JsonArray
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
+import com.theartofdev.edmodo.cropper.CropImageView
+import kotlinx.coroutines.*
 import no.kristiania.reverseimagesearch.R
+import no.kristiania.reverseimagesearch.databinding.FragmentImageSearchBinding
+import no.kristiania.reverseimagesearch.viewmodel.SearchViewModel
 import no.kristiania.reverseimagesearch.viewmodel.api.FastNetworkingAPI
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils.Companion.UriToBitmap
 import no.kristiania.reverseimagesearch.viewmodel.utils.JsonArrUtils
 import org.json.JSONArray
-
+import java.io.File
 
 class ImageSearchFragment : Fragment() {
-    //private lateinit var savedBtn: Button
-    private lateinit var uploadBtn: Button
-    private lateinit var searchBtn: Button
-    private lateinit var imagePreview: ImageView
-    private lateinit var selectedImage: Bitmap
-    private  var uri: Uri? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        if(arguments != null){
-            uri = requireArguments().getParcelable(IMG_URI)
-        }
-    }
+    private var _binding: FragmentImageSearchBinding? = null
+    private val binding get() = _binding!!
+    private var _viewModel: SearchViewModel? = null
+    private val viewModel get() = _viewModel!!
+    private lateinit var uploadBtn: Button
+    private lateinit var cameraBtn: Button
+    private lateinit var searchBtn: Button
+    private lateinit var cropBtn: Button
+    private lateinit var imagePreview: ImageView
+    private lateinit var cropImageView: CropImageView
+    private lateinit var selectedImage: Bitmap
+    private lateinit var tempImgFile: File
+    private var uri: Uri? = null
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
+        _binding = FragmentImageSearchBinding.inflate(inflater, container, false)
+        val view = binding.root
+
+        _viewModel = ViewModelProvider(this)[SearchViewModel::class.java]
+
+        binding.lifecycleOwner = viewLifecycleOwner
+        uploadBtn = binding.uploadBtn
+        cameraBtn = binding.cameraBtn
+        searchBtn = binding.searchBtn
+        cropBtn = binding.cropBtn
+        imagePreview = binding.uploadedImage
+        cropImageView = binding.cropImageView
 
 
-        // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_image_search, container, false)
-       // savedBtn = view.findViewById(R.id.saved_btn)
-        uploadBtn = view.findViewById(R.id.upload_btn)
-        searchBtn = view.findViewById(R.id.search_btn)
-        imagePreview = view.findViewById(R.id.uploaded_image)
         uploadBtn.setOnClickListener {
             pickImageGallery()
         }
-        if(uri != null){
-            selectedImage = BitmapUtils.getBitmap(requireContext(), null, uri.toString(), ::UriToBitmap)
+
+        cameraBtn.setOnClickListener {
+            pickImageCamera()
+        }
+
+        if (uri != null) {
+            selectedImage =
+                BitmapUtils.getBitmap(requireContext(), null, uri.toString(), ::UriToBitmap)
             imagePreview.setImageBitmap(selectedImage)
         }
-//        supportFragmentManager.beginTransaction().apply{
-//            replace(R.id.fragmentContainerView, NothingSelectedFragment())
-//            addToBackStack(null)
-//            commit()
-//        }
+
+        viewModel.url.observe(viewLifecycleOwner, { url ->
+            val action = ImageSearchFragmentDirections
+                .actionSearchFragmentToResultFragment(url, uri.toString())
+            this.findNavController().navigate(action)
+        })
+        searchBtn.setOnClickListener {
+            viewModel.uploadImageAndFetchUrl(selectedImage, requireContext())
+        }
+
         return view
     }
 
-    companion object {
-
-        private val IMG_URI = "imageUri"
-
-        fun newInstance(uri: Uri): ImageSearchFragment {
-            val fragment = ImageSearchFragment()
-            val args = Bundle()
-            args.putParcelable(IMG_URI, uri)
-            fragment.arguments = args
-            return fragment
-        }
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // noen grunn til at click listener var her?
+    }
 
-        searchBtn.setOnClickListener{
-            uploadImageToServer(selectedImage)
+    private fun cropImage(bitmap: Bitmap) {
+        imagePreview.visibility = View.GONE
+        searchBtn.visibility = View.GONE
+        cropImageView.visibility = View.VISIBLE
+        cropImageView.setImageBitmap(bitmap)
+        cropBtn.text = getString(R.string.finish_cropping)
+        cropBtn.setOnClickListener {
+            finishCropping(cropImageView.croppedImage)
         }
     }
 
@@ -115,25 +141,71 @@ class ImageSearchFragment : Fragment() {
         }
 
 
-
+    private fun finishCropping(bitmap: Bitmap) {
+        imagePreview.setImageBitmap(bitmap)
+        cropImageView.visibility = View.GONE
+        imagePreview.visibility = View.VISIBLE
+        searchBtn.visibility = View.VISIBLE
+        cropBtn.text = getString(R.string.crop_image)
+        cropBtn.setOnClickListener {
+            cropImage(selectedImage)
+        }
     }
 
     private fun pickImageGallery() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        resultLauncher.launch(intent)
+        galleryResultLauncher.launch(intent)
     }
 
-    private val resultLauncher  =
+    private fun pickImageCamera() {
+        if (ContextCompat.checkSelfPermission(this.context!!, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            getBmpFromCamera()
+        } else {
+            cameraPermissionRequest.launch(Manifest.permission.CAMERA)
+        }
+    }
+
+    private fun getBmpFromCamera() {
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        tempImgFile = File.createTempFile(
+            "tempImg",
+            ".jpg",
+            this.context?.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        )
+        val fileProvider = FileProvider.getUriForFile(
+            this.context!!,
+            "no.kristiania.reverseimagesearch.fileprovider",
+            tempImgFile
+        )
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider)
+        cameraResultLauncher.launch(intent)
+    }
+
+    private val cameraPermissionRequest = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+        if (it) {
+            getBmpFromCamera()
+        }
+    }
+
+    private val cameraResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == AppCompatActivity.RESULT_OK) {
+                selectedImage = BitmapFactory.decodeFile(tempImgFile.absolutePath)
+                imagePreview.setImageBitmap(selectedImage)
+                searchBtn.visibility = View.VISIBLE
+                cropBtn.visibility = View.VISIBLE
+            }
+        }
+
+    private val galleryResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == AppCompatActivity.RESULT_OK && it.data != null) {
                 this.uri = it.data?.data!!
-                selectedImage = BitmapUtils.getBitmap(requireContext(), null, uri.toString(), ::UriToBitmap)
+                selectedImage =
+                    BitmapUtils.getBitmap(requireContext(), null, uri.toString(), ::UriToBitmap)
                 imagePreview.setImageBitmap(selectedImage)
-//                supportFragmentManager.beginTransaction().apply{
-//                    replace(R.id.fragmentContainerView, ImageSearchFragment.newInstance(it.data?.data!!))
-//                    addToBackStack(null)
-//                    commit()
-//                }
+                searchBtn.visibility = View.VISIBLE
+                cropBtn.visibility = View.VISIBLE
 
             } else {
                 println("error: result is not OK, or data is empty")

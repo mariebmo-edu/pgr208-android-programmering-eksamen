@@ -14,4 +14,8 @@
     <string name="help">Help</string>
     <string name="fragment_search">Search</string>
     <string name="fragment_result">Results</string>
+    <string name="crop_image">CROP IMAGE</string>
+    <string name="finish_cropping">Finish cropping</string>
+    <string name="camera">CAMERA</string>
+    <string name="save_search_result">Save search result</string>
 </resources>

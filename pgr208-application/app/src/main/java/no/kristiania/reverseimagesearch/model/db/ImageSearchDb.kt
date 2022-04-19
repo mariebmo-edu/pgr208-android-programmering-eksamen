@@ -5,10 +5,12 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import no.kristiania.reverseimagesearch.model.entity.RequestImage
+import no.kristiania.reverseimagesearch.model.entity.ResultImage
 
-@Database(entities = [RequestImage::class], version = 1, exportSchema = false)
+@Database(entities = [RequestImage::class, ResultImage::class], version = 2, exportSchema = false)
 abstract class ImageSearchDb : RoomDatabase() {
     abstract val requestImageDao: RequestImageDao
+    abstract val resultImageDao: ResultImageDao
 
     companion object {
         @Volatile

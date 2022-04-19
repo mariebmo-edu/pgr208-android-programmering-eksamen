@@ -13,6 +13,7 @@ import no.kristiania.reverseimagesearch.databinding.FragmentResultBinding
 import no.kristiania.reverseimagesearch.model.db.ImageSearchDb
 import no.kristiania.reverseimagesearch.view.adapter.ResultItemAdapter
 import no.kristiania.reverseimagesearch.viewmodel.ResultViewModelFactory
+import no.kristiania.reverseimagesearch.viewmodel.api.FastNetworkingAPI
 
 class ResultFragment : Fragment() {
 
@@ -27,14 +28,25 @@ class ResultFragment : Fragment() {
         _binding = FragmentResultBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        val application = requireNotNull(this.activity).application
-        val dao = ImageSearchDb.getInstance(application).requestImageDao
+        val hostedImageServerUrl = ResultFragmentArgs.fromBundle(requireArguments()).responseUrl
+        val api = FastNetworkingAPI()
+        Log.d("ResultFragment", hostedImageServerUrl)
 
-        val resultViewModelFactory = ResultViewModelFactory(dao)
+
+        val application = requireNotNull(this.activity).application
+        val db = ImageSearchDb.getInstance(application)
+        val requestImageDao = db.requestImageDao
+        val resultImageDao = db.resultImageDao
+
+        val resultViewModelFactory = ResultViewModelFactory(requestImageDao, resultImageDao)
         val viewModel = ViewModelProvider(this, resultViewModelFactory)[ResultViewModel::class.java]
+
+        api.getImageFromProvider(hostedImageServerUrl, FastNetworkingAPI.ImageProvider.Bing, viewModel)
+
+
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
-
+        //binding.resultItemsList.
         // Til databinding med livedata
         val adapter = ResultItemAdapter()
         binding.resultItemsList.adapter = adapter
@@ -45,6 +57,21 @@ class ResultFragment : Fragment() {
                 adapter.submitList(it)
             }
         })
+
+        binding.saveResultButton.setOnClickListener {
+            Log.d("Button Clicked!", adapter.selectedImagesForSave.toString())
+
+            // TODO: Get bitmap from URI param
+            // Create instance of requestImage
+            // Save it
+            // update ID on all selected resultItem(s)
+            // Save them
+            // ??
+            // Profit
+
+        }
+
+
 
         return view
     }

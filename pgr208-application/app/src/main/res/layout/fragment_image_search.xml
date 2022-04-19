@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     tools:context=".view.fragment.ImageSearchFragment">
 
-    <!-- TODO: Update blank fragment layout -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+   
 
     <Button
         android:id="@+id/upload_btn"
@@ -14,9 +16,19 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:text="@string/upload"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/camera_btn"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/camera_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="@string/camera"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/upload_btn"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 <!--    <Button
         android:id="@+id/saved_btn"
@@ -29,22 +41,48 @@
 
     <ImageView
         android:id="@+id/uploaded_image"
-        android:layout_width="348dp"
-        android:layout_height="400dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:contentDescription="@string/image_from_upload"
+        android:scaleType="centerInside"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@id/crop_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:contentDescription="@string/image_from_upload" />
+        app:layout_constraintTop_toBottomOf="@id/upload_btn" />
+
+    <com.theartofdev.edmodo.cropper.CropImageView
+        android:id="@+id/crop_image_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/crop_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/upload_btn" />
+
+    <Button
+        android:id="@+id/crop_btn"
+        android:layout_width="349dp"
+        android:layout_height="wrap_content"
+        android:text="@string/crop_image"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/search_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/search_btn"
         android:layout_width="349dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         android:text="@string/search"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/uploaded_image" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -17,14 +17,25 @@
         android:orientation="vertical">
 
         <!-- Sjekk ut andre layout managers! -->
+
+
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:id="@+id/result_items_list"
-            android:layout_weight="2"
+            android:layout_weight="6"
             android:layout_gravity="top"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:spanCount="2"/>
 
+        <Button
+            android:id="@+id/save_result_button"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:text="@string/save_search_result" />
     </LinearLayout>
+
+
 </layout>
