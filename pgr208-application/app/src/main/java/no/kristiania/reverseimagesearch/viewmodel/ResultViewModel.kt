@@ -12,7 +12,10 @@ import no.kristiania.reverseimagesearch.model.entity.RequestImage
 import no.kristiania.reverseimagesearch.model.entity.ResultImage
 import org.json.JSONArray
 
-class ResultViewModel(private val requestImageDao: RequestImageDao, private val resultImageDao: ResultImageDao) : ViewModel() {
+class ResultViewModel(
+    private val requestImageDao: RequestImageDao,
+    private val resultImageDao: ResultImageDao
+) : ViewModel() {
 
 
     private val _resultImages = MutableLiveData<List<ResultImage>>()

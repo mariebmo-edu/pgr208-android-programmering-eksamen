@@ -1,6 +1,5 @@
 package no.kristiania.reverseimagesearch.view.fragment
 
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -9,16 +8,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import no.kristiania.reverseimagesearch.viewmodel.ResultViewModel
 import no.kristiania.reverseimagesearch.databinding.FragmentResultBinding
 import no.kristiania.reverseimagesearch.model.db.ImageSearchDb
-import no.kristiania.reverseimagesearch.model.entity.RequestImage
 import no.kristiania.reverseimagesearch.view.adapter.ResultItemAdapter
 import no.kristiania.reverseimagesearch.viewmodel.ResultViewModelFactory
 import no.kristiania.reverseimagesearch.viewmodel.api.FastNetworkingAPI
-import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
+import no.kristiania.reverseimagesearch.viewmodel.utils.JsonArrUtils
+import org.json.JSONArray
 
 class ResultFragment : Fragment() {
 
@@ -34,9 +35,7 @@ class ResultFragment : Fragment() {
         val view = binding.root
 
         val hostedImageServerUrl = ResultFragmentArgs.fromBundle(requireArguments()).responseUrl
-        val requestImageLocalPath =
-            ResultFragmentArgs.fromBundle(requireArguments()).requestImagePath
-
+        val api = context?.let { FastNetworkingAPI(it) }
         Log.d("ResultFragment", hostedImageServerUrl)
 
 
@@ -48,6 +47,9 @@ class ResultFragment : Fragment() {
         val resultViewModelFactory = ResultViewModelFactory(requestImageDao, resultImageDao)
         val viewModel = ViewModelProvider(this, resultViewModelFactory)[ResultViewModel::class.java]
 
+        if (api != null) {
+            getResultFromUrl(hostedImageServerUrl, api, viewModel)
+        }
 
 
         binding.viewModel = viewModel
@@ -56,14 +58,6 @@ class ResultFragment : Fragment() {
         // Til databinding med livedata
         val adapter = ResultItemAdapter()
         binding.resultItemsList.adapter = adapter
-
-
-        context?.let { FastNetworkingAPI(it) }?.getImageFromProviderSynchronous(
-            hostedImageServerUrl,
-            FastNetworkingAPI.ImageProvider.Bing,
-            viewModel
-        )
-
         // Observer endringer i view modellens liste av resultitems
         viewModel.resultImages.observe(viewLifecycleOwner, Observer {
             Log.i("ResultFragment", "Submitting list")
@@ -74,19 +68,6 @@ class ResultFragment : Fragment() {
 
         binding.saveResultButton.setOnClickListener {
             Log.d("Button Clicked!", adapter.selectedImagesForSave.toString())
-            val bitmapReqImg = BitmapUtils.getBitmap(
-                requireContext(), null, requestImageLocalPath,
-                BitmapUtils.Companion::UriToBitmap
-            )
-            val reqImg = RequestImage(
-                serverPath = hostedImageServerUrl,
-                data = BitmapUtils.bitmapToByteArray(bitmapReqImg)
-            )
-
-            GlobalScope.launch {
-                requestImageDao.insert(reqImg)
-
-            }
 
             // TODO: Get bitmap from URI param
             // Create instance of requestImage
@@ -106,6 +87,43 @@ class ResultFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    fun getResultFromUrl(url: String, api: FastNetworkingAPI, viewModel: ResultViewModel) {
+        runBlocking(Dispatchers.IO) {
+            val googleReq =
+                async {
+                    api.getImageFromProviderSynchronous(
+                        url,
+                        FastNetworkingAPI.ImageProvider.Google
+                    )
+                }
+            val bingReq =
+                async {
+                    api.getImageFromProviderSynchronous(
+                        url,
+                        FastNetworkingAPI.ImageProvider.Bing
+                    )
+                }
+            val tinEyeReq =
+                async {
+                    api.getImageFromProviderSynchronous(
+                        url,
+                        FastNetworkingAPI.ImageProvider.TinEye
+                    )
+                }
+
+            val googleRes = googleReq.await()
+            val bingRes = bingReq.await()
+            val tinEyeRes = tinEyeReq.await()
+
+            val mergedJson =
+                JsonArrUtils().multipleJsonArraysToOne(googleRes, bingRes, tinEyeRes)
+
+            launch(Dispatchers.Main) {
+                viewModel.fetchImagesFromSearch(mergedJson)
+            }
+        }
     }
 
 }
