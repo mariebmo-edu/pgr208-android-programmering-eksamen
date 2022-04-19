@@ -6,8 +6,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RelativeLayout
+import android.widget.Toast
+import androidx.core.view.size
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
+import no.kristiania.reverseimagesearch.R
 import no.kristiania.reverseimagesearch.viewmodel.ResultViewModel
 import no.kristiania.reverseimagesearch.databinding.FragmentResultBinding
 import no.kristiania.reverseimagesearch.model.db.ImageSearchDb
@@ -57,10 +62,16 @@ class ResultFragment : Fragment() {
         val adapter = ResultItemAdapter()
         binding.resultItemsList.adapter = adapter
         // Observer endringer i view modellens liste av resultitems
+
+        var i = 0
         viewModel.resultImages.observe(viewLifecycleOwner, Observer {
             Log.i("ResultFragment", "Submitting list")
             it?.let {
                 adapter.submitList(it)
+                Toast.makeText(context, "${i++}/3 results added", Toast.LENGTH_SHORT).show()
+            }
+            if(view.findViewById<RecyclerView>(R.id.result_items_list).size > 0){
+                view.findViewById<RelativeLayout>(R.id.loading_panel).visibility = View.GONE
             }
         })
 
