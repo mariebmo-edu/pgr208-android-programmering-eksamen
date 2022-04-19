@@ -35,7 +35,7 @@ class FastNetworkingAPI(val context: Context) {
             Log.i("POST_SUCCESS", "post successful!: " + response.result)
             return response.result.toString()
         } else {
-            Log.i("POST_ERROR", "upload error: " + ANError().errorBody)
+            Log.i("POST_ERROR", "upload error: " + response.error)
         }
         return null
     }

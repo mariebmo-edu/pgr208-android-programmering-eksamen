@@ -13,7 +13,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <!-- Sjekk ut andre layout managers! -->
@@ -22,7 +22,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/result_items_list"
             android:layout_width="0dp"
-            android:layout_height="642dp"
+            android:layout_height="match_parent"
             android:layout_gravity="top"
             android:layout_marginStart="20dp"
             android:layout_marginTop="20dp"
@@ -42,15 +42,13 @@
             android:layout_width="228dp"
             android:layout_height="48dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="20dp"
             android:layout_weight="1"
             android:text="@string/save_search_result"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.497"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/result_items_list"
-            app:layout_constraintVertical_bias="0.377" />
+            tools:layout_constraintBottom_toBottomOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

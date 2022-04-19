@@ -14,6 +14,7 @@ class SearchViewModel : ViewModel() {
     private val _url = MutableLiveData<String>()
     val url: LiveData<String>
         get() = _url
+    var shouldNavigate = true
 
     fun uploadImageForUrl(bitmap: Bitmap, context: Context) {
         val http = FastNetworkingAPI(context)

@@ -53,6 +53,7 @@ class ImageSearchFragment : Fragment() {
     private var uri: Uri? = null
 
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -91,12 +92,16 @@ class ImageSearchFragment : Fragment() {
         }
 
         viewModel.url.observe(viewLifecycleOwner, { url ->
-            Log.d("URL OBSERVER", "Should navigate")
-            val action = ImageSearchFragmentDirections
-                .actionSearchFragmentToResultFragment(url, uri.toString())
-            this.findNavController().navigate(action)
+            if (viewModel.shouldNavigate) {
+                Log.d("URL OBSERVER", "Should navigate")
+                val action = ImageSearchFragmentDirections
+                    .actionSearchFragmentToResultFragment(url, uri.toString())
+                this.findNavController().navigate(action)
+                viewModel.shouldNavigate = false
+            }
         })
         searchBtn.setOnClickListener {
+            viewModel.shouldNavigate = true
             viewModel.uploadImageForUrl(selectedImage, requireContext())
         }
 
