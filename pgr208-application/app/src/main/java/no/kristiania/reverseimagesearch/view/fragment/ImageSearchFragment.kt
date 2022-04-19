@@ -87,6 +87,7 @@ class ImageSearchFragment : Fragment() {
         }
 
         viewModel.url.observe(viewLifecycleOwner, { url ->
+            Log.d("URL OBSERVER", "Should navigate")
             val action = ImageSearchFragmentDirections
                 .actionSearchFragmentToResultFragment(url, uri.toString())
             this.findNavController().navigate(action)

@@ -48,7 +48,7 @@ class ResultFragment : Fragment() {
         val viewModel = ViewModelProvider(this, resultViewModelFactory)[ResultViewModel::class.java]
 
         if (api != null) {
-            getResultFromUrl(hostedImageServerUrl, api, viewModel)
+            //getResultFromUrl(hostedImageServerUrl, api, viewModel)
         }
 
 

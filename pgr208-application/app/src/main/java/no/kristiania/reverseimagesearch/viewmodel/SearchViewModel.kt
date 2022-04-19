@@ -24,6 +24,7 @@ class SearchViewModel : ViewModel() {
 
             url?.let {
                 launch(Dispatchers.Main) {
+                    Log.d("upload image from uri", "In main thread $it")
                     _url.value = it
                 }
             }
