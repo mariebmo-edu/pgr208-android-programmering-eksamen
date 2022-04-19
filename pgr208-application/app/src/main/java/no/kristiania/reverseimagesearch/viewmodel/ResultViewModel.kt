@@ -34,13 +34,13 @@ class ResultViewModel(
     fun getResultFromUrl(url: String, api: FastNetworkingAPI) {
 
         viewModelScope.launch(Dispatchers.IO) {
-//            val googleReq =
-//                async {
-//                    api.getImageFromProviderSynchronous(
-//                        url,
-//                        FastNetworkingAPI.ImageProvider.Google
-//                    )
-//                }
+            val googleReq =
+                async {
+                    api.getImageFromProviderSynchronous(
+                        url,
+                        FastNetworkingAPI.ImageProvider.Google
+                    )
+                }
             val bingReq =
                 async {
                     api.getImageFromProviderSynchronous(
@@ -48,23 +48,22 @@ class ResultViewModel(
                         FastNetworkingAPI.ImageProvider.Bing
                     )
                 }
-//            val tinEyeReq =
-//                async {
-//                    api.getImageFromProviderSynchronous(
-//                        url,
-//                        FastNetworkingAPI.ImageProvider.TinEye
-//                    )
-//                }
-
-            // val googleRes = googleReq.await()
-            val bingRes = bingReq.await()
-            //val tinEyeRes = tinEyeReq.await()
-
-//            val mergedJson =
-//                JsonArrUtils().multipleJsonArraysToOne(googleRes, bingRes, tinEyeRes)
+           val tinEyeReq =
+                async {
+                    api.getImageFromProviderSynchronous(
+                        url,
+                        FastNetworkingAPI.ImageProvider.TinEye
+                    )
+                }
 
             launch(Dispatchers.Main) {
-                bingRes?.let {
+                bingReq.await()?.let {
+                    fetchImagesFromSearch(it)
+                }
+                googleReq.await()?.let {
+                    fetchImagesFromSearch(it)
+                }
+                tinEyeReq.await()?.let {
                     fetchImagesFromSearch(it)
                 }
             }
