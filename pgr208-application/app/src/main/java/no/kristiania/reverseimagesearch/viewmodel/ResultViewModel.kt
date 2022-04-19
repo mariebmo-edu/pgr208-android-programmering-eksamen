@@ -23,20 +23,24 @@ class ResultViewModel(
 ) : ViewModel() {
 
 
-    private val _resultImages = MutableLiveData<List<ResultImage>>()
-    val resultImages: LiveData<List<ResultImage>>
+    private var _resultImages = MutableLiveData<MutableList<ResultImage>>()
+    val resultImages: LiveData<MutableList<ResultImage>>
         get() = _resultImages
+
+    init {
+        _resultImages.value = ArrayList()
+    }
 
     fun getResultFromUrl(url: String, api: FastNetworkingAPI) {
 
         viewModelScope.launch(Dispatchers.IO) {
-            val googleReq =
-                async {
-                    api.getImageFromProviderSynchronous(
-                        url,
-                        FastNetworkingAPI.ImageProvider.Google
-                    )
-                }
+//            val googleReq =
+//                async {
+//                    api.getImageFromProviderSynchronous(
+//                        url,
+//                        FastNetworkingAPI.ImageProvider.Google
+//                    )
+//                }
             val bingReq =
                 async {
                     api.getImageFromProviderSynchronous(
@@ -44,23 +48,25 @@ class ResultViewModel(
                         FastNetworkingAPI.ImageProvider.Bing
                     )
                 }
-            val tinEyeReq =
-                async {
-                    api.getImageFromProviderSynchronous(
-                        url,
-                        FastNetworkingAPI.ImageProvider.TinEye
-                    )
-                }
+//            val tinEyeReq =
+//                async {
+//                    api.getImageFromProviderSynchronous(
+//                        url,
+//                        FastNetworkingAPI.ImageProvider.TinEye
+//                    )
+//                }
 
-            val googleRes = googleReq.await()
+            // val googleRes = googleReq.await()
             val bingRes = bingReq.await()
-            val tinEyeRes = tinEyeReq.await()
+            //val tinEyeRes = tinEyeReq.await()
 
-            val mergedJson =
-                JsonArrUtils().multipleJsonArraysToOne(googleRes, bingRes, tinEyeRes)
+//            val mergedJson =
+//                JsonArrUtils().multipleJsonArraysToOne(googleRes, bingRes, tinEyeRes)
 
             launch(Dispatchers.Main) {
-                fetchImagesFromSearch(mergedJson)
+                bingRes?.let {
+                    fetchImagesFromSearch(it)
+                }
             }
         }
     }
@@ -79,16 +85,21 @@ class ResultViewModel(
 
     fun fetchImagesFromSearch(response: JSONArray) {
         val imageObjs = mutableListOf<ResultImage>()
+        _resultImages.value?.let {
+            imageObjs.addAll(it)
 
-        for (i in 0 until response.length()) {
-            val currentJsonObj = response.getJSONObject(i)
-            val imageLink = currentJsonObj.getString("image_link")
-            val thumbnailLink = currentJsonObj.getString("thumbnail_link")
-            Log.d("fetchImagesFromSearch", currentJsonObj.toString())
-            imageObjs.add(ResultImage(serverPath = imageLink))
+            for (i in 0 until response.length()) {
+                val currentJsonObj = response.getJSONObject(i)
+                val imageLink = currentJsonObj.getString("image_link")
+                val thumbnailLink = currentJsonObj.getString("thumbnail_link")
+                Log.d("fetchImagesFromSearch", currentJsonObj.toString())
+                imageObjs?.add(ResultImage(serverPath = imageLink))
+            }
+
+            _resultImages.value = imageObjs
         }
 
-        _resultImages.value = imageObjs
+
     }
     //fun addItem(resultItem: ResultItem) = requestImageDao.add(resultItem)
 
