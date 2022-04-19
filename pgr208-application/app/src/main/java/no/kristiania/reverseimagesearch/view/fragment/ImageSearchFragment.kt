@@ -140,7 +140,7 @@ class ImageSearchFragment : Fragment() {
         if (ContextCompat.checkSelfPermission(
                 this.context!!,
                 Manifest.permission.CAMERA
-            ) != PackageManager.PERMISSION_GRANTED
+            ) == PackageManager.PERMISSION_GRANTED
         ) {
             getBmpFromCamera()
         } else {
