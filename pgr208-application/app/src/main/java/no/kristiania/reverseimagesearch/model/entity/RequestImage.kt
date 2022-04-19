@@ -11,13 +11,13 @@ import java.io.IOException
 data class RequestImage(
     @ColumnInfo(name = "request_image_id")
     @PrimaryKey(autoGenerate = true)
-    val id: Long? = null,
+    var id: Long? = null,
 
     @ColumnInfo(name = "request_image_server_path")
-    val serverPath: String? = null,
+    var serverPath: String? = null,
 
     @ColumnInfo(name = "request_image_date")
-    val data: ByteArray? = null,
+    var data: ByteArray? = null,
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

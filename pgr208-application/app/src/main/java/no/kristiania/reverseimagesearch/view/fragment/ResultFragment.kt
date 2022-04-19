@@ -1,5 +1,6 @@
 package no.kristiania.reverseimagesearch.view.fragment
 
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -8,12 +9,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import no.kristiania.reverseimagesearch.viewmodel.ResultViewModel
 import no.kristiania.reverseimagesearch.databinding.FragmentResultBinding
 import no.kristiania.reverseimagesearch.model.db.ImageSearchDb
+import no.kristiania.reverseimagesearch.model.entity.RequestImage
 import no.kristiania.reverseimagesearch.view.adapter.ResultItemAdapter
 import no.kristiania.reverseimagesearch.viewmodel.ResultViewModelFactory
 import no.kristiania.reverseimagesearch.viewmodel.api.FastNetworkingAPI
+import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
 
 class ResultFragment : Fragment() {
 
@@ -29,6 +34,9 @@ class ResultFragment : Fragment() {
         val view = binding.root
 
         val hostedImageServerUrl = ResultFragmentArgs.fromBundle(requireArguments()).responseUrl
+        val requestImageLocalPath =
+            ResultFragmentArgs.fromBundle(requireArguments()).requestImagePath
+
         Log.d("ResultFragment", hostedImageServerUrl)
 
 
@@ -66,6 +74,19 @@ class ResultFragment : Fragment() {
 
         binding.saveResultButton.setOnClickListener {
             Log.d("Button Clicked!", adapter.selectedImagesForSave.toString())
+            val bitmapReqImg = BitmapUtils.getBitmap(
+                requireContext(), null, requestImageLocalPath,
+                BitmapUtils.Companion::UriToBitmap
+            )
+            val reqImg = RequestImage(
+                serverPath = hostedImageServerUrl,
+                data = BitmapUtils.bitmapToByteArray(bitmapReqImg)
+            )
+
+            GlobalScope.launch {
+                requestImageDao.insert(reqImg)
+
+            }
 
             // TODO: Get bitmap from URI param
             // Create instance of requestImage

@@ -115,82 +115,80 @@ class ImageSearchFragment : Fragment() {
     }
 
 
-
-
-        private fun finishCropping(bitmap: Bitmap) {
-            imagePreview.setImageBitmap(bitmap)
-            cropImageView.visibility = View.GONE
-            imagePreview.visibility = View.VISIBLE
-            searchBtn.visibility = View.VISIBLE
-            cropBtn.text = getString(R.string.crop_image)
-            cropBtn.setOnClickListener {
-                cropImage(selectedImage)
-            }
+    private fun finishCropping(bitmap: Bitmap) {
+        imagePreview.setImageBitmap(bitmap)
+        cropImageView.visibility = View.GONE
+        imagePreview.visibility = View.VISIBLE
+        searchBtn.visibility = View.VISIBLE
+        cropBtn.text = getString(R.string.crop_image)
+        cropBtn.setOnClickListener {
+            cropImage(selectedImage)
         }
-
-        private fun pickImageGallery() {
-            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            galleryResultLauncher.launch(intent)
-        }
-
-        private fun pickImageCamera() {
-            if (ContextCompat.checkSelfPermission(
-                    this.context!!,
-                    Manifest.permission.CAMERA
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                getBmpFromCamera()
-            } else {
-                cameraPermissionRequest.launch(Manifest.permission.CAMERA)
-            }
-        }
-
-        private fun getBmpFromCamera() {
-            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            tempImgFile = File.createTempFile(
-                "tempImg",
-                ".jpg",
-                this.context?.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-            )
-            val fileProvider = FileProvider.getUriForFile(
-                this.context!!,
-                "no.kristiania.reverseimagesearch.fileprovider",
-                tempImgFile
-            )
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider)
-            cameraResultLauncher.launch(intent)
-        }
-
-        private val cameraPermissionRequest =
-            registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-                if (it) {
-                    getBmpFromCamera()
-                }
-            }
-
-        private val cameraResultLauncher =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-                if (it.resultCode == AppCompatActivity.RESULT_OK) {
-                    selectedImage = BitmapFactory.decodeFile(tempImgFile.absolutePath)
-                    imagePreview.setImageBitmap(selectedImage)
-                    searchBtn.visibility = View.VISIBLE
-                    cropBtn.visibility = View.VISIBLE
-                }
-            }
-
-        private val galleryResultLauncher =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-                if (it.resultCode == AppCompatActivity.RESULT_OK && it.data != null) {
-                    this.uri = it.data?.data!!
-                    selectedImage =
-                        BitmapUtils.getBitmap(requireContext(), null, uri.toString(), ::UriToBitmap)
-                    imagePreview.setImageBitmap(selectedImage)
-                    searchBtn.visibility = View.VISIBLE
-                    cropBtn.visibility = View.VISIBLE
-
-                } else {
-                    println("error: result is not OK, or data is empty")
-                }
-
-            }
     }
+
+    private fun pickImageGallery() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        galleryResultLauncher.launch(intent)
+    }
+
+    private fun pickImageCamera() {
+        if (ContextCompat.checkSelfPermission(
+                this.context!!,
+                Manifest.permission.CAMERA
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            getBmpFromCamera()
+        } else {
+            cameraPermissionRequest.launch(Manifest.permission.CAMERA)
+        }
+    }
+
+    private fun getBmpFromCamera() {
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        tempImgFile = File.createTempFile(
+            "tempImg",
+            ".jpg",
+            this.context?.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        )
+        val fileProvider = FileProvider.getUriForFile(
+            this.context!!,
+            "no.kristiania.reverseimagesearch.fileprovider",
+            tempImgFile
+        )
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider)
+        cameraResultLauncher.launch(intent)
+    }
+
+    private val cameraPermissionRequest =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+            if (it) {
+                getBmpFromCamera()
+            }
+        }
+
+    private val cameraResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == AppCompatActivity.RESULT_OK) {
+                selectedImage = BitmapFactory.decodeFile(tempImgFile.absolutePath)
+                imagePreview.setImageBitmap(selectedImage)
+                searchBtn.visibility = View.VISIBLE
+                cropBtn.visibility = View.VISIBLE
+            }
+        }
+
+    private val galleryResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == AppCompatActivity.RESULT_OK && it.data != null) {
+                this.uri = it.data?.data!!
+                selectedImage =
+                    BitmapUtils.getBitmap(requireContext(), null, uri.toString(), ::UriToBitmap)
+                imagePreview.setImageBitmap(selectedImage)
+                searchBtn.visibility = View.VISIBLE
+                cropBtn.visibility = View.VISIBLE
+
+            } else {
+                println("error: result is not OK, or data is empty")
+            }
+
+        }
+}
