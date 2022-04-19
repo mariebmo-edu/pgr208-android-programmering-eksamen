@@ -7,7 +7,10 @@ import no.kristiania.reverseimagesearch.model.entity.ResultImage
 @Dao
 interface ResultImageDao {
     @Insert
-    suspend fun insert(resultImage: ResultImage)
+    suspend fun insert(resultImage: ResultImage): Long
+
+    @Insert
+    suspend fun insertMany(resultImages: List<ResultImage>)
 
     @Update
     suspend fun update(resultImage: ResultImage)

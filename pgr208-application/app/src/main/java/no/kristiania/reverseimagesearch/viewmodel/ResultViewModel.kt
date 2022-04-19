@@ -1,5 +1,6 @@
 package no.kristiania.reverseimagesearch.viewmodel
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -14,15 +15,18 @@ import no.kristiania.reverseimagesearch.model.db.ResultImageDao
 import no.kristiania.reverseimagesearch.model.entity.RequestImage
 import no.kristiania.reverseimagesearch.model.entity.ResultImage
 import no.kristiania.reverseimagesearch.viewmodel.api.FastNetworkingAPI
+import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
 import no.kristiania.reverseimagesearch.viewmodel.utils.JsonArrUtils
 import org.json.JSONArray
 
 class ResultViewModel(
     private val requestImageDao: RequestImageDao,
-    private val resultImageDao: ResultImageDao
+    private val resultImageDao: ResultImageDao,
 ) : ViewModel() {
 
 
+    lateinit var requestImageLocalPath: String
+    lateinit var hostedImageServerUrl: String
     private var _resultImages = MutableLiveData<MutableList<ResultImage>>()
     val resultImages: LiveData<MutableList<ResultImage>>
         get() = _resultImages
@@ -71,12 +75,12 @@ class ResultViewModel(
         }
     }
 
-    fun saveResuestImage(requestImage: RequestImage) {
+
+    fun saveAllResultImages(resultImages: List<ResultImage>) {
         viewModelScope.launch {
-            requestImageDao.insert(requestImage)
+            resultImageDao.insertMany(resultImages)
         }
     }
-
     fun saveResultImage(resultImage: ResultImage) {
         viewModelScope.launch {
             resultImageDao.insert(resultImage)
@@ -95,14 +99,26 @@ class ResultViewModel(
                 Log.d("fetchImagesFromSearch", currentJsonObj.toString())
                 imageObjs?.add(ResultImage(serverPath = imageLink))
             }
-
             _resultImages.value = imageObjs
         }
+    }
 
+    fun saveResult(context: Context, imagesToSave: List<ResultImage>) {
+
+        val bitmapRequestImage = BitmapUtils.getBitmap(context, null, requestImageLocalPath,
+            BitmapUtils.Companion::UriToBitmap
+        )
+        val requestImage = RequestImage(serverPath = hostedImageServerUrl, data = BitmapUtils.bitmapToByteArray(bitmapRequestImage))
+
+        viewModelScope.launch {
+            val reqSave = async {requestImageDao.insert(requestImage)}
+            val reqImgId = reqSave.await()
+
+            imagesToSave.forEach {
+                it.requestImageId = reqImgId
+            }
+            resultImageDao.insertMany(imagesToSave)
+        }
 
     }
-    //fun addItem(resultItem: ResultItem) = requestImageDao.add(resultItem)
-
-    //fun removeItem(resultItem: ResultItem) = requestImageDao.remove(resultItem)
-
 }
