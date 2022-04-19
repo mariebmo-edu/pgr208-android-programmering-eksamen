@@ -80,6 +80,10 @@ class ImageSearchFragment : Fragment() {
             pickImageCamera()
         }
 
+        cropBtn.setOnClickListener {
+            cropImage(selectedImage)
+        }
+
         if (uri != null) {
             selectedImage =
                 BitmapUtils.getBitmap(requireContext(), null, uri.toString(), ::UriToBitmap)
