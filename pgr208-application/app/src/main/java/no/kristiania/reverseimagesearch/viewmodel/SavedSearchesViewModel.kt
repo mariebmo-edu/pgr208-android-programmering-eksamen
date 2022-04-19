@@ -1,7 +1,8 @@
 package no.kristiania.reverseimagesearch.viewmodel
 
 import androidx.lifecycle.ViewModel
+import no.kristiania.reverseimagesearch.model.db.RequestImageDao
 
-class SavedSearchesViewModel : ViewModel() {
-    // TODO: Implement the ViewModel
+class SavedSearchesViewModel(requestImageDao: RequestImageDao) : ViewModel() {
+    val requestImages = requestImageDao.getAll()
 }

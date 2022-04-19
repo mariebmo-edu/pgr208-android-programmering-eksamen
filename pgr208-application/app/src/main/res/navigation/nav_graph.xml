@@ -14,8 +14,7 @@
             android:id="@+id/action_searchFragment_to_resultFragment"
             app:destination="@+id/resultFragment" />
     </fragment>
-
-    <fragment
+        <fragment
         android:id="@+id/resultFragment"
         android:name="no.kristiania.reverseimagesearch.view.fragment.ResultFragment"
         android:label="@string/fragment_result"
@@ -32,4 +31,10 @@
             android:name="requestImagePath"
             app:argType="string" />
     </fragment>
+
+    <fragment
+        android:id="@+id/savedSearchesFragment"
+        android:name="no.kristiania.reverseimagesearch.view.fragment.SavedSearchesFragment"
+        android:label="Saved results"
+        tools:layout="@layout/saved_searches_fragment"/>
 </navigation>
