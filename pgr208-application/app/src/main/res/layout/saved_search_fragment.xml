@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="no.kristiania.reverseimagesearch.view.fragment.SavedSearchesFragment">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".SavedSearchFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="match_parent"
+            android:id="@+id/saved_search_list"
+            android:layout_width="0dp"
             android:layout_height="0dp"
-            android:id="@+id/saved_requests_list"
-            android:layout_weight="6"
             android:layout_gravity="top"
-            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            app:spanCount="2"/>
+            android:layout_weight="1"
+            app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
+            app:spanCount="2" />
 
     </LinearLayout>
 </layout>
