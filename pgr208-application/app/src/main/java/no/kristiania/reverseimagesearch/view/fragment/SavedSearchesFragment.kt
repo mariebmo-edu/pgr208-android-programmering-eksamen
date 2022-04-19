@@ -7,7 +7,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import no.kristiania.reverseimagesearch.R
 import no.kristiania.reverseimagesearch.databinding.SavedSearchesFragmentBinding
 import no.kristiania.reverseimagesearch.model.db.ImageSearchDb
 import no.kristiania.reverseimagesearch.view.adapter.SavedSearchItemAdapter
@@ -18,7 +17,8 @@ class SavedSearchesFragment : Fragment() {
     private var _binding: SavedSearchesFragmentBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var viewModel: SavedSearchesViewModel
+    private var _viewModel: SavedSearchesViewModel? = null
+    private val viewModel get() = _viewModel!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,17 +29,22 @@ class SavedSearchesFragment : Fragment() {
 
         val dao =
             ImageSearchDb.getInstance(requireNotNull(this.activity).application).requestImageDao
-        viewModel = ViewModelProvider(
+
+        val viewModelFactory = SavedSearchesViewModelFactory(dao)
+        _viewModel = ViewModelProvider(
             this,
-            SavedSearchesViewModelFactory(dao)
+            viewModelFactory
         )[SavedSearchesViewModel::class.java]
 
         val adapter = SavedSearchItemAdapter()
         binding.savedRequestsList.adapter = adapter
+        binding.lifecycleOwner = viewLifecycleOwner
+
 
         viewModel.requestImages.observe(viewLifecycleOwner, {
             it?.let {
                 Log.d("SavedSearchesFragment", "Submitting list!")
+                Log.d("SavedSearchesFragment", it.toString())
                 adapter.submitList(it)
             }
         })
@@ -47,5 +52,9 @@ class SavedSearchesFragment : Fragment() {
         return view
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
 }

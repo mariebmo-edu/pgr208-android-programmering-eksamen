@@ -7,21 +7,10 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import no.kristiania.reverseimagesearch.databinding.SavedSearchItemBinding
 import no.kristiania.reverseimagesearch.model.entity.RequestImage
-import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
 
 class SavedSearchItemAdapter : ListAdapter<RequestImage, SavedSearchItemAdapter.SavedSearchItemViewHolder>(SavedSearchDiffItemCallback()) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SavedSearchItemViewHolder =
-        SavedSearchItemViewHolder.inflateFrom(parent)
-
-    override fun onBindViewHolder(holder: SavedSearchItemViewHolder, position: Int) {
-        val item = getItem(position)
-        Log.d("onBindViewHolder", item.toString())
-        holder.bind(item)
-    }
-
-    class SavedSearchItemViewHolder(val binding: SavedSearchItemBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    class SavedSearchItemViewHolder(val binding: SavedSearchItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
         companion object {
             fun inflateFrom(parent: ViewGroup): SavedSearchItemViewHolder {
@@ -30,12 +19,17 @@ class SavedSearchItemAdapter : ListAdapter<RequestImage, SavedSearchItemAdapter.
                 return SavedSearchItemViewHolder(binding)
             }
         }
-
-        fun bind(requestImage: RequestImage) {
-            requestImage.data?.let {
-                val bitmapImage = BitmapUtils.byteArrayToBitmap(it)
-                binding.savedResultImage.setImageBitmap(bitmapImage)
-            }
+        fun bind(item: RequestImage) {
+            Log.d("bind", "Binding")
         }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SavedSearchItemViewHolder {
+        return SavedSearchItemViewHolder.inflateFrom(parent)
+    }
+
+    override fun onBindViewHolder(holder: SavedSearchItemViewHolder, position: Int) {
+        val item = getItem(position)
+        holder.bind(item)
     }
 }

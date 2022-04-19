@@ -18,6 +18,8 @@ import java.util.logging.Level.INFO
 class ResultItemAdapter :
     ListAdapter<ResultImage, ResultItemAdapter.ResultItemViewHolder>(ResultDiffItemCallback()) {
     val selectedImagesForSave = mutableListOf<ResultImage>()
+
+
     // Når den indre klassen under instansieres (dette fungerer som et rot-element for å stappe result_item xml-fila inn i.
     // Den blir inflatet i den indre klassen
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ResultItemViewHolder =
