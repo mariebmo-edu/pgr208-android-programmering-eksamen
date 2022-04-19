@@ -24,10 +24,11 @@
 
         <CheckBox
             android:id="@+id/save_result"
-            android:layout_width="48dp"
+            android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_gravity="bottom"
-            android:layout_marginLeft="15dp"
+            android:background="#BCFFFEFE"
+            android:backgroundTintMode="multiply"
             android:buttonTint="@color/lm_primary_color"
             android:checked="false"
             android:minWidth="48dp"
