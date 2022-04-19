@@ -48,7 +48,7 @@ class ResultFragment : Fragment() {
         val viewModel = ViewModelProvider(this, resultViewModelFactory)[ResultViewModel::class.java]
 
         if (api != null) {
-            //getResultFromUrl(hostedImageServerUrl, api, viewModel)
+            viewModel.getResultFromUrl(hostedImageServerUrl, api)
         }
 
 
@@ -89,41 +89,6 @@ class ResultFragment : Fragment() {
         _binding = null
     }
 
-    fun getResultFromUrl(url: String, api: FastNetworkingAPI, viewModel: ResultViewModel) {
-        runBlocking(Dispatchers.IO) {
-            val googleReq =
-                async {
-                    api.getImageFromProviderSynchronous(
-                        url,
-                        FastNetworkingAPI.ImageProvider.Google
-                    )
-                }
-            val bingReq =
-                async {
-                    api.getImageFromProviderSynchronous(
-                        url,
-                        FastNetworkingAPI.ImageProvider.Bing
-                    )
-                }
-            val tinEyeReq =
-                async {
-                    api.getImageFromProviderSynchronous(
-                        url,
-                        FastNetworkingAPI.ImageProvider.TinEye
-                    )
-                }
 
-            val googleRes = googleReq.await()
-            val bingRes = bingReq.await()
-            val tinEyeRes = tinEyeReq.await()
-
-            val mergedJson =
-                JsonArrUtils().multipleJsonArraysToOne(googleRes, bingRes, tinEyeRes)
-
-            launch(Dispatchers.Main) {
-                viewModel.fetchImagesFromSearch(mergedJson)
-            }
-        }
-    }
 
 }
