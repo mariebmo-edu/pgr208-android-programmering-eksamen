@@ -40,11 +40,6 @@ class ResultFragment : Fragment() {
         val resultViewModelFactory = ResultViewModelFactory(requestImageDao, resultImageDao)
         val viewModel = ViewModelProvider(this, resultViewModelFactory)[ResultViewModel::class.java]
 
-        context?.let { FastNetworkingAPI(it) }?.getImageFromProviderSynchronous(
-            hostedImageServerUrl,
-            FastNetworkingAPI.ImageProvider.Bing,
-            viewModel
-        )
 
 
         binding.viewModel = viewModel
@@ -53,6 +48,14 @@ class ResultFragment : Fragment() {
         // Til databinding med livedata
         val adapter = ResultItemAdapter()
         binding.resultItemsList.adapter = adapter
+
+
+        context?.let { FastNetworkingAPI(it) }?.getImageFromProviderSynchronous(
+            hostedImageServerUrl,
+            FastNetworkingAPI.ImageProvider.Bing,
+            viewModel
+        )
+
         // Observer endringer i view modellens liste av resultitems
         viewModel.resultImages.observe(viewLifecycleOwner, Observer {
             Log.i("ResultFragment", "Submitting list")
