@@ -2,14 +2,20 @@ package no.kristiania.reverseimagesearch.viewmodel
 
 import android.content.Context
 import android.util.Log
+import android.view.View
+import android.widget.RelativeLayout
+import android.widget.Toast
+import androidx.core.view.size
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import no.kristiania.reverseimagesearch.R
 import no.kristiania.reverseimagesearch.model.db.RequestImageDao
 import no.kristiania.reverseimagesearch.model.db.ResultImageDao
 import no.kristiania.reverseimagesearch.model.entity.RequestImage

@@ -8,6 +8,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
+    // APP COLORS
     <color name="lm_primary_color">#E10F88</color>
     <color name="lm_primary_color_variant">#A51B6B</color>
     <color name="lm_primary_text_color">#FFFFFF</color>
