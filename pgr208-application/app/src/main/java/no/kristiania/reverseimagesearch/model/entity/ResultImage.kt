@@ -9,8 +9,8 @@ import androidx.room.PrimaryKey
     foreignKeys = arrayOf(
         ForeignKey(
             entity = RequestImage::class,
-            parentColumns = arrayOf("id"),
-            childColumns = arrayOf("requestImageId"), onDelete = ForeignKey.CASCADE
+            parentColumns = arrayOf("request_image_id"),
+            childColumns = arrayOf("request_image_id"), onDelete = ForeignKey.CASCADE
         )
     )
 )
