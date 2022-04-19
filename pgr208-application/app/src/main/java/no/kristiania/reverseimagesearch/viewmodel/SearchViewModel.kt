@@ -15,7 +15,7 @@ class SearchViewModel : ViewModel() {
     val url: LiveData<String>
         get() = _url
 
-    fun uploadImageForUrl(bitmap:Bitmap, context: Context){
+    fun uploadImageForUrl(bitmap: Bitmap, context: Context) {
         val http = FastNetworkingAPI(context)
 
         GlobalScope.launch(Dispatchers.IO) {
@@ -28,7 +28,5 @@ class SearchViewModel : ViewModel() {
                 }
             }
         }
-
-
     }
 }

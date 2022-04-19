@@ -8,12 +8,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import no.kristiania.reverseimagesearch.viewmodel.ResultViewModel
 import no.kristiania.reverseimagesearch.databinding.FragmentResultBinding
 import no.kristiania.reverseimagesearch.model.db.ImageSearchDb
 import no.kristiania.reverseimagesearch.view.adapter.ResultItemAdapter
 import no.kristiania.reverseimagesearch.viewmodel.ResultViewModelFactory
 import no.kristiania.reverseimagesearch.viewmodel.api.FastNetworkingAPI
+import no.kristiania.reverseimagesearch.viewmodel.utils.JsonArrUtils
+import org.json.JSONArray
 
 class ResultFragment : Fragment() {
 
@@ -29,6 +35,7 @@ class ResultFragment : Fragment() {
         val view = binding.root
 
         val hostedImageServerUrl = ResultFragmentArgs.fromBundle(requireArguments()).responseUrl
+        val api = context?.let { FastNetworkingAPI(it) }
         Log.d("ResultFragment", hostedImageServerUrl)
 
 
@@ -40,11 +47,9 @@ class ResultFragment : Fragment() {
         val resultViewModelFactory = ResultViewModelFactory(requestImageDao, resultImageDao)
         val viewModel = ViewModelProvider(this, resultViewModelFactory)[ResultViewModel::class.java]
 
-        context?.let { FastNetworkingAPI(it) }?.getImageFromProviderSynchronous(
-            hostedImageServerUrl,
-            FastNetworkingAPI.ImageProvider.Bing,
-            viewModel
-        )
+        if (api != null) {
+            getResultFromUrl(hostedImageServerUrl, api, viewModel)
+        }
 
 
         binding.viewModel = viewModel
@@ -82,6 +87,43 @@ class ResultFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    fun getResultFromUrl(url: String, api: FastNetworkingAPI, viewModel: ResultViewModel) {
+        runBlocking(Dispatchers.IO) {
+            val googleReq =
+                async {
+                    api.getImageFromProviderSynchronous(
+                        url,
+                        FastNetworkingAPI.ImageProvider.Google
+                    )
+                }
+            val bingReq =
+                async {
+                    api.getImageFromProviderSynchronous(
+                        url,
+                        FastNetworkingAPI.ImageProvider.Bing
+                    )
+                }
+            val tinEyeReq =
+                async {
+                    api.getImageFromProviderSynchronous(
+                        url,
+                        FastNetworkingAPI.ImageProvider.TinEye
+                    )
+                }
+
+            val googleRes = googleReq.await()
+            val bingRes = bingReq.await()
+            val tinEyeRes = tinEyeReq.await()
+
+            val mergedJson =
+                JsonArrUtils().multipleJsonArraysToOne(googleRes, bingRes, tinEyeRes)
+
+            launch(Dispatchers.Main) {
+                viewModel.fetchImagesFromSearch(mergedJson)
+            }
+        }
     }
 
 }

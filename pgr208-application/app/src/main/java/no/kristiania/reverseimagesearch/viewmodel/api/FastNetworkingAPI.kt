@@ -16,7 +16,7 @@ import no.kristiania.reverseimagesearch.viewmodel.ResultViewModel
 
 class FastNetworkingAPI(val context: Context) {
 
-    init{
+    init {
         AndroidNetworking.initialize(context)
         AndroidNetworking.setParserFactory(JacksonParserFactory())
     }
@@ -31,7 +31,7 @@ class FastNetworkingAPI(val context: Context) {
 
         val response = request.executeForString()
 
-        if(response.isSuccess){
+        if (response.isSuccess) {
             Log.i("POST_SUCCESS", "post successful!: " + response.result)
             return response.result.toString()
         } else {
@@ -44,7 +44,10 @@ class FastNetworkingAPI(val context: Context) {
         Google, Bing, TinEye
     }
 
-    fun getImageFromProviderSynchronous(url: String, provider: ImageProvider, viewModel: ResultViewModel): JSONArray? {
+    fun getImageFromProviderSynchronous(
+        url: String,
+        provider: ImageProvider,
+    ): JSONArray? {
 
         val endpoint = when (provider) {
             ImageProvider.TinEye -> Endpoints.get_tinEye_url
@@ -60,7 +63,7 @@ class FastNetworkingAPI(val context: Context) {
 
         val response = request.executeForJSONArray()
 
-        if(response.isSuccess){
+        if (response.isSuccess) {
             Log.i("GET_SUCCESS", "get from $provider successful!")
             return response.result as JSONArray
 

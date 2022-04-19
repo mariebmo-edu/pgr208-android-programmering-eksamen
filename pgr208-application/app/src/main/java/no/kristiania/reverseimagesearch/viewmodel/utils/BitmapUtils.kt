@@ -16,10 +16,10 @@ import java.util.*
 
 class BitmapUtils {
 
-    companion object{
+    companion object {
 
         //CODE FROM BORIS MOCIALOV
-        fun VectorDrawableToBitmap(context: Context, id: Int?, uri: String?) : Bitmap {
+        fun VectorDrawableToBitmap(context: Context, id: Int?, uri: String?): Bitmap {
             val drawable = (ContextCompat.getDrawable(context!!, id!!) as VectorDrawable)
             val image = Bitmap.createBitmap(
                 drawable.getIntrinsicWidth(),
@@ -34,19 +34,25 @@ class BitmapUtils {
         }
 
         fun UriToBitmap(context: Context, id: Int?, uri: String?): Bitmap {
-            val image: Bitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, Uri.parse(uri))
+            val image: Bitmap =
+                MediaStore.Images.Media.getBitmap(context.contentResolver, Uri.parse(uri))
             return image
         }
 
-        fun getBitmap(context: Context, id: Int?, uri: String?, decoder: (Context, Int?, String?) -> Bitmap): Bitmap {
+        fun getBitmap(
+            context: Context,
+            id: Int?,
+            uri: String?,
+            decoder: (Context, Int?, String?) -> Bitmap
+        ): Bitmap {
             return decoder(context, id, uri)
         }
 
-        fun byteArrayToBitmap(byteArray: ByteArray) : Bitmap{
+        fun byteArrayToBitmap(byteArray: ByteArray): Bitmap {
             return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
         }
 
-        fun bitmapToByteArray(bitmap : Bitmap) : ByteArray{
+        fun bitmapToByteArray(bitmap: Bitmap): ByteArray {
             val outputStream = ByteArrayOutputStream()
 
             bitmap.compress(Bitmap.CompressFormat.PNG, 0, outputStream)
@@ -55,7 +61,7 @@ class BitmapUtils {
 
 
         //FROM https://stackoverflow.com/questions/7769806/convert-bitmap-to-file
-        fun bitmapToFile(bitmap : Bitmap, filename : String, context: Context) : File{
+        fun bitmapToFile(bitmap: Bitmap, filename: String, context: Context): File {
 
             val file = File(context.getCacheDir(), filename)
             file.createNewFile()
