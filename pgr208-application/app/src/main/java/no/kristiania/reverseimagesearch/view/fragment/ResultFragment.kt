@@ -76,6 +76,4 @@ class ResultFragment : Fragment() {
         _binding = null
     }
 
-
-
 }

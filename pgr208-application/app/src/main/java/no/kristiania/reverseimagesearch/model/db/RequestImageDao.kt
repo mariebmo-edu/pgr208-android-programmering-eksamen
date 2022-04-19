@@ -17,4 +17,5 @@ interface RequestImageDao {
 
     @Query("SELECT * FROM request_image_table ORDER BY request_image_id DESC")
     fun getAll(): LiveData<List<RequestImage>>
+
 }
