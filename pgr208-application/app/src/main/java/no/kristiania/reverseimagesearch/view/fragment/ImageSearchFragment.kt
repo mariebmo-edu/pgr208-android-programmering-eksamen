@@ -80,6 +80,10 @@ class ImageSearchFragment : Fragment() {
             pickImageCamera()
         }
 
+        cropBtn.setOnClickListener {
+            cropImage(selectedImage)
+        }
+
         if (uri != null) {
             selectedImage =
                 BitmapUtils.getBitmap(requireContext(), null, uri.toString(), ::UriToBitmap)
@@ -136,7 +140,7 @@ class ImageSearchFragment : Fragment() {
         if (ContextCompat.checkSelfPermission(
                 this.context!!,
                 Manifest.permission.CAMERA
-            ) != PackageManager.PERMISSION_GRANTED
+            ) == PackageManager.PERMISSION_GRANTED
         ) {
             getBmpFromCamera()
         } else {
