@@ -44,12 +44,6 @@ class ImageSearchFragment : Fragment() {
     private lateinit var imagePreview: ImageView
     private lateinit var cropImageView: CropImageView
 
-    // Disse to må kanskje flyttes til SearchViewModel
-    private lateinit var tempImgFile: File
-    private var uri: Uri? = null
-
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -68,7 +62,7 @@ class ImageSearchFragment : Fragment() {
         imagePreview = binding.uploadedImage
         cropImageView = binding.cropImageView
 
-        tempImgFile = File.createTempFile(
+        viewModel.tempImgFile = File.createTempFile(
             "tempImg",
             ".jpg",
             this.context?.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
@@ -87,9 +81,9 @@ class ImageSearchFragment : Fragment() {
         }
 
         // Nødvendig for å unngå rot ved navigasjon
-        if (uri != null) {
+        if (viewModel.uri != null) {
             val bitmap =
-                BitmapUtils.getBitmap(requireContext(), null, uri.toString(), ::UriToBitmap)
+                BitmapUtils.getBitmap(requireContext(), null, viewModel.uri.toString(), ::UriToBitmap)
             imagePreview.setImageBitmap(bitmap)
             searchBtn.visibility = View.VISIBLE
             cropBtn.visibility = View.VISIBLE
@@ -99,7 +93,7 @@ class ImageSearchFragment : Fragment() {
             if (viewModel.shouldNavigate) {
                 Log.d("URL OBSERVER", "Should navigate")
                 val action = ImageSearchFragmentDirections
-                    .actionSearchFragmentToResultFragment(url, uri.toString())
+                    .actionSearchFragmentToResultFragment(url, viewModel.uri.toString())
                 this.findNavController().navigate(action)
                 viewModel.shouldNavigate = false
             }
@@ -127,8 +121,8 @@ class ImageSearchFragment : Fragment() {
     // Burde flyttes ut til SearchViewModel
     private fun finishCropping(bitmap: Bitmap) {
         imagePreview.setImageBitmap(bitmap)
-        tempImgFile = BitmapUtils.bitmapToFile(bitmap, "tempImg.jpg", requireContext())
-        uri = Uri.fromFile(tempImgFile)
+        viewModel.tempImgFile = BitmapUtils.bitmapToFile(bitmap, "tempImg.jpg", requireContext())
+        viewModel.uri = Uri.fromFile(viewModel.tempImgFile)
         cropImageView.visibility = View.GONE
         imagePreview.visibility = View.VISIBLE
         searchBtn.visibility = View.VISIBLE
@@ -163,7 +157,7 @@ class ImageSearchFragment : Fragment() {
         val fileProvider = FileProvider.getUriForFile(
             requireContext(),
             "no.kristiania.reverseimagesearch.fileprovider",
-            tempImgFile
+            viewModel.tempImgFile
         )
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider)
         cameraResultLauncher.launch(intent)
@@ -181,8 +175,8 @@ class ImageSearchFragment : Fragment() {
     private val cameraResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == AppCompatActivity.RESULT_OK) {
-                val bitmap = BitmapFactory.decodeFile(tempImgFile.absolutePath)
-                uri = Uri.fromFile(tempImgFile)
+                val bitmap = BitmapFactory.decodeFile(viewModel.tempImgFile.absolutePath)
+                viewModel.uri = Uri.fromFile(viewModel.tempImgFile)
                 imagePreview.setImageBitmap(bitmap)
                 searchBtn.visibility = View.VISIBLE
                 cropBtn.visibility = View.VISIBLE
@@ -193,9 +187,9 @@ class ImageSearchFragment : Fragment() {
     private val galleryResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == AppCompatActivity.RESULT_OK && it.data != null) {
-                this.uri = it.data?.data!!
+                viewModel.uri = it.data?.data!!
                 val bitmap =
-                    BitmapUtils.getBitmap(requireContext(), null, uri.toString(), ::UriToBitmap)
+                    BitmapUtils.getBitmap(requireContext(), null, viewModel.uri.toString(), ::UriToBitmap)
                 imagePreview.setImageBitmap(bitmap)
                 searchBtn.visibility = View.VISIBLE
                 cropBtn.visibility = View.VISIBLE
