@@ -2,6 +2,7 @@ package no.kristiania.reverseimagesearch.viewmodel
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -17,6 +18,7 @@ class SearchViewModel : ViewModel() {
         get() = _url
     var shouldNavigate = true
     lateinit var tempImgFile : File
+    var uri: Uri? = null
 
     fun uploadImageForUrl(bitmap: Bitmap, context: Context) {
         val http = FastNetworkingAPI(context)
