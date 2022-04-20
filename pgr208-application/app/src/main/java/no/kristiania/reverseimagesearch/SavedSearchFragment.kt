@@ -2,6 +2,7 @@ package no.kristiania.reverseimagesearch
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -35,6 +36,7 @@ class SavedSearchFragment : Fragment() {
 
         viewModel.savedSearchImages.observe(viewLifecycleOwner, {
             it?.let {
+                Log.d("obeserving list", it.size.toString())
                 adapter.submitList(it)
             }
         })

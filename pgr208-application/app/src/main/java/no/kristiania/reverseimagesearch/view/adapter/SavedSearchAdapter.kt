@@ -10,9 +10,12 @@ import no.kristiania.reverseimagesearch.databinding.ResultItemBinding
 import no.kristiania.reverseimagesearch.databinding.SavedSearchItemBinding
 import no.kristiania.reverseimagesearch.model.entity.RequestImage
 import no.kristiania.reverseimagesearch.model.entity.ResultImage
+import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
 
 class SavedSearchAdapter :
-    ListAdapter<RequestImage, SavedSearchAdapter.SavedSearchItemViewHolder>(SavedSearchDiffItemCallback()) {
+    ListAdapter<RequestImage, SavedSearchAdapter.SavedSearchItemViewHolder>(
+        SavedSearchDiffItemCallback()
+    ) {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -35,6 +38,11 @@ class SavedSearchAdapter :
         }
 
         fun bind(requestImage: RequestImage) {
+            requestImage.data?.let {
+                val bitmapImage = BitmapUtils.byteArrayToBitmap(it)
+                binding.savedResultImage.setImageBitmap(bitmapImage)
+            }
+            binding.textToBeDeleted.text = "faahk"
             Log.i("Load image", "Loading image in binding")
         }
     }
