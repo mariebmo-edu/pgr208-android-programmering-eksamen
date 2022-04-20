@@ -16,12 +16,9 @@ import no.kristiania.reverseimagesearch.R
 import no.kristiania.reverseimagesearch.viewmodel.ResultViewModel
 import no.kristiania.reverseimagesearch.databinding.FragmentResultBinding
 import no.kristiania.reverseimagesearch.model.db.ImageSearchDb
-import no.kristiania.reverseimagesearch.model.entity.RequestImage
 import no.kristiania.reverseimagesearch.view.adapter.ResultItemAdapter
-import no.kristiania.reverseimagesearch.viewmodel.ResultViewModelFactory
+import no.kristiania.reverseimagesearch.viewmodel.factory.ResultViewModelFactory
 import no.kristiania.reverseimagesearch.viewmodel.api.FastNetworkingAPI
-import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
-import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils.Companion.UriToBitmap
 
 class ResultFragment : Fragment() {
 
