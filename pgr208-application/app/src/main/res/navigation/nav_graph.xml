@@ -35,7 +35,7 @@
 
     <fragment
         android:id="@+id/savedSearchesFragment"
-        android:name="no.kristiania.reverseimagesearch.view.fragment.SavedSearchesFragment"
+        android:name="no.kristiania.reverseimagesearch.view.fragment.SavedSearchFragment"
         android:label="Saved results"
-        tools:layout="@layout/saved_searches_fragment" />
+        tools:layout="@layout/saved_search_fragment" />
 </navigation>

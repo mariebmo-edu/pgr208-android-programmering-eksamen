@@ -18,9 +18,14 @@ import java.util.logging.Level.INFO
 class ResultItemAdapter :
     ListAdapter<ResultImage, ResultItemAdapter.ResultItemViewHolder>(ResultDiffItemCallback()) {
     val selectedImagesForSave = mutableListOf<ResultImage>()
+
+
     // Når den indre klassen under instansieres (dette fungerer som et rot-element for å stappe result_item xml-fila inn i.
     // Den blir inflatet i den indre klassen
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ResultItemViewHolder =
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): ResultItemViewHolder =
         ResultItemViewHolder.inflateFrom(parent)
 
     // Denne kalles for hver gang en recyclerview blir opprettet eller brukt på nytt,
@@ -34,8 +39,7 @@ class ResultItemAdapter :
             if (isChecked) {
                 item.data = BitmapUtils.bitmapToByteArray((image.drawable as BitmapDrawable).bitmap)
                 selectedImagesForSave.add(item)
-            }
-            else if (!isChecked){
+            } else if (!isChecked) {
                 selectedImagesForSave.remove(item)
             }
         }
