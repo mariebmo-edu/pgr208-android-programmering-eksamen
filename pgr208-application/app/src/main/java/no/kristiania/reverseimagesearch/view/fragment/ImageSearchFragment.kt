@@ -44,8 +44,7 @@ class ImageSearchFragment : Fragment() {
     private lateinit var imagePreview: ImageView
     private lateinit var cropImageView: CropImageView
 
-    // Disse to må kanskje flyttes til SearchViewModel
-    private lateinit var tempImgFile: File
+    // Denne må kanskje flyttes til SearchViewModel
     private var uri: Uri? = null
 
 
@@ -68,7 +67,7 @@ class ImageSearchFragment : Fragment() {
         imagePreview = binding.uploadedImage
         cropImageView = binding.cropImageView
 
-        tempImgFile = File.createTempFile(
+        viewModel.tempImgFile = File.createTempFile(
             "tempImg",
             ".jpg",
             this.context?.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
@@ -127,8 +126,8 @@ class ImageSearchFragment : Fragment() {
     // Burde flyttes ut til SearchViewModel
     private fun finishCropping(bitmap: Bitmap) {
         imagePreview.setImageBitmap(bitmap)
-        tempImgFile = BitmapUtils.bitmapToFile(bitmap, "tempImg.jpg", requireContext())
-        uri = Uri.fromFile(tempImgFile)
+        viewModel.tempImgFile = BitmapUtils.bitmapToFile(bitmap, "tempImg.jpg", requireContext())
+        uri = Uri.fromFile(viewModel.tempImgFile)
         cropImageView.visibility = View.GONE
         imagePreview.visibility = View.VISIBLE
         searchBtn.visibility = View.VISIBLE
@@ -163,7 +162,7 @@ class ImageSearchFragment : Fragment() {
         val fileProvider = FileProvider.getUriForFile(
             requireContext(),
             "no.kristiania.reverseimagesearch.fileprovider",
-            tempImgFile
+            viewModel.tempImgFile
         )
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider)
         cameraResultLauncher.launch(intent)
@@ -181,8 +180,8 @@ class ImageSearchFragment : Fragment() {
     private val cameraResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == AppCompatActivity.RESULT_OK) {
-                val bitmap = BitmapFactory.decodeFile(tempImgFile.absolutePath)
-                uri = Uri.fromFile(tempImgFile)
+                val bitmap = BitmapFactory.decodeFile(viewModel.tempImgFile.absolutePath)
+                uri = Uri.fromFile(viewModel.tempImgFile)
                 imagePreview.setImageBitmap(bitmap)
                 searchBtn.visibility = View.VISIBLE
                 cropBtn.visibility = View.VISIBLE

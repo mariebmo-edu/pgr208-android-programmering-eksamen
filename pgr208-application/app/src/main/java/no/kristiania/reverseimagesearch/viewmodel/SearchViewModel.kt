@@ -9,12 +9,14 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.*
 import no.kristiania.reverseimagesearch.viewmodel.api.FastNetworkingAPI
 import no.kristiania.reverseimagesearch.viewmodel.utils.JsonArrUtils
+import java.io.File
 
 class SearchViewModel : ViewModel() {
     private val _url = MutableLiveData<String>()
     val url: LiveData<String>
         get() = _url
     var shouldNavigate = true
+    lateinit var tempImgFile : File
 
     fun uploadImageForUrl(bitmap: Bitmap, context: Context) {
         val http = FastNetworkingAPI(context)
