@@ -16,6 +16,7 @@ class SearchViewModel : ViewModel() {
         get() = _url
     var shouldNavigate = true
 
+
     fun uploadImageForUrl(bitmap: Bitmap, context: Context) {
         val http = FastNetworkingAPI(context)
 
