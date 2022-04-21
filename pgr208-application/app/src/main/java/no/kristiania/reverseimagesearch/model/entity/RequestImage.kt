@@ -1,11 +1,8 @@
 package no.kristiania.reverseimagesearch.model.entity
 
-import android.util.Log
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.io.File
-import java.io.IOException
 
 @Entity(tableName = "request_image_table")
 data class RequestImage(
@@ -18,6 +15,9 @@ data class RequestImage(
 
     @ColumnInfo(name = "request_image_date",typeAffinity = ColumnInfo.BLOB)
     var data: ByteArray? = null,
+
+    @ColumnInfo(name = "request_image_search_name")
+    var searchName: String? = null
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
