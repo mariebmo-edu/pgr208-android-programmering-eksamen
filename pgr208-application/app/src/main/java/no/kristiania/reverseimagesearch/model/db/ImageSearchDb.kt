@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import no.kristiania.reverseimagesearch.model.entity.RequestImage
 import no.kristiania.reverseimagesearch.model.entity.ResultImage
 
-@Database(entities = [RequestImage::class, ResultImage::class], version = 2, exportSchema = false)
+@Database(entities = [RequestImage::class, ResultImage::class], version = 3, exportSchema = false)
 abstract class ImageSearchDb : RoomDatabase() {
     abstract val requestImageDao: RequestImageDao
     abstract val resultImageDao: ResultImageDao
@@ -15,7 +15,7 @@ abstract class ImageSearchDb : RoomDatabase() {
     companion object {
         @Volatile
         private var INSTANCE: ImageSearchDb? = null
-
+// TODO: Bør nok fjerne fallback destructive greia
         fun getInstance(context: Context): ImageSearchDb {
             synchronized(this) {
                 var instance = INSTANCE
@@ -24,7 +24,7 @@ abstract class ImageSearchDb : RoomDatabase() {
                         context.applicationContext,
                         ImageSearchDb::class.java,
                         "image_search_database"
-                    ).build()
+                    ).fallbackToDestructiveMigration().build()
                     INSTANCE = instance
                 }
                 return instance
