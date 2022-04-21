@@ -48,7 +48,7 @@ class ImageSearchFragment : Fragment() {
 
         _viewModel = ViewModelProvider(this)[SearchViewModel::class.java]
 
-        viewModel.initiate()
+        viewModel.initiateCroppingValue()
 
         binding.lifecycleOwner = viewLifecycleOwner
         uploadBtn = binding.uploadBtn
@@ -64,8 +64,6 @@ class ImageSearchFragment : Fragment() {
             this.context?.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         )
 
-        //println(Uri.fromFile(viewModel.tempImgFile).toString())
-
         uploadBtn.setOnClickListener {
             viewModel.pickImageGallery(galleryResultLauncher)
         }
@@ -78,17 +76,17 @@ class ImageSearchFragment : Fragment() {
             viewModel.cropImage(imagePreview.drawable.toBitmap(), cropImageView)
         }
 
-        // Nødvendig for å unngå rot ved navigasjon
-        if (viewModel.uri != null) {
-            val bitmap =
-                BitmapUtils.getBitmap(requireContext(), null, viewModel.uri.toString(), ::UriToBitmap)
-            imagePreview.setImageBitmap(bitmap)
-            searchBtn.visibility = View.VISIBLE
-            cropBtn.visibility = View.VISIBLE
-        } else {
-            searchBtn.visibility = View.GONE
-            cropBtn.visibility = View.GONE
-        }
+        viewModel.uri.observe(viewLifecycleOwner, {
+            it?.let {
+                val bitmap = BitmapUtils.getBitmap(requireContext(), null, it.toString(), ::UriToBitmap)
+                imagePreview.setImageBitmap(bitmap)
+                searchBtn.visibility = View.VISIBLE
+                cropBtn.visibility = View.VISIBLE
+            } ?: run {
+                searchBtn.visibility = View.GONE
+                cropBtn.visibility = View.GONE
+            }
+        })
 
         viewModel.url.observe(viewLifecycleOwner, { url ->
             if (viewModel.shouldNavigate) {
@@ -103,7 +101,7 @@ class ImageSearchFragment : Fragment() {
         viewModel.cropping.observe(viewLifecycleOwner, {
             if (it) {
                 cropOn()
-            } else if (viewModel.uri != null && !it) {
+            } else if (viewModel.uri.value != null && !it) {
                 cropOff()
             }
         })
@@ -144,7 +142,7 @@ class ImageSearchFragment : Fragment() {
         bitmap?.let { bmp ->
             viewModel.tempImgFile =
                 BitmapUtils.bitmapToFile(bmp, "tempImg.jpg", requireContext())
-            viewModel.uri = Uri.fromFile(viewModel.tempImgFile)
+            viewModel.setUri(Uri.fromFile(viewModel.tempImgFile))
             helper()
             cropBtn.setOnClickListener {
                 viewModel.cropImage(bmp, cropImageView)
@@ -170,7 +168,7 @@ class ImageSearchFragment : Fragment() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == AppCompatActivity.RESULT_OK) {
                 val bitmap = BitmapFactory.decodeFile(viewModel.tempImgFile.absolutePath)
-                viewModel.uri = Uri.fromFile(viewModel.tempImgFile)
+                viewModel.setUri(Uri.fromFile(viewModel.tempImgFile)) // Egentlig big nono, må helst endres
                 imagePreview.setImageBitmap(bitmap)
 //                searchBtn.visibility = View.VISIBLE
 //                cropBtn.visibility = View.VISIBLE
@@ -181,7 +179,7 @@ class ImageSearchFragment : Fragment() {
     private val galleryResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == AppCompatActivity.RESULT_OK && it.data != null) {
-                viewModel.uri = it.data?.data!!
+                viewModel.setUri(it.data?.data!!)
                 val bitmap =
                     BitmapUtils.getBitmap(requireContext(), null, viewModel.uri.toString(), ::UriToBitmap)
                 imagePreview.setImageBitmap(bitmap)

@@ -30,15 +30,21 @@ class SearchViewModel : ViewModel() {
     lateinit var tempImgFile : File
 
     private val _uri = MutableLiveData<Uri?>()
-    var uri: Uri? = null
+    val uri: LiveData<Uri?>
+        get() = _uri
+
 
     private val _cropping = MutableLiveData<Boolean>()
     val cropping : LiveData<Boolean>
         get() = _cropping
 
 
-    fun initiate() {
+    fun initiateCroppingValue() {
         _cropping.value = false
+    }
+
+    fun setUri(uri: Uri) {
+        _uri.value = uri
     }
 
     fun uploadImageForUrl(bitmap: Bitmap, context: Context) {
