@@ -1,14 +1,10 @@
 package no.kristiania.reverseimagesearch.view.fragment
 
-import android.Manifest
-import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
-import android.provider.MediaStore
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -19,8 +15,6 @@ import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.toBitmap
 import androidx.navigation.fragment.findNavController
 import com.theartofdev.edmodo.cropper.CropImageView
@@ -54,6 +48,8 @@ class ImageSearchFragment : Fragment() {
 
         _viewModel = ViewModelProvider(this)[SearchViewModel::class.java]
 
+        viewModel.initiate()
+
         binding.lifecycleOwner = viewLifecycleOwner
         uploadBtn = binding.uploadBtn
         cameraBtn = binding.cameraBtn
@@ -68,16 +64,18 @@ class ImageSearchFragment : Fragment() {
             this.context?.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         )
 
+        //println(Uri.fromFile(viewModel.tempImgFile).toString())
+
         uploadBtn.setOnClickListener {
-            pickImageGallery()
+            viewModel.pickImageGallery(galleryResultLauncher)
         }
 
         cameraBtn.setOnClickListener {
-            pickImageCamera()
+            viewModel.pickImageCamera(requireContext(), cameraResultLauncher, cameraPermissionRequest)
         }
 
         cropBtn.setOnClickListener {
-            cropImage(imagePreview.drawable.toBitmap())
+            viewModel.cropImage(imagePreview.drawable.toBitmap(), cropImageView)
         }
 
         // Nødvendig for å unngå rot ved navigasjon
@@ -87,6 +85,9 @@ class ImageSearchFragment : Fragment() {
             imagePreview.setImageBitmap(bitmap)
             searchBtn.visibility = View.VISIBLE
             cropBtn.visibility = View.VISIBLE
+        } else {
+            searchBtn.visibility = View.GONE
+            cropBtn.visibility = View.GONE
         }
 
         viewModel.url.observe(viewLifecycleOwner, { url ->
@@ -98,6 +99,15 @@ class ImageSearchFragment : Fragment() {
                 viewModel.shouldNavigate = false
             }
         })
+
+        viewModel.cropping.observe(viewLifecycleOwner, {
+            if (it) {
+                cropOn()
+            } else if (viewModel.uri != null && !it) {
+                cropOff()
+            }
+        })
+
         searchBtn.setOnClickListener {
             viewModel.shouldNavigate = true
             viewModel.uploadImageForUrl(imagePreview.drawable.toBitmap(), requireContext())
@@ -106,68 +116,52 @@ class ImageSearchFragment : Fragment() {
         return view
     }
 
-    // Burde flyttes ut til SearchViewModel
-    private fun cropImage(bitmap: Bitmap) {
+    private fun cropOn() {
         imagePreview.visibility = View.GONE
         searchBtn.visibility = View.GONE
+        uploadBtn.visibility = View.GONE
+        cameraBtn.visibility = View.GONE
         cropImageView.visibility = View.VISIBLE
-        cropImageView.setImageBitmap(bitmap)
         cropBtn.text = getString(R.string.finish_cropping)
         cropBtn.setOnClickListener {
-            finishCropping(cropImageView.croppedImage)
+            viewModel.finishCropping(cropImageView.croppedImage, imagePreview)
         }
     }
 
-    // Burde flyttes ut til SearchViewModel
-    private fun finishCropping(bitmap: Bitmap) {
-        imagePreview.setImageBitmap(bitmap)
-        viewModel.tempImgFile = BitmapUtils.bitmapToFile(bitmap, "tempImg.jpg", requireContext())
-        viewModel.uri = Uri.fromFile(viewModel.tempImgFile)
-        cropImageView.visibility = View.GONE
-        imagePreview.visibility = View.VISIBLE
-        searchBtn.visibility = View.VISIBLE
-        cropBtn.text = getString(R.string.crop_image)
-        cropBtn.setOnClickListener {
-            cropImage(imagePreview.drawable.toBitmap())
+    private fun cropOff() {
+
+        fun helper() {
+            cropImageView.visibility = View.GONE
+            imagePreview.visibility = View.VISIBLE
+            searchBtn.visibility = View.VISIBLE
+            uploadBtn.visibility = View.VISIBLE
+            cameraBtn.visibility = View.VISIBLE
+            cropBtn.text = getString(R.string.crop_image)
         }
-    }
 
-    // Burde flyttes ut til SearchViewModel
-    private fun pickImageGallery() {
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        galleryResultLauncher.launch(intent)
-    }
+        val bitmap: Bitmap? = cropImageView.croppedImage
 
-    // Burde flyttes ut til SearchViewModel
-    private fun pickImageCamera() {
-        if (ContextCompat.checkSelfPermission(
-                this.context!!,
-                Manifest.permission.CAMERA
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            getBmpFromCamera()
-        } else {
-            cameraPermissionRequest.launch(Manifest.permission.CAMERA)
+        bitmap?.let { bmp ->
+            viewModel.tempImgFile =
+                BitmapUtils.bitmapToFile(bmp, "tempImg.jpg", requireContext())
+            viewModel.uri = Uri.fromFile(viewModel.tempImgFile)
+            helper()
+            cropBtn.setOnClickListener {
+                viewModel.cropImage(bmp, cropImageView)
+            }
+        } ?: run {
+            helper()
+            cropBtn.setOnClickListener {
+                viewModel.cropImage(imagePreview.drawable.toBitmap(), cropImageView)
+            }
         }
-    }
-
-    // Burde flyttes ut til SearchViewModel
-    private fun getBmpFromCamera() {
-        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        val fileProvider = FileProvider.getUriForFile(
-            requireContext(),
-            "no.kristiania.reverseimagesearch.fileprovider",
-            viewModel.tempImgFile
-        )
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider)
-        cameraResultLauncher.launch(intent)
     }
 
     // Må ligge her; callback kan kanskje flyttes ut
     private val cameraPermissionRequest =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) {
             if (it) {
-                getBmpFromCamera()
+                viewModel.getBmpFromCamera(requireContext(), cameraResultLauncher)
             }
         }
 
@@ -178,8 +172,8 @@ class ImageSearchFragment : Fragment() {
                 val bitmap = BitmapFactory.decodeFile(viewModel.tempImgFile.absolutePath)
                 viewModel.uri = Uri.fromFile(viewModel.tempImgFile)
                 imagePreview.setImageBitmap(bitmap)
-                searchBtn.visibility = View.VISIBLE
-                cropBtn.visibility = View.VISIBLE
+//                searchBtn.visibility = View.VISIBLE
+//                cropBtn.visibility = View.VISIBLE
             }
         }
 
@@ -191,12 +185,11 @@ class ImageSearchFragment : Fragment() {
                 val bitmap =
                     BitmapUtils.getBitmap(requireContext(), null, viewModel.uri.toString(), ::UriToBitmap)
                 imagePreview.setImageBitmap(bitmap)
-                searchBtn.visibility = View.VISIBLE
-                cropBtn.visibility = View.VISIBLE
+//                searchBtn.visibility = View.VISIBLE
+//                cropBtn.visibility = View.VISIBLE
 
             } else {
                 println("error: result is not OK, or data is empty")
             }
-
         }
 }
