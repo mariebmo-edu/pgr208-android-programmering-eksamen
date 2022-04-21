@@ -85,7 +85,7 @@ class ResultFragment : Fragment() {
             val dialogueBuilder = AlertDialog.Builder(context)
             val popUpView = layoutInflater.inflate(R.layout.fragment_popup__text_w_button, null)
 
-            var selectedName =
+            val selectedName =
                 popUpView.findViewById<AutoCompleteTextView>(R.id.autoCompleteCollectionNameTextView).text
             val submitBtn = popUpView.findViewById<Button>(R.id.submit_btn)
             val cancelBtn = popUpView.findViewById<Button>(R.id.cancel_btn)
@@ -96,6 +96,8 @@ class ResultFragment : Fragment() {
 
             submitBtn.setOnClickListener {
                 viewModel.saveResult(requireContext(), adapter.selectedImagesForSave, selectedName.toString())
+                dialog.dismiss()
+                Toast.makeText(context, "Collection Saved!", Toast.LENGTH_LONG).show()
             }
 
             cancelBtn.setOnClickListener {
