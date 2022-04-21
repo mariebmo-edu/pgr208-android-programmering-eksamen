@@ -14,12 +14,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
             <ImageView
                 android:id="@+id/saved_search_image"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="top"
-                />
+                app:srcCompat="@drawable/ic_launcher_reverseimgsrc_foreground" />
+
+            <TextView
+                android:id="@+id/saved_search_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="TextView" />
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
