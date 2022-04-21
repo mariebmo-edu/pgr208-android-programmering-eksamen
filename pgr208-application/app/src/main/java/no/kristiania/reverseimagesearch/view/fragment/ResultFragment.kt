@@ -86,7 +86,7 @@ class ResultFragment : Fragment() {
             val popUpView = layoutInflater.inflate(R.layout.fragment_popup__text_w_button, null)
 
             var selectedName =
-                popUpView.findViewById<AutoCompleteTextView>(R.id.autoCompleteCollectionNameTextView)
+                popUpView.findViewById<AutoCompleteTextView>(R.id.autoCompleteCollectionNameTextView).text
             val submitBtn = popUpView.findViewById<Button>(R.id.submit_btn)
             val cancelBtn = popUpView.findViewById<Button>(R.id.cancel_btn)
 
