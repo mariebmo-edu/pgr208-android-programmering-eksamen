@@ -10,10 +10,8 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
@@ -199,4 +197,9 @@ class ImageSearchFragment : Fragment() {
             }
 
         }
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        // TODO Add your menu entries here
+        super.onCreateOptionsMenu(menu, inflater)
+        Log.d("options", "is it called?")
+    }
 }
