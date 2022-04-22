@@ -29,6 +29,7 @@ import no.kristiania.reverseimagesearch.databinding.FragmentImageSearchBinding
 import no.kristiania.reverseimagesearch.viewmodel.SearchViewModel
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils.Companion.UriToBitmap
+import no.kristiania.reverseimagesearch.viewmodel.utils.ViewUtils
 import java.io.File
 
 class ImageSearchFragment : Fragment() {
@@ -47,7 +48,7 @@ class ImageSearchFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         _binding = FragmentImageSearchBinding.inflate(inflater, container, false)
         val view = binding.root
@@ -85,6 +86,10 @@ class ImageSearchFragment : Fragment() {
             val bitmap =
                 BitmapUtils.getBitmap(requireContext(), null, viewModel.uri.toString(), ::UriToBitmap)
             imagePreview.setImageBitmap(bitmap)
+
+            imagePreview.setOnClickListener{
+                ViewUtils().fullSizeImage(bitmap, view.rootView, context!!)
+            }
             searchBtn.visibility = View.VISIBLE
             cropBtn.visibility = View.VISIBLE
         }

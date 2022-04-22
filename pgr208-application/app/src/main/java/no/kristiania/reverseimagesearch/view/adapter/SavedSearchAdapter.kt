@@ -11,6 +11,7 @@ import no.kristiania.reverseimagesearch.databinding.SavedSearchItemBinding
 import no.kristiania.reverseimagesearch.model.entity.RequestImage
 import no.kristiania.reverseimagesearch.model.entity.ResultImage
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
+import no.kristiania.reverseimagesearch.viewmodel.utils.ViewUtils
 
 class SavedSearchAdapter :
     ListAdapter<RequestImage, SavedSearchAdapter.SavedSearchItemViewHolder>(
@@ -38,9 +39,12 @@ class SavedSearchAdapter :
         }
 
         fun bind(requestImage: RequestImage) {
-            requestImage.data?.let {
+            requestImage.data?.let { it ->
                 val bitmapImage = BitmapUtils.byteArrayToBitmap(it)
                 binding.savedResultImage.setImageBitmap(bitmapImage)
+                binding.savedResultImage.setOnClickListener {
+                    ViewUtils().fullSizeImage(bitmapImage, it.rootView, it.context)
+                }
             }
             binding.textToBeDeleted.text = "faahk"
             Log.i("Load image", "Loading image in binding")
