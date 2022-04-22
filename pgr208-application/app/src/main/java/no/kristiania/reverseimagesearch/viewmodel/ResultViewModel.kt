@@ -110,12 +110,12 @@ class ResultViewModel(
         }
     }
 
-    fun saveResult(context: Context, imagesToSave: List<ResultImage>) {
+    fun saveResult(context: Context, imagesToSave: List<ResultImage>, collectionName : String) {
 
         val bitmapRequestImage = BitmapUtils.getBitmap(context, null, requestImageLocalPath,
             BitmapUtils.Companion::UriToBitmap
         )
-        val requestImage = RequestImage(serverPath = hostedImageServerUrl, data = BitmapUtils.bitmapToByteArray(bitmapRequestImage))
+        val requestImage = RequestImage(serverPath = hostedImageServerUrl, data = BitmapUtils.bitmapToByteArray(bitmapRequestImage), collectionName = collectionName)
 
         viewModelScope.launch {
             val reqSave = async {requestImageDao.insert(requestImage)}
