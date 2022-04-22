@@ -10,30 +10,28 @@
         android:elevation="4dp"
         app:cardCornerRadius="4dp">
 
-        <LinearLayout
+        <ImageView
+            android:id="@+id/saved_search_image"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_gravity="top"
+            android:maxHeight="250dp"
+            app:srcCompat="@drawable/ic_launcher_reverseimgsrc_foreground" />
 
-            <TextView
-                android:id="@+id/saved_search_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/lm_secondary_color"
-                android:text="TextView"
-                android:textAlignment="center"
-                android:textAllCaps="true"
-                android:textColor="@color/lm_secondary_text_variant"
-                android:textStyle="bold" />
-
-            <ImageView
-                android:id="@+id/saved_search_image"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="top"
-                app:srcCompat="@drawable/ic_launcher_reverseimgsrc_foreground" />
-
-        </LinearLayout>
+        <TextView
+            android:id="@+id/saved_search_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#BCFFFEFE"
+            android:backgroundTintMode="multiply"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:text="TextView"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            android:textColor="@color/lm_primary_color_variant"
+            android:textStyle="bold" />
 
     </androidx.cardview.widget.CardView>
 </layout>

@@ -23,6 +23,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.toBitmap
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.bottomnavigation.BottomNavigationMenuView
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.theartofdev.edmodo.cropper.CropImageView
 import no.kristiania.reverseimagesearch.R
 import no.kristiania.reverseimagesearch.databinding.FragmentImageSearchBinding
@@ -100,10 +102,22 @@ class ImageSearchFragment : Fragment() {
         })
         searchBtn.setOnClickListener {
             viewModel.shouldNavigate = true
+            toggleResultNav(it)
             viewModel.uploadImageForUrl(imagePreview.drawable.toBitmap(), requireContext())
+
+
         }
 
         return view
+    }
+
+    private fun toggleResultNav(view: View){
+        val bottomNav = view.findViewById<BottomNavigationView>(R.id.bottom_nav)?.menu
+
+        if (bottomNav != null) {
+            Log.d("BADGE_NAVBAR", bottomNav.getItem(1).title.toString())
+            bottomNav.getItem(1).isVisible = true
+        }
     }
 
     // Burde flyttes ut til SearchViewModel
