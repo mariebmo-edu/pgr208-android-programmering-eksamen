@@ -57,9 +57,13 @@ class ResultFragment : Fragment() {
         Log.d("ResultFragment", viewModel.hostedImageServerUrl)
 
 
-        if (api != null) {
-            viewModel.getResultFromUrl(viewModel.hostedImageServerUrl, api)
-        }
+        viewModel.shouldSearch.observe(viewLifecycleOwner, { shouldSearch ->
+            if (shouldSearch && api != null) {
+                viewModel.getResultFromUrl(viewModel.hostedImageServerUrl, api)
+                viewModel.searchDone()
+            }
+        })
+
 
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner

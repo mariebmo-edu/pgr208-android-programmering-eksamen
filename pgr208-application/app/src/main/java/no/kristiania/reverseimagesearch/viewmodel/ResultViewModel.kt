@@ -30,16 +30,18 @@ class ResultViewModel(
     private val resultImageDao: ResultImageDao,
 ) : ViewModel() {
 
+    private var _shouldSearch = MutableLiveData(true)
+    val shouldSearch: LiveData<Boolean> get() = _shouldSearch
 
     lateinit var requestImageLocalPath: String
     lateinit var hostedImageServerUrl: String
-    private var _resultImages = MutableLiveData<MutableList<ResultImage>>()
+    private var _resultImages = MutableLiveData<MutableList<ResultImage>>(mutableListOf())
     val resultImages: LiveData<MutableList<ResultImage>>
         get() = _resultImages
 
-    init {
-        _resultImages.value = ArrayList()
-    }
+//    init {
+//        _resultImages.value = ArrayList()
+//    }
 
     fun getResultFromUrl(url: String, api: FastNetworkingAPI) {
 
@@ -125,5 +127,9 @@ class ResultViewModel(
             resultImageDao.insertMany(imagesToSave)
         }
 
+    }
+
+    fun searchDone() {
+        _shouldSearch.value = false
     }
 }
