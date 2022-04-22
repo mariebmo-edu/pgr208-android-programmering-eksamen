@@ -31,6 +31,7 @@ class MainActivity : AppCompatActivity() {
         val bottomNavView = findViewById<BottomNavigationView>(R.id.bottom_nav)
         toolBar.setupWithNavController(navController, appBarConfiguration)
         bottomNavView.setupWithNavController(navController)
+        bottomNavView.menu.getItem(2).isEnabled = false
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

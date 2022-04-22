@@ -20,7 +20,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.toBitmap
+import androidx.core.view.children
+import androidx.core.view.get
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.theartofdev.edmodo.cropper.CropImageView
 import no.kristiania.reverseimagesearch.R
 import no.kristiania.reverseimagesearch.databinding.FragmentImageSearchBinding
@@ -42,13 +46,18 @@ class ImageSearchFragment : Fragment() {
     private lateinit var imagePreview: ImageView
     private lateinit var cropImageView: CropImageView
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
+        setHasOptionsMenu(true)
         _binding = FragmentImageSearchBinding.inflate(inflater, container, false)
         val view = binding.root
+
+
+
+
 
         _viewModel = ViewModelProvider(this)[SearchViewModel::class.java]
 
@@ -89,10 +98,10 @@ class ImageSearchFragment : Fragment() {
 
         viewModel.url.observe(viewLifecycleOwner, { url ->
             if (viewModel.shouldNavigate) {
-                Log.d("URL OBSERVER", "Should navigate")
                 val action = ImageSearchFragmentDirections
                     .actionSearchFragmentToResultFragment(url, viewModel.uri.toString())
                 this.findNavController().navigate(action)
+                activateResultMenuItem()
                 viewModel.shouldNavigate = false
             }
         })
@@ -102,6 +111,13 @@ class ImageSearchFragment : Fragment() {
         }
 
         return view
+    }
+
+    private fun activateResultMenuItem() {
+        val appCompat = requireActivity() as AppCompatActivity
+        val navigationView = appCompat.findViewById<BottomNavigationView>(R.id.bottom_nav)
+        val results = navigationView.menu.getItem(2)
+        results.isEnabled = true
     }
 
     // Burde flyttes ut til SearchViewModel
@@ -197,9 +213,5 @@ class ImageSearchFragment : Fragment() {
             }
 
         }
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        // TODO Add your menu entries here
-        super.onCreateOptionsMenu(menu, inflater)
-        Log.d("options", "is it called?")
-    }
+
 }
