@@ -1,17 +1,29 @@
 package no.kristiania.reverseimagesearch.view.adapter
 
+import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toBitmap
+import androidx.core.view.drawToBitmap
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.github.chrisbanes.photoview.PhotoView
+import kotlinx.coroutines.NonDisposableHandle.parent
+import no.kristiania.reverseimagesearch.R
 import no.kristiania.reverseimagesearch.databinding.ResultItemBinding
 import no.kristiania.reverseimagesearch.model.entity.ResultImage
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
 import java.util.logging.Level.INFO
+import kotlin.coroutines.coroutineContext
 
 
 // Denne klassen forteller recyclerview hvordan den skal vise data fra databasen.
@@ -34,6 +46,11 @@ class ResultItemAdapter :
         Log.i("onBind", "binding item")
         val item = getItem(position)
         val image = holder.binding.image
+
+        image.setOnClickListener {
+            Log.d("IMAGE_CLICKED", "Image $position was clicked")
+            fullSizeImage((image.drawable as BitmapDrawable).bitmap ,it.rootView, it.context)
+        }
 
         holder.binding.saveResult.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
@@ -65,6 +82,22 @@ class ResultItemAdapter :
                 .into(binding.image)
             //binding.resultItem = resultImage
         }
+    }
+
+    fun fullSizeImage(bitmap: Bitmap, view: View, context: Context){
+
+        val photoViewContainer = view.findViewById<ConstraintLayout>(R.id.photo_view_constraint)
+        val photoView = view.findViewById<PhotoView>(R.id.photo_view)
+        photoView.setImageBitmap(bitmap)
+        photoViewContainer.setBackgroundColor(ContextCompat.getColor(context, R.color.lm_background_color))
+        photoViewContainer.visibility = View.VISIBLE
+
+        val closeBtn = view.findViewById<Button>(R.id.photo_view_close)
+
+        closeBtn.setOnClickListener {
+            photoViewContainer.visibility = View.INVISIBLE
+        }
+
     }
 
 
