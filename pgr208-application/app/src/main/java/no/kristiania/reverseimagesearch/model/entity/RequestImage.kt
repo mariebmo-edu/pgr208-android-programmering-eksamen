@@ -1,11 +1,8 @@
 package no.kristiania.reverseimagesearch.model.entity
 
-import android.util.Log
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.io.File
-import java.io.IOException
 
 @Entity(tableName = "request_image_table")
 data class RequestImage(
