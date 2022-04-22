@@ -5,14 +5,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import no.kristiania.reverseimagesearch.databinding.ResultItemBinding
 import no.kristiania.reverseimagesearch.databinding.SavedSearchItemBinding
 import no.kristiania.reverseimagesearch.model.entity.RequestImage
-import no.kristiania.reverseimagesearch.model.entity.ResultImage
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
 
-class SavedSearchAdapter :
+class SavedSearchAdapter(val clickListener: (id: Long) -> Unit) :
     ListAdapter<RequestImage, SavedSearchAdapter.SavedSearchItemViewHolder>(
         SavedSearchDiffItemCallback()
     ) {
@@ -23,7 +20,7 @@ class SavedSearchAdapter :
 
     override fun onBindViewHolder(holder: SavedSearchItemViewHolder, position: Int) {
         val item = getItem(position)
-        holder.bind(item)
+        holder.bind(item, clickListener)
     }
 
     class SavedSearchItemViewHolder(val binding: SavedSearchItemBinding) :
@@ -37,12 +34,15 @@ class SavedSearchAdapter :
             }
         }
 
-        fun bind(requestImage: RequestImage) {
+        fun bind(requestImage: RequestImage, clickListener: (id: Long) -> Unit) {
             requestImage.data?.let {
                 val bitmapImage = BitmapUtils.byteArrayToBitmap(it)
-                binding.savedResultImage.setImageBitmap(bitmapImage)
+                binding.savedSearchImage.setImageBitmap(bitmapImage)
+                binding.savedSearchText.text = requestImage.collectionName.toString()
+                requestImage.id?.let { id ->
+                    binding.root.setOnClickListener { clickListener(id) }
+                }
             }
-            binding.textToBeDeleted.text = "faahk"
             Log.i("Load image", "Loading image in binding")
         }
     }

@@ -2,8 +2,8 @@
 <layout xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <androidx.cardview.widget.CardView
 
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
@@ -15,23 +15,11 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/saved_search_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/lm_secondary_color"
-                android:text="TextView"
-                android:textAlignment="center"
-                android:textAllCaps="true"
-                android:textColor="@color/lm_secondary_text_variant"
-                android:textStyle="bold" />
-
             <ImageView
-                android:id="@+id/saved_search_image"
+                android:id="@+id/saved_search_result_image"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="top"
-                app:srcCompat="@drawable/ic_launcher_reverseimgsrc_foreground" />
+                android:layout_gravity="top" />
 
         </LinearLayout>
 
