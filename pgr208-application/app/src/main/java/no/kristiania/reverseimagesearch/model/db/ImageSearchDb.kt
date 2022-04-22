@@ -24,7 +24,8 @@ abstract class ImageSearchDb : RoomDatabase() {
                         context.applicationContext,
                         ImageSearchDb::class.java,
                         "image_search_database"
-                    ).build()
+                    ).fallbackToDestructiveMigration()
+                        .build()
                     INSTANCE = instance
                 }
                 return instance
