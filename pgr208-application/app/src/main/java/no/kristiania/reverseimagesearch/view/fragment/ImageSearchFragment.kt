@@ -56,10 +56,6 @@ class ImageSearchFragment : Fragment() {
         _binding = FragmentImageSearchBinding.inflate(inflater, container, false)
         val view = binding.root
 
-
-
-
-
         _viewModel = ViewModelProvider(this)[SearchViewModel::class.java]
 
         binding.lifecycleOwner = viewLifecycleOwner
@@ -86,6 +82,14 @@ class ImageSearchFragment : Fragment() {
 
         cropBtn.setOnClickListener {
             cropImage(imagePreview.drawable.toBitmap())
+        }
+
+        imagePreview.setOnClickListener{
+
+            if(viewModel.uri != null){
+                val bitmap = imagePreview.drawable.toBitmap()
+                ViewUtils().fullSizeImage(bitmap, it.context.applicationContext)
+            }
         }
 
         // Nødvendig for å unngå rot ved navigasjon

@@ -36,14 +36,13 @@ class SavedSearchAdapter(val clickListener: (id: Long) -> Unit) :
         }
 
         fun bind(requestImage: RequestImage, clickListener: (id: Long) -> Unit) {
-            requestImage.data?.let {
+            requestImage.data?.let { it ->
                 val bitmapImage = BitmapUtils.byteArrayToBitmap(it)
-                binding.savedResultImage.setImageBitmap(bitmapImage)
-                binding.savedResultImage.setOnClickListener {
-                    ViewUtils().fullSizeImage(bitmapImage, it.rootView, it.context)
-                }
-
+                binding.savedSearchImage.setImageBitmap(bitmapImage)
                 binding.savedSearchText.text = requestImage.collectionName.toString()
+                binding.savedSearchImage.setOnClickListener {
+                    ViewUtils().fullSizeImage(bitmapImage, binding.root.context)
+                }
                 requestImage.id?.let { id ->
                     binding.root.setOnClickListener { clickListener(id) }
                 }
