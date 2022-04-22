@@ -29,7 +29,7 @@
             android:id="@+id/action_resultFragment_to_searchFragment"
             app:destination="@+id/searchFragment"
             app:popUpTo="@id/searchFragment"
-            app:popUpToInclusive="true" />
+             />
 
     </fragment>
 
