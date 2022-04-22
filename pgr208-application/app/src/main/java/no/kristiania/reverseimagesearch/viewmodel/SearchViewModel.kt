@@ -75,6 +75,10 @@ class SearchViewModel : ViewModel() {
         _cropping.value = false
     }
 
+    fun abortCropping() {
+        _cropping.value = false
+    }
+
     fun pickImageGallery(galleryResultLauncher: ActivityResultLauncher<Intent>) {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         galleryResultLauncher.launch(intent)

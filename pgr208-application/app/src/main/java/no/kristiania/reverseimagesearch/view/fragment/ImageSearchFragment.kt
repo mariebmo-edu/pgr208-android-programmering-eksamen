@@ -31,12 +31,13 @@ class ImageSearchFragment : Fragment() {
     private val binding get() = _binding!!
     private var _viewModel: SearchViewModel? = null
     private val viewModel get() = _viewModel!!
-    private lateinit var uploadBtn: Button
+    private lateinit var galleryBtn: Button
     private lateinit var cameraBtn: Button
     private lateinit var searchBtn: Button
     private lateinit var cropBtn: Button
     private lateinit var imagePreview: ImageView
     private lateinit var cropImageView: CropImageView
+    private var shouldGetBmp: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,7 +52,7 @@ class ImageSearchFragment : Fragment() {
         viewModel.initiateCroppingValue()
 
         binding.lifecycleOwner = viewLifecycleOwner
-        uploadBtn = binding.uploadBtn
+        galleryBtn = binding.galleryBtn
         cameraBtn = binding.cameraBtn
         searchBtn = binding.searchBtn
         cropBtn = binding.cropBtn
@@ -64,7 +65,7 @@ class ImageSearchFragment : Fragment() {
             this.context?.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         )
 
-        uploadBtn.setOnClickListener {
+        galleryBtn.setOnClickListener {
             viewModel.pickImageGallery(galleryResultLauncher)
         }
 
@@ -73,7 +74,9 @@ class ImageSearchFragment : Fragment() {
         }
 
         cropBtn.setOnClickListener {
+            shouldGetBmp = true
             viewModel.cropImage(imagePreview.drawable.toBitmap(), cropImageView)
+            shouldGetBmp = false
         }
 
         viewModel.uri.observe(viewLifecycleOwner, {
@@ -102,7 +105,7 @@ class ImageSearchFragment : Fragment() {
             if (it) {
                 cropOn()
             } else if (viewModel.uri.value != null && !it) {
-                cropOff()
+                cropOff(shouldGetBmp)
             }
         })
 
@@ -116,46 +119,53 @@ class ImageSearchFragment : Fragment() {
 
     private fun cropOn() {
         imagePreview.visibility = View.GONE
-        searchBtn.visibility = View.GONE
-        uploadBtn.visibility = View.GONE
+        galleryBtn.visibility = View.GONE
         cameraBtn.visibility = View.GONE
         cropImageView.visibility = View.VISIBLE
         cropBtn.text = getString(R.string.finish_cropping)
         cropBtn.setOnClickListener {
+            shouldGetBmp = true
             viewModel.finishCropping(cropImageView.croppedImage, imagePreview)
+            shouldGetBmp = false
+        }
+        searchBtn.text = getString(R.string.back)
+        searchBtn.setOnClickListener {
+            viewModel.abortCropping()
+            resetCrop()
         }
     }
 
-    private fun cropOff() {
-
-        fun helper() {
-            cropImageView.visibility = View.GONE
-            imagePreview.visibility = View.VISIBLE
-            searchBtn.visibility = View.VISIBLE
-            uploadBtn.visibility = View.VISIBLE
-            cameraBtn.visibility = View.VISIBLE
-            cropBtn.text = getString(R.string.crop_image)
+    private fun resetCrop() {
+        cropImageView.visibility = View.GONE
+        imagePreview.visibility = View.VISIBLE
+        galleryBtn.visibility = View.VISIBLE
+        cameraBtn.visibility = View.VISIBLE
+        cropBtn.text = getString(R.string.crop_image)
+        searchBtn.text = getString(R.string.search)
+        cropBtn.setOnClickListener {
+            viewModel.cropImage(imagePreview.drawable.toBitmap(), cropImageView)
         }
+        searchBtn.setOnClickListener {
+            viewModel.shouldNavigate = true
+            viewModel.uploadImageForUrl(imagePreview.drawable.toBitmap(), requireContext())
+        }
+    }
 
-        val bitmap: Bitmap? = cropImageView.croppedImage
+    private fun cropOff(shouldGetBmp: Boolean) {
+
+        var bitmap: Bitmap? = null
+
+        if (shouldGetBmp) {
+            bitmap = cropImageView.croppedImage
+        }
 
         bitmap?.let { bmp ->
-            viewModel.tempImgFile =
-                BitmapUtils.bitmapToFile(bmp, "tempImg.jpg", requireContext())
-            viewModel.setUri(Uri.fromFile(viewModel.tempImgFile))
-            helper()
-            cropBtn.setOnClickListener {
-                viewModel.cropImage(bmp, cropImageView)
-            }
-        } ?: run {
-            helper()
-            cropBtn.setOnClickListener {
-                viewModel.cropImage(imagePreview.drawable.toBitmap(), cropImageView)
-            }
-        }
+            viewModel.tempImgFile.writeBytes(BitmapUtils.bitmapToByteArray(bmp))
+            viewModel.setUri(Uri.fromFile(viewModel.tempImgFile)) // Mulig dette er big nono, må kanskje endres
+            resetCrop()
+        } ?: resetCrop()
     }
 
-    // Må ligge her; callback kan kanskje flyttes ut
     private val cameraPermissionRequest =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) {
             if (it) {
@@ -163,29 +173,22 @@ class ImageSearchFragment : Fragment() {
             }
         }
 
-    // Må ligge her; callback kan kanskje flyttes ut
     private val cameraResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == AppCompatActivity.RESULT_OK) {
                 val bitmap = BitmapFactory.decodeFile(viewModel.tempImgFile.absolutePath)
-                viewModel.setUri(Uri.fromFile(viewModel.tempImgFile)) // Egentlig big nono, må helst endres
+                viewModel.setUri(Uri.fromFile(viewModel.tempImgFile)) // Mulig dette er big nono, må kanskje endres
                 imagePreview.setImageBitmap(bitmap)
-//                searchBtn.visibility = View.VISIBLE
-//                cropBtn.visibility = View.VISIBLE
             }
         }
 
-    // Må ligge her; callback kan kanskje flyttes ut
     private val galleryResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == AppCompatActivity.RESULT_OK && it.data != null) {
-                viewModel.setUri(it.data?.data!!)
+                viewModel.setUri(it.data?.data!!) // Mulig dette er big nono, må kanskje endres
                 val bitmap =
-                    BitmapUtils.getBitmap(requireContext(), null, viewModel.uri.toString(), ::UriToBitmap)
+                    BitmapUtils.getBitmap(requireContext(), null, viewModel.uri.value.toString(), ::UriToBitmap)
                 imagePreview.setImageBitmap(bitmap)
-//                searchBtn.visibility = View.VISIBLE
-//                cropBtn.visibility = View.VISIBLE
-
             } else {
                 println("error: result is not OK, or data is empty")
             }

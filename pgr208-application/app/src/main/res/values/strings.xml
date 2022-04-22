@@ -19,4 +19,6 @@
     <string name="camera">CAMERA</string>
     <string name="save_search_result">Save search result</string>
     <string name="loading">Loading...</string>
+    <string name="back">BACK</string>
+    <string name="gallery">GALLERY</string>
 </resources>
