@@ -22,6 +22,7 @@ import no.kristiania.reverseimagesearch.R
 import no.kristiania.reverseimagesearch.databinding.ResultItemBinding
 import no.kristiania.reverseimagesearch.model.entity.ResultImage
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
+import no.kristiania.reverseimagesearch.viewmodel.utils.ViewUtils
 import java.util.logging.Level.INFO
 import kotlin.coroutines.coroutineContext
 
@@ -49,7 +50,7 @@ class ResultItemAdapter :
 
         image.setOnClickListener {
             Log.d("IMAGE_CLICKED", "Image $position was clicked")
-            fullSizeImage((image.drawable as BitmapDrawable).bitmap ,it.rootView, it.context)
+            ViewUtils().fullSizeImage((image.drawable as BitmapDrawable).bitmap ,it.rootView, it.context)
         }
 
         holder.binding.saveResult.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -82,22 +83,6 @@ class ResultItemAdapter :
                 .into(binding.image)
             //binding.resultItem = resultImage
         }
-    }
-
-    fun fullSizeImage(bitmap: Bitmap, view: View, context: Context){
-
-        val photoViewContainer = view.findViewById<ConstraintLayout>(R.id.photo_view_constraint)
-        val photoView = view.findViewById<PhotoView>(R.id.photo_view)
-        photoView.setImageBitmap(bitmap)
-        photoViewContainer.setBackgroundColor(ContextCompat.getColor(context, R.color.lm_background_color))
-        photoViewContainer.visibility = View.VISIBLE
-
-        val closeBtn = view.findViewById<Button>(R.id.photo_view_close)
-
-        closeBtn.setOnClickListener {
-            photoViewContainer.visibility = View.INVISIBLE
-        }
-
     }
 
 
