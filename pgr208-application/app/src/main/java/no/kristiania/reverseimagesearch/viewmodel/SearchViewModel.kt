@@ -20,6 +20,7 @@ class SearchViewModel : ViewModel() {
     lateinit var tempImgFile : File
     var uri: Uri? = null
 
+
     fun uploadImageForUrl(bitmap: Bitmap, context: Context) {
         val http = FastNetworkingAPI(context)
 

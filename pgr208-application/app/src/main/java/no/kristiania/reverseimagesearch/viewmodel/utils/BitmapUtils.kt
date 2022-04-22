@@ -13,6 +13,8 @@ import android.util.Base64.encodeToString
 import androidx.core.content.ContextCompat
 import java.io.*
 import java.util.*
+import java.util.zip.Deflater
+import java.util.zip.Inflater
 
 class BitmapUtils {
 
@@ -57,6 +59,30 @@ class BitmapUtils {
 
             bitmap.compress(Bitmap.CompressFormat.PNG, 0, outputStream)
             return outputStream.toByteArray()
+        }
+
+        fun compressByteArray(byteArray: ByteArray): ByteArray {
+            val deflater = Deflater()
+
+            deflater.setInput(byteArray)
+            deflater.finish()
+            val output = byteArrayOf()
+            deflater.deflate(output)
+            deflater.end()
+
+            return output
+        }
+
+        fun decompressByteArray(byteArray: ByteArray): ByteArray {
+            val inflater = Inflater()
+
+            inflater.setInput(byteArray, 0, byteArray.size)
+            val output = byteArrayOf()
+            inflater.inflate(output)
+
+            inflater.end()
+
+            return output
         }
 
 
