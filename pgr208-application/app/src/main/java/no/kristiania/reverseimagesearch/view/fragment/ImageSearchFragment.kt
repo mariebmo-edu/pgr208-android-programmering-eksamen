@@ -33,6 +33,7 @@ import no.kristiania.reverseimagesearch.viewmodel.SearchViewModel
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils.Companion.UriToBitmap
 import no.kristiania.reverseimagesearch.viewmodel.utils.NetworkUtils
+import no.kristiania.reverseimagesearch.viewmodel.utils.ViewUtils
 
 import java.io.File
 
@@ -53,7 +54,7 @@ class ImageSearchFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         setHasOptionsMenu(true)
         _binding = FragmentImageSearchBinding.inflate(inflater, container, false)
         val view = binding.root
