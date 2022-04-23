@@ -3,12 +3,10 @@ package no.kristiania.reverseimagesearch.viewmodel.utils
 import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Bitmap
-import android.text.Layout
 import android.view.LayoutInflater
-import android.view.View
-import android.widget.Button
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import com.github.chrisbanes.photoview.PhotoView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import no.kristiania.reverseimagesearch.R
 
