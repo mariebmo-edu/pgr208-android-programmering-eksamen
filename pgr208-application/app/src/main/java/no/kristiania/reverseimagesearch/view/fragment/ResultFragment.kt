@@ -72,7 +72,7 @@ class ResultFragment : Fragment() {
         // Observer endringer i view modellens liste av resultitems
 
         var i = 0
-        viewModel.resultImages.observe(viewLifecycleOwner, Observer {
+        viewModel.resultImages.observe(viewLifecycleOwner, {
             Log.i("ResultFragment", "Submitting list")
             it?.let {
                 adapter.submitList(it)
