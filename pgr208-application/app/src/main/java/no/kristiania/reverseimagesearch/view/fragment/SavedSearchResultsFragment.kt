@@ -1,4 +1,4 @@
-package no.kristiania.reverseimagesearch
+package no.kristiania.reverseimagesearch.view.fragment
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
@@ -7,7 +7,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import no.kristiania.reverseimagesearch.viewmodel.SavedSearchResultsViewModel
 import no.kristiania.reverseimagesearch.databinding.SavedSearchResultsFragmentBinding
+import no.kristiania.reverseimagesearch.model.controller.ResultController
 import no.kristiania.reverseimagesearch.model.db.ImageSearchDb
 import no.kristiania.reverseimagesearch.view.adapter.SavedSearchResultsAdapter
 import no.kristiania.reverseimagesearch.viewmodel.factory.SavedSearchResultsViewModelFactory

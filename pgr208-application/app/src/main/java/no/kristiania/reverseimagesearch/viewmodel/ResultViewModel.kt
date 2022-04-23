@@ -25,14 +25,26 @@ class ResultViewModel(
     private var _shouldSearch = MutableLiveData(true)
     val shouldSearch: LiveData<Boolean> get() = _shouldSearch
 
+    private var _shouldNavigateToSaved = MutableLiveData(false)
+    val shouldNavigateToSaved: LiveData<Boolean> get() = _shouldNavigateToSaved
+    private var _infoMessage = MutableLiveData<String>()
+    val infoMessage get() = _infoMessage
+
     lateinit var requestImageLocalPath: String
     lateinit var hostedImageServerUrl: String
     private var _resultImages = MutableLiveData<MutableList<ResultImage>>(mutableListOf())
+
     val resultImages: LiveData<MutableList<ResultImage>>
         get() = _resultImages
 
-
-
+    fun toggleNavigateToSaved() {
+        _shouldNavigateToSaved.value?.let {
+            _shouldNavigateToSaved.value = !it
+        }
+    }
+    fun setInfoText(message: String) {
+        _infoMessage.value = message
+    }
     fun getResultFromUrl(url: String, api: FastNetworkingAPI) {
 
         viewModelScope.launch(Dispatchers.IO) {
