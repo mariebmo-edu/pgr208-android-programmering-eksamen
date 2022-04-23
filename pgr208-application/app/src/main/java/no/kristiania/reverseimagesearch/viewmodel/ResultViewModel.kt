@@ -2,32 +2,28 @@ package no.kristiania.reverseimagesearch.viewmodel
 
 import android.content.Context
 import android.util.Log
-import android.view.View
-import android.widget.RelativeLayout
-import android.widget.Toast
-import androidx.core.view.size
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import no.kristiania.reverseimagesearch.R
+import no.kristiania.reverseimagesearch.model.controller.RequestController
+import no.kristiania.reverseimagesearch.model.controller.ResultController
 import no.kristiania.reverseimagesearch.model.db.RequestImageDao
 import no.kristiania.reverseimagesearch.model.db.ResultImageDao
 import no.kristiania.reverseimagesearch.model.entity.RequestImage
 import no.kristiania.reverseimagesearch.model.entity.ResultImage
 import no.kristiania.reverseimagesearch.viewmodel.api.FastNetworkingAPI
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
-import no.kristiania.reverseimagesearch.viewmodel.utils.JsonArrUtils
 import org.json.JSONArray
 
 class ResultViewModel(
     private val requestImageDao: RequestImageDao,
     private val resultImageDao: ResultImageDao,
+    private val resultController: ResultController,
+    private val requestController: RequestController
 ) : ViewModel() {
 
     private var _shouldSearch = MutableLiveData(true)
@@ -118,6 +114,7 @@ class ResultViewModel(
         val requestImage = RequestImage(serverPath = hostedImageServerUrl, data = BitmapUtils.bitmapToByteArray(bitmapRequestImage), collectionName = collectionName)
 
         viewModelScope.launch {
+            resultController.saveAll(requestImage, imagesToSave, collectionName)
             val reqSave = async {requestImageDao.insert(requestImage)}
             val reqImgId = reqSave.await()
 
