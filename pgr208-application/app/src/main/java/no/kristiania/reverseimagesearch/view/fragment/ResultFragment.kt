@@ -60,7 +60,6 @@ class ResultFragment : Fragment() {
 
         viewModel.shouldSearch.observe(viewLifecycleOwner, { shouldSearch ->
             if (shouldSearch && api != null) {
-                viewModel.searchDone()
                 viewModel.getResultFromUrl(viewModel.hostedImageServerUrl, api)
             }
         })
@@ -78,13 +77,20 @@ class ResultFragment : Fragment() {
         var timer = true
 
         viewModel.resultImages.observe(viewLifecycleOwner, Observer {
+
+            Log.d("SHOULD_SEARCH", viewModel.shouldSearch.value.toString())
+            if(viewModel.shouldSearch.value!!){
+                view.findViewById<RelativeLayout>(R.id.loading_panel).visibility = View.VISIBLE
+            } else {
+                viewModel.searchDone()
+                view.findViewById<RelativeLayout>(R.id.loading_panel).visibility = View.GONE
+                timer = false
+            }
+
             Log.i("ResultFragment", "Submitting list")
             it?.let {
                 adapter.submitList(it)
-                viewModel.setInfoText("${++i}/3 results added")
-            }
-            if (view.findViewById<RecyclerView>(R.id.result_items_list).size > 0) {
-                view.findViewById<RelativeLayout>(R.id.loading_panel).visibility = View.GONE
+                viewModel.setInfoText("${i++}/3 results added")
             }
 
             //Turns off the loading bar if there is a timeout - 20 seconds
@@ -93,9 +99,12 @@ class ResultFragment : Fragment() {
                     view.findViewById<RelativeLayout>(R.id.loading_panel).visibility = View.GONE
                     Log.i("RESPONSE_TIMEOUT", "The response from the server took too long.")
                     viewModel.setInfoText("Response Timeout")
+                    viewModel.searchDone()
                     timer = false
                 }
             }, 20000)
+
+
         })
 
         viewModel.shouldNavigateToSaved.observe(viewLifecycleOwner, {
