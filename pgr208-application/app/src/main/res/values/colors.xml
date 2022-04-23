@@ -8,7 +8,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    // APP COLORS
+    // APP COLORS - LightMode
     <color name="lm_primary_color">#E10F88</color>
     <color name="lm_primary_color_variant">#A51B6B</color>
     <color name="lm_primary_text_color">#FFFFFF</color>
@@ -17,5 +17,20 @@
     <color name="lm_secondary_color_variant">#07424A</color>
     <color name="lm_secondary_text_variant">#FFFFFF</color>
 
-    <color name="lm_background_color">#D5D4DF</color>
+    <color name="lm_background_color">#D2D2DA</color>
+    <color name="lm_overlay_color">#ADD2D2DA</color>
+
+
+    // APP COLORS - DarkMode
+    <color name="dm_primary_color">#87004E</color>
+    <color name="dm_primary_color_variant">#4E002B</color>
+    <color name="dm_primary_text_color">#E19AC1</color>
+
+    <color name="dm_secondary_color">#123540</color>
+    <color name="dm_secondary_color_variant">#032C32</color>
+    <color name="dm_secondary_text_variant">#7B999A</color>
+
+    <color name="dm_background_color">#3D3D42</color>
+    <color name="dm_overlay_color">#D8000000</color>
+
 </resources>
