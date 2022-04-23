@@ -11,7 +11,7 @@ interface ResultImageDao {
     suspend fun insert(resultImage: ResultImage): Long
 
     @Insert
-    suspend fun insertMany(resultImages: List<ResultImage>): Boolean
+    suspend fun insertMany(resultImages: List<ResultImage>)
 
     @Update
     suspend fun update(resultImage: ResultImage)

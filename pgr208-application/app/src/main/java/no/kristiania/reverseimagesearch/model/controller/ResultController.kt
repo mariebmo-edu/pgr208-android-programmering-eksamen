@@ -8,20 +8,20 @@ import no.kristiania.reverseimagesearch.model.entity.RequestImage
 import no.kristiania.reverseimagesearch.model.entity.ResultImage
 import java.lang.Exception
 
-class ResultController(private val resultImageDao: ResultImageDao,private val requestImageDao: RequestImageDao) {
-    fun saveAll(requestImage: RequestImage, imagesToSave: List<ResultImage>, collectionName: String) {
+class ResultController(
+    private val resultImageDao: ResultImageDao,
+    private val requestImageDao: RequestImageDao
+) {
+    fun saveAll(
+        requestImage: RequestImage,
+        imagesToSave: List<ResultImage>
+    ) = CoroutineScope(Dispatchers.IO).async {
 
-        runBlocking {
-            launch(Dispatchers.IO) {
-                val reqSave = async {requestImageDao.insert(requestImage)}
-                val reqImgId = reqSave.await()
-
-                imagesToSave.forEach {
-                    it.requestImageId = reqImgId
-                }
-                resultImageDao.insertMany(imagesToSave)
-            }
+        val reqSave = async { requestImageDao.insert(requestImage) }
+        val reqImgId = reqSave.await()
+        imagesToSave.forEach {
+            it.requestImageId = reqImgId
         }
-
+        resultImageDao.insertMany(imagesToSave)
     }
 }

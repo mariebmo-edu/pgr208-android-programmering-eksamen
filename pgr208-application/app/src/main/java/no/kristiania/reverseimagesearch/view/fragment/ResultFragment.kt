@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import no.kristiania.reverseimagesearch.R
 import no.kristiania.reverseimagesearch.viewmodel.ResultViewModel
 import no.kristiania.reverseimagesearch.databinding.FragmentResultBinding
+import no.kristiania.reverseimagesearch.model.controller.ResultController
 import no.kristiania.reverseimagesearch.model.db.ImageSearchDb
 import no.kristiania.reverseimagesearch.view.adapter.ResultItemAdapter
 import no.kristiania.reverseimagesearch.viewmodel.factory.ResultViewModelFactory
@@ -44,7 +45,8 @@ class ResultFragment : Fragment() {
         val db = ImageSearchDb.getInstance(application)
         val requestImageDao = db.requestImageDao
         val resultImageDao = db.resultImageDao
-        val resultViewModelFactory = ResultViewModelFactory(requestImageDao, resultImageDao)
+        val resultController = ResultController(resultImageDao, requestImageDao)
+        val resultViewModelFactory = ResultViewModelFactory(resultController)
         val viewModel = ViewModelProvider(this, resultViewModelFactory)[ResultViewModel::class.java]
         viewModel.hostedImageServerUrl =
             ResultFragmentArgs.fromBundle(requireArguments()).responseUrl

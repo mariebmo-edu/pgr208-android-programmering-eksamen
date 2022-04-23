@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import no.kristiania.reverseimagesearch.model.controller.RequestController
 import no.kristiania.reverseimagesearch.model.controller.ResultController
 import no.kristiania.reverseimagesearch.model.db.RequestImageDao
@@ -20,10 +21,7 @@ import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
 import org.json.JSONArray
 
 class ResultViewModel(
-    private val requestImageDao: RequestImageDao,
-    private val resultImageDao: ResultImageDao,
-    private val resultController: ResultController,
-    private val requestController: RequestController
+    private val resultController: ResultController
 ) : ViewModel() {
 
     private var _shouldSearch = MutableLiveData(true)
@@ -35,9 +33,7 @@ class ResultViewModel(
     val resultImages: LiveData<MutableList<ResultImage>>
         get() = _resultImages
 
-//    init {
-//        _resultImages.value = ArrayList()
-//    }
+
 
     fun getResultFromUrl(url: String, api: FastNetworkingAPI) {
 
@@ -79,16 +75,6 @@ class ResultViewModel(
     }
 
 
-    fun saveAllResultImages(resultImages: List<ResultImage>) {
-        viewModelScope.launch {
-            resultImageDao.insertMany(resultImages)
-        }
-    }
-    fun saveResultImage(resultImage: ResultImage) {
-        viewModelScope.launch {
-            resultImageDao.insert(resultImage)
-        }
-    }
 
     fun fetchImagesFromSearch(response: JSONArray) {
         val imageObjs = mutableListOf<ResultImage>()
@@ -113,15 +99,8 @@ class ResultViewModel(
         )
         val requestImage = RequestImage(serverPath = hostedImageServerUrl, data = BitmapUtils.bitmapToByteArray(bitmapRequestImage), collectionName = collectionName)
 
-        viewModelScope.launch {
-            resultController.saveAll(requestImage, imagesToSave, collectionName)
-            val reqSave = async {requestImageDao.insert(requestImage)}
-            val reqImgId = reqSave.await()
-
-            imagesToSave.forEach {
-                it.requestImageId = reqImgId
-            }
-            resultImageDao.insertMany(imagesToSave)
+        runBlocking {
+            resultController.saveAll(requestImage, imagesToSave)
         }
 
     }
