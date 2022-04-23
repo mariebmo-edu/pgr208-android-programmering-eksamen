@@ -11,10 +11,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import no.kristiania.reverseimagesearch.R
 import no.kristiania.reverseimagesearch.model.db.RequestImageDao
 import no.kristiania.reverseimagesearch.model.db.ResultImageDao
@@ -46,6 +43,7 @@ class ResultViewModel(
     fun getResultFromUrl(url: String, api: FastNetworkingAPI) {
 
         viewModelScope.launch(Dispatchers.IO) {
+
             val googleReq =
                 async {
                     api.getImageFromProviderSynchronous(
@@ -68,15 +66,17 @@ class ResultViewModel(
                     )
                 }
 
-            launch(Dispatchers.Main) {
-                bingReq.await()?.let {
-                    fetchImagesFromSearch(it)
-                }
-                googleReq.await()?.let {
-                    fetchImagesFromSearch(it)
-                }
-                tinEyeReq.await()?.let {
-                    fetchImagesFromSearch(it)
+            withTimeout(20000L){
+                launch(Dispatchers.Main) {
+                    bingReq.await()?.let {
+                        fetchImagesFromSearch(it)
+                    }
+                    googleReq.await()?.let {
+                        fetchImagesFromSearch(it)
+                    }
+                    tinEyeReq.await()?.let {
+                        fetchImagesFromSearch(it)
+                    }
                 }
             }
         }
