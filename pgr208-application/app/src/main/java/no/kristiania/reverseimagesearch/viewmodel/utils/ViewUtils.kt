@@ -26,7 +26,7 @@ class ViewUtils {
 
         val photoViewContainer = imageViewer.findViewById<ConstraintLayout>(R.id.photo_view_constraint)
         val photoView = imageViewer.findViewById<PhotoView>(R.id.photo_view)
-        val closeBtn = imageViewer.findViewById<FloatingActionButton>(R.id.photo_view_close)
+        val closeBtn = imageViewer.findViewById<Button>(R.id.photo_view_close)
 
 
         photoView.setImageBitmap(bitmap)

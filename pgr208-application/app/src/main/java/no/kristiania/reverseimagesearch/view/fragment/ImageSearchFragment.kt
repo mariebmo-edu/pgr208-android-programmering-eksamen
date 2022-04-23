@@ -51,7 +51,7 @@ class ImageSearchFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         setHasOptionsMenu(true)
         _binding = FragmentImageSearchBinding.inflate(inflater, container, false)
         val view = binding.root
@@ -88,7 +88,7 @@ class ImageSearchFragment : Fragment() {
 
             if(viewModel.uri != null){
                 val bitmap = imagePreview.drawable.toBitmap()
-                ViewUtils().fullSizeImage(bitmap, it.context.applicationContext)
+                ViewUtils().fullSizeImage(bitmap, view.context)
             }
         }
 
