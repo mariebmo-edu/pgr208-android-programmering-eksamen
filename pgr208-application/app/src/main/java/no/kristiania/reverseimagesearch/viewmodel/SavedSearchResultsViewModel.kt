@@ -1,4 +1,4 @@
-package no.kristiania.reverseimagesearch
+package no.kristiania.reverseimagesearch.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

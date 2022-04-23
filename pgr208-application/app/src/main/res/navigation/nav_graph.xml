@@ -46,7 +46,7 @@
     </fragment>
     <fragment
         android:id="@+id/savedSearchesResultFragment"
-        android:name="no.kristiania.reverseimagesearch.SavedSearchResultsFragment"
+        android:name="no.kristiania.reverseimagesearch.view.fragment.SavedSearchResultsFragment"
         android:label="Saved results"
         tools:layout="@layout/saved_search_fragment">
         <argument
