@@ -10,20 +10,21 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.toBitmap
+import androidx.core.view.children
+import androidx.core.view.get
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.bottomnavigation.BottomNavigationMenuView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.theartofdev.edmodo.cropper.CropImageView
 import no.kristiania.reverseimagesearch.R
@@ -31,6 +32,7 @@ import no.kristiania.reverseimagesearch.databinding.FragmentImageSearchBinding
 import no.kristiania.reverseimagesearch.viewmodel.SearchViewModel
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils.Companion.UriToBitmap
+import no.kristiania.reverseimagesearch.viewmodel.utils.NetworkUtils
 import java.io.File
 
 class ImageSearchFragment : Fragment() {
@@ -46,13 +48,18 @@ class ImageSearchFragment : Fragment() {
     private lateinit var imagePreview: ImageView
     private lateinit var cropImageView: CropImageView
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
+        setHasOptionsMenu(true)
         _binding = FragmentImageSearchBinding.inflate(inflater, container, false)
         val view = binding.root
+
+
+
+
 
         _viewModel = ViewModelProvider(this)[SearchViewModel::class.java]
 
@@ -93,31 +100,32 @@ class ImageSearchFragment : Fragment() {
 
         viewModel.url.observe(viewLifecycleOwner, { url ->
             if (viewModel.shouldNavigate) {
-                Log.d("URL OBSERVER", "Should navigate")
                 val action = ImageSearchFragmentDirections
                     .actionSearchFragmentToResultFragment(url, viewModel.uri.toString())
                 this.findNavController().navigate(action)
+                activateResultMenuItem()
                 viewModel.shouldNavigate = false
             }
         })
         searchBtn.setOnClickListener {
-            viewModel.shouldNavigate = true
-            toggleResultNav(it)
-            viewModel.uploadImageForUrl(imagePreview.drawable.toBitmap(), requireContext())
 
-
+            when(NetworkUtils().isConnected(requireContext())){
+                true -> {
+                    viewModel.shouldNavigate = true
+                    viewModel.uploadImageForUrl(imagePreview.drawable.toBitmap(), requireContext())
+                }
+                false -> Toast.makeText(requireContext(), "Connection Error", Toast.LENGTH_LONG).show()
+            }
         }
 
         return view
     }
 
-    private fun toggleResultNav(view: View){
-        val bottomNav = view.findViewById<BottomNavigationView>(R.id.bottom_nav)?.menu
-
-        if (bottomNav != null) {
-            Log.d("BADGE_NAVBAR", bottomNav.getItem(1).title.toString())
-            bottomNav.getItem(1).isVisible = true
-        }
+    private fun activateResultMenuItem() {
+        val appCompat = requireActivity() as AppCompatActivity
+        val navigationView = appCompat.findViewById<BottomNavigationView>(R.id.bottom_nav)
+        val results = navigationView.menu.getItem(2)
+        results.isEnabled = true
     }
 
     // Burde flyttes ut til SearchViewModel
@@ -213,4 +221,5 @@ class ImageSearchFragment : Fragment() {
             }
 
         }
+
 }

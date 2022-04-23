@@ -11,10 +11,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import no.kristiania.reverseimagesearch.R
 import no.kristiania.reverseimagesearch.model.db.RequestImageDao
 import no.kristiania.reverseimagesearch.model.db.ResultImageDao
@@ -30,20 +27,23 @@ class ResultViewModel(
     private val resultImageDao: ResultImageDao,
 ) : ViewModel() {
 
+    private var _shouldSearch = MutableLiveData(true)
+    val shouldSearch: LiveData<Boolean> get() = _shouldSearch
 
     lateinit var requestImageLocalPath: String
     lateinit var hostedImageServerUrl: String
-    private var _resultImages = MutableLiveData<MutableList<ResultImage>>()
+    private var _resultImages = MutableLiveData<MutableList<ResultImage>>(mutableListOf())
     val resultImages: LiveData<MutableList<ResultImage>>
         get() = _resultImages
 
-    init {
-        _resultImages.value = ArrayList()
-    }
+//    init {
+//        _resultImages.value = ArrayList()
+//    }
 
     fun getResultFromUrl(url: String, api: FastNetworkingAPI) {
 
         viewModelScope.launch(Dispatchers.IO) {
+
             val googleReq =
                 async {
                     api.getImageFromProviderSynchronous(
@@ -66,15 +66,17 @@ class ResultViewModel(
                     )
                 }
 
-            launch(Dispatchers.Main) {
-                bingReq.await()?.let {
-                    fetchImagesFromSearch(it)
-                }
-                googleReq.await()?.let {
-                    fetchImagesFromSearch(it)
-                }
-                tinEyeReq.await()?.let {
-                    fetchImagesFromSearch(it)
+            withTimeout(20000L){
+                launch(Dispatchers.Main) {
+                    bingReq.await()?.let {
+                        fetchImagesFromSearch(it)
+                    }
+                    googleReq.await()?.let {
+                        fetchImagesFromSearch(it)
+                    }
+                    tinEyeReq.await()?.let {
+                        fetchImagesFromSearch(it)
+                    }
                 }
             }
         }
@@ -125,5 +127,9 @@ class ResultViewModel(
             resultImageDao.insertMany(imagesToSave)
         }
 
+    }
+
+    fun searchDone() {
+        _shouldSearch.value = false
     }
 }
