@@ -80,7 +80,7 @@ class ResultFragment : Fragment() {
             Log.i("ResultFragment", "Submitting list")
             it?.let {
                 adapter.submitList(it)
-                Toast.makeText(activity, "${++i}/3 results added", Toast.LENGTH_SHORT).show()
+                viewModel.setInfoText("${++i}/3 results added")
             }
             if (view.findViewById<RecyclerView>(R.id.result_items_list).size > 0) {
                 view.findViewById<RelativeLayout>(R.id.loading_panel).visibility = View.GONE
@@ -91,7 +91,7 @@ class ResultFragment : Fragment() {
             if (timer){
                 view.findViewById<RelativeLayout>(R.id.loading_panel).visibility = View.GONE
                 Log.i("RESPONSE_TIMEOUT", "The response from the server took too long.")
-                Toast.makeText(activity, "Response Timeout", Toast.LENGTH_SHORT).show()
+                viewModel.setInfoText("Response Timeout")
                 timer = false
             }
             }, 20000)
