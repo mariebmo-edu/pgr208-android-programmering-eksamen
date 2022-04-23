@@ -60,8 +60,8 @@ class ResultFragment : Fragment() {
 
         viewModel.shouldSearch.observe(viewLifecycleOwner, { shouldSearch ->
             if (shouldSearch && api != null) {
-                viewModel.getResultFromUrl(viewModel.hostedImageServerUrl, api)
                 viewModel.searchDone()
+                viewModel.getResultFromUrl(viewModel.hostedImageServerUrl, api)
             }
         })
 
