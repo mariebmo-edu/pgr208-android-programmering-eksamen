@@ -14,6 +14,7 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -31,6 +32,7 @@ import no.kristiania.reverseimagesearch.databinding.FragmentImageSearchBinding
 import no.kristiania.reverseimagesearch.viewmodel.SearchViewModel
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils.Companion.UriToBitmap
+import no.kristiania.reverseimagesearch.viewmodel.utils.NetworkUtils
 import java.io.File
 
 class ImageSearchFragment : Fragment() {
@@ -106,8 +108,14 @@ class ImageSearchFragment : Fragment() {
             }
         })
         searchBtn.setOnClickListener {
-            viewModel.shouldNavigate = true
-            viewModel.uploadImageForUrl(imagePreview.drawable.toBitmap(), requireContext())
+
+            when(NetworkUtils().isConnected(requireContext())){
+                true -> {
+                    viewModel.shouldNavigate = true
+                    viewModel.uploadImageForUrl(imagePreview.drawable.toBitmap(), requireContext())
+                }
+                false -> Toast.makeText(requireContext(), "Connection Error", Toast.LENGTH_LONG).show()
+            }
         }
 
         return view
