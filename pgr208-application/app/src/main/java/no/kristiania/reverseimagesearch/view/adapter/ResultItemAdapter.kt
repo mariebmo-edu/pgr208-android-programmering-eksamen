@@ -50,7 +50,6 @@ class ResultItemAdapter :
 
         image.setOnClickListener {
             Log.d("IMAGE_CLICKED", "Image $position was clicked")
-            ViewUtils().fullSizeImage((image.drawable as BitmapDrawable).bitmap, it.context.applicationContext)
         }
 
         holder.binding.saveResult.setOnCheckedChangeListener { buttonView, isChecked ->

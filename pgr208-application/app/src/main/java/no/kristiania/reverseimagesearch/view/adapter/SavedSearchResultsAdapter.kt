@@ -44,10 +44,6 @@ class SavedSearchResultsAdapter : ListAdapter<ResultImage, SavedSearchResultsAda
             resultImage.data?.let {
                 val bitMapImage = BitmapUtils.byteArrayToBitmap(it)
                 binding.savedSearchResultImage.setImageBitmap(bitMapImage)
-
-                binding.savedSearchResultImage.setOnClickListener { it ->
-                    ViewUtils().fullSizeImage(bitMapImage, it.context.applicationContext)
-                }
             }
         }
     }

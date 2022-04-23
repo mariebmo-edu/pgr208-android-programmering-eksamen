@@ -1,12 +1,14 @@
 package no.kristiania.reverseimagesearch.viewmodel.utils
 
 import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Context
 import android.graphics.Bitmap
 import android.text.Layout
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
+import android.widget.PopupWindow
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import com.github.chrisbanes.photoview.PhotoView
@@ -16,10 +18,8 @@ import no.kristiania.reverseimagesearch.R
 
 class ViewUtils {
 
-    fun fullSizeImage(bitmap: Bitmap, context: Context){
+    fun fullSizeImage(bitmap: Bitmap, view: View, context: Context){
 
-
-        val dialogueBuilder = AlertDialog.Builder(context)
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
         val imageViewer = inflater.inflate(R.layout.fragment_fullscreen_image, null)
@@ -32,12 +32,13 @@ class ViewUtils {
         photoView.setImageBitmap(bitmap)
         photoViewContainer.setBackgroundColor(ContextCompat.getColor(context, R.color.lm_background_color))
 
-        dialogueBuilder.setView(imageViewer)
-        val showImageFullscreen = dialogueBuilder.create()
+        val popUpWindow = PopupWindow(imageViewer)
 
         closeBtn.setOnClickListener {
-            showImageFullscreen.dismiss()
+            popUpWindow.dismiss()
         }
+
+        popUpWindow.showAsDropDown(view)
     }
 
 
