@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import no.kristiania.reverseimagesearch.databinding.SavedSearchItemBinding
 import no.kristiania.reverseimagesearch.model.entity.RequestImage
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
+import no.kristiania.reverseimagesearch.viewmodel.utils.ViewUtils
 
 class SavedSearchAdapter(val clickListener: (id: Long) -> Unit) :
     ListAdapter<RequestImage, SavedSearchAdapter.SavedSearchItemViewHolder>(
@@ -35,10 +36,13 @@ class SavedSearchAdapter(val clickListener: (id: Long) -> Unit) :
         }
 
         fun bind(requestImage: RequestImage, clickListener: (id: Long) -> Unit) {
-            requestImage.data?.let {
+            requestImage.data?.let { it ->
                 val bitmapImage = BitmapUtils.byteArrayToBitmap(it)
                 binding.savedSearchImage.setImageBitmap(bitmapImage)
                 binding.savedSearchText.text = requestImage.collectionName.toString()
+                binding.savedSearchImage.setOnClickListener {
+                    ViewUtils().fullSizeImage(bitmapImage, binding.root.context)
+                }
                 requestImage.id?.let { id ->
                     binding.root.setOnClickListener { clickListener(id) }
                 }

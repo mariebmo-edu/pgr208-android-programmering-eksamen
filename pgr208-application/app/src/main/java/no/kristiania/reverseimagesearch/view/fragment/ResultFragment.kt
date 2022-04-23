@@ -1,8 +1,6 @@
 package no.kristiania.reverseimagesearch.view.fragment
 
 import android.app.AlertDialog
-import android.content.Context.LAYOUT_INFLATER_SERVICE
-import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -15,15 +13,14 @@ import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.RelativeLayout
 import android.widget.Toast
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.view.size
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
-import no.kristiania.reverseimagesearch.PopupFragment_TextWButton
 import no.kristiania.reverseimagesearch.R
 import no.kristiania.reverseimagesearch.viewmodel.ResultViewModel
 import no.kristiania.reverseimagesearch.databinding.FragmentResultBinding
+import no.kristiania.reverseimagesearch.model.controller.ResultController
 import no.kristiania.reverseimagesearch.model.db.ImageSearchDb
 import no.kristiania.reverseimagesearch.view.adapter.ResultItemAdapter
 import no.kristiania.reverseimagesearch.viewmodel.factory.ResultViewModelFactory
@@ -50,7 +47,8 @@ class ResultFragment : Fragment() {
         val db = ImageSearchDb.getInstance(application)
         val requestImageDao = db.requestImageDao
         val resultImageDao = db.resultImageDao
-        val resultViewModelFactory = ResultViewModelFactory(requestImageDao, resultImageDao)
+        val resultController = ResultController(resultImageDao, requestImageDao)
+        val resultViewModelFactory = ResultViewModelFactory(resultController)
         val viewModel = ViewModelProvider(this, resultViewModelFactory)[ResultViewModel::class.java]
         viewModel.hostedImageServerUrl =
             ResultFragmentArgs.fromBundle(requireArguments()).responseUrl

@@ -33,6 +33,7 @@ import no.kristiania.reverseimagesearch.viewmodel.SearchViewModel
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils.Companion.UriToBitmap
 import no.kristiania.reverseimagesearch.viewmodel.utils.NetworkUtils
+
 import java.io.File
 
 class ImageSearchFragment : Fragment() {
@@ -56,10 +57,6 @@ class ImageSearchFragment : Fragment() {
         setHasOptionsMenu(true)
         _binding = FragmentImageSearchBinding.inflate(inflater, container, false)
         val view = binding.root
-
-
-
-
 
         _viewModel = ViewModelProvider(this)[SearchViewModel::class.java]
 
@@ -87,6 +84,14 @@ class ImageSearchFragment : Fragment() {
 
         cropBtn.setOnClickListener {
             cropImage(imagePreview.drawable.toBitmap())
+        }
+
+        imagePreview.setOnClickListener{
+
+            if(viewModel.uri != null){
+                val bitmap = imagePreview.drawable.toBitmap()
+                ViewUtils().fullSizeImage(bitmap, it.context.applicationContext)
+            }
         }
 
         // Nødvendig for å unngå rot ved navigasjon
