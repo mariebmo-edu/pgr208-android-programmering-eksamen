@@ -33,6 +33,7 @@ import no.kristiania.reverseimagesearch.viewmodel.SearchViewModel
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils.Companion.UriToBitmap
 import no.kristiania.reverseimagesearch.viewmodel.utils.NetworkUtils
+import no.kristiania.reverseimagesearch.viewmodel.utils.ViewUtils
 
 import java.io.File
 

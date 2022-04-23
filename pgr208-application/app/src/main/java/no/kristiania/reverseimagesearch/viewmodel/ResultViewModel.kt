@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.*
 import no.kristiania.reverseimagesearch.R
+import no.kristiania.reverseimagesearch.model.controller.ResultController
 import no.kristiania.reverseimagesearch.model.db.RequestImageDao
 import no.kristiania.reverseimagesearch.model.db.ResultImageDao
 import no.kristiania.reverseimagesearch.model.entity.RequestImage

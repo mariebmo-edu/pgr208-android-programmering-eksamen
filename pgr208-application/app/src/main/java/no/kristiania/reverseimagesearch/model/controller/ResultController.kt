@@ -1,6 +1,7 @@
 package no.kristiania.reverseimagesearch.model.controller
 
 import android.accounts.NetworkErrorException
+import androidx.lifecycle.LiveData
 import kotlinx.coroutines.*
 import no.kristiania.reverseimagesearch.model.db.RequestImageDao
 import no.kristiania.reverseimagesearch.model.db.ResultImageDao
@@ -12,6 +13,7 @@ class ResultController(
     private val resultImageDao: ResultImageDao,
     private val requestImageDao: RequestImageDao
 ) {
+
     fun saveAll(
         requestImage: RequestImage,
         imagesToSave: List<ResultImage>
@@ -24,4 +26,8 @@ class ResultController(
         }
         resultImageDao.insertMany(imagesToSave)
     }
+
+    suspend fun getByParentId(requestImgId: Long) = CoroutineScope(Dispatchers.IO).async {
+        return@async resultImageDao.getByParentId(requestImgId)
+    }.await()
 }

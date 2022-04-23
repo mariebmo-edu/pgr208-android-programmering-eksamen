@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import no.kristiania.reverseimagesearch.viewmodel.SavedSearchResultsViewModel
 import no.kristiania.reverseimagesearch.databinding.SavedSearchResultsFragmentBinding
+import no.kristiania.reverseimagesearch.model.controller.ResultController
 import no.kristiania.reverseimagesearch.model.db.ImageSearchDb
 import no.kristiania.reverseimagesearch.view.adapter.SavedSearchResultsAdapter
 import no.kristiania.reverseimagesearch.viewmodel.factory.SavedSearchResultsViewModelFactory
@@ -31,8 +32,9 @@ class SavedSearchResultsFragment : Fragment() {
         val application = requireNotNull(this.activity).application
         val db = ImageSearchDb.getInstance(application)
         val dao = db.resultImageDao
+        val resultController = ResultController(dao, db.requestImageDao)
         _binding = SavedSearchResultsFragmentBinding.inflate(inflater,container,false)
-        _viewModel = ViewModelProvider(this, SavedSearchResultsViewModelFactory(dao,requestImageId))[SavedSearchResultsViewModel::class.java]
+        _viewModel = ViewModelProvider(this, SavedSearchResultsViewModelFactory(resultController,requestImageId))[SavedSearchResultsViewModel::class.java]
 
         val view = binding.root
 
