@@ -32,9 +32,8 @@ class SavedSearchResultsFragment : Fragment() {
         val application = requireNotNull(this.activity).application
         val db = ImageSearchDb.getInstance(application)
         val dao = db.resultImageDao
-        val resultController = ResultController(dao, db.requestImageDao)
         _binding = SavedSearchResultsFragmentBinding.inflate(inflater,container,false)
-        _viewModel = ViewModelProvider(this, SavedSearchResultsViewModelFactory(resultController,requestImageId))[SavedSearchResultsViewModel::class.java]
+        _viewModel = ViewModelProvider(this, SavedSearchResultsViewModelFactory(dao,requestImageId))[SavedSearchResultsViewModel::class.java]
 
         val view = binding.root
 

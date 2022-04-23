@@ -27,7 +27,12 @@ class ResultController(
         resultImageDao.insertMany(imagesToSave)
     }
 
-    suspend fun getByParentId(requestImgId: Long) = CoroutineScope(Dispatchers.IO).async {
-        return@async resultImageDao.getByParentId(requestImgId)
-    }.await()
+    suspend fun getByParentId(requestImgId: Long): LiveData<List<ResultImage>> {
+
+        fun getFromDb() = CoroutineScope(Dispatchers.IO).async {
+            return@async resultImageDao.getByParentId(requestImgId)
+        }
+
+        return getFromDb().await()
+    }
 }

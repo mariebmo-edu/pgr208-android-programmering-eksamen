@@ -16,6 +16,7 @@ import android.widget.Toast
 import androidx.core.view.size
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import no.kristiania.reverseimagesearch.R
 import no.kristiania.reverseimagesearch.viewmodel.ResultViewModel
@@ -88,13 +89,21 @@ class ResultFragment : Fragment() {
 
             //Turns off the loading bar if there is a timeout - 20 seconds
             Handler(Looper.getMainLooper()).postDelayed({
-            if (timer){
-                view.findViewById<RelativeLayout>(R.id.loading_panel).visibility = View.GONE
-                Log.i("RESPONSE_TIMEOUT", "The response from the server took too long.")
-                viewModel.setInfoText("Response Timeout")
-                timer = false
-            }
+                if (timer) {
+                    view.findViewById<RelativeLayout>(R.id.loading_panel).visibility = View.GONE
+                    Log.i("RESPONSE_TIMEOUT", "The response from the server took too long.")
+                    viewModel.setInfoText("Response Timeout")
+                    timer = false
+                }
             }, 20000)
+        })
+
+        viewModel.shouldNavigateToSaved.observe(viewLifecycleOwner, {
+            if (it) {
+                val action = ResultFragmentDirections.actionResultFragmentToSavedSearchesFragment()
+                this.findNavController().navigate(action)
+                viewModel.toggleNavigateToSaved()
+            }
         })
 
         binding.saveResultButton.setOnClickListener {
@@ -111,9 +120,14 @@ class ResultFragment : Fragment() {
             dialog.show()
 
             submitBtn.setOnClickListener {
-                viewModel.saveResult(requireContext(), adapter.selectedImagesForSave, selectedName.toString())
+                viewModel.saveResult(
+                    requireContext(),
+                    adapter.selectedImagesForSave,
+                    selectedName.toString()
+                )
                 dialog.dismiss()
                 Toast.makeText(context, "Collection Saved!", Toast.LENGTH_LONG).show()
+                viewModel.toggleNavigateToSaved()
             }
 
             cancelBtn.setOnClickListener {

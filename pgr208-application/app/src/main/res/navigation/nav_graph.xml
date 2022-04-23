@@ -30,6 +30,9 @@
             app:destination="@+id/searchFragment"
             app:popUpTo="@id/searchFragment"
              />
+        <action android:id="@+id/action_resultFragment_to_savedSearchesFragment"
+            app:destination="@+id/savedSearchesFragment"
+            app:popUpTo="@id/savedSearchesFragment" />
 
     </fragment>
 
@@ -40,9 +43,7 @@
         tools:layout="@layout/saved_search_fragment">
         <action
             android:id="@+id/action_savedSearchesFragment_to_savedSearchesResultFragment"
-            app:destination="@+id/savedSearchesResultFragment"
-            app:popUpTo="@id/savedSearchesResultFragment"
-            app:popUpToInclusive="true" />
+            app:destination="@+id/savedSearchesResultFragment" />
     </fragment>
     <fragment
         android:id="@+id/savedSearchesResultFragment"

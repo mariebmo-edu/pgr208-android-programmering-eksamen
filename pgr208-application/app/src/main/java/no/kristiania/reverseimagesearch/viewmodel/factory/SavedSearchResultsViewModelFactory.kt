@@ -7,10 +7,10 @@ import no.kristiania.reverseimagesearch.viewmodel.SavedSearchResultsViewModel
 import no.kristiania.reverseimagesearch.model.db.ResultImageDao
 import java.lang.IllegalArgumentException
 
-class SavedSearchResultsViewModelFactory(private val resultController: ResultController, private val requestImageId: Long) : ViewModelProvider.Factory {
+class SavedSearchResultsViewModelFactory(private val resultImageDao: ResultImageDao, private val requestImageId: Long) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(SavedSearchResultsViewModel::class.java)) {
-            return SavedSearchResultsViewModel(resultController, requestImageId) as T
+            return SavedSearchResultsViewModel(resultImageDao, requestImageId) as T
         }
         throw IllegalArgumentException("Unknown ViewModel!")
     }

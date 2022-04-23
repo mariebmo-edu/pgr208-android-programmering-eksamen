@@ -9,21 +9,19 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import android.util.Log
-import android.view.*
-import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.toBitmap
-import androidx.core.view.children
-import androidx.core.view.get
-import androidx.navigation.findNavController
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.theartofdev.edmodo.cropper.CropImageView
@@ -34,7 +32,6 @@ import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils.Companion.UriToBitmap
 import no.kristiania.reverseimagesearch.viewmodel.utils.NetworkUtils
 import no.kristiania.reverseimagesearch.viewmodel.utils.ViewUtils
-
 import java.io.File
 
 class ImageSearchFragment : Fragment() {
@@ -91,7 +88,7 @@ class ImageSearchFragment : Fragment() {
 
             if(viewModel.uri != null){
                 val bitmap = imagePreview.drawable.toBitmap()
-                ViewUtils().fullSizeImage(bitmap, it.context.applicationContext)
+                ViewUtils().fullSizeImage(bitmap,view, it.context.applicationContext)
             }
         }
 

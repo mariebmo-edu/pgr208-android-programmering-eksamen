@@ -25,6 +25,8 @@ class ResultViewModel(
     private var _shouldSearch = MutableLiveData(true)
     val shouldSearch: LiveData<Boolean> get() = _shouldSearch
 
+    private var _shouldNavigateToSaved = MutableLiveData(false)
+    val shouldNavigateToSaved: LiveData<Boolean> get() = _shouldNavigateToSaved
     private var _infoMessage = MutableLiveData<String>()
     val infoMessage get() = _infoMessage
 
@@ -35,7 +37,11 @@ class ResultViewModel(
     val resultImages: LiveData<MutableList<ResultImage>>
         get() = _resultImages
 
-
+    fun toggleNavigateToSaved() {
+        _shouldNavigateToSaved.value?.let {
+            _shouldNavigateToSaved.value = !it
+        }
+    }
     fun setInfoText(message: String) {
         _infoMessage.value = message
     }
