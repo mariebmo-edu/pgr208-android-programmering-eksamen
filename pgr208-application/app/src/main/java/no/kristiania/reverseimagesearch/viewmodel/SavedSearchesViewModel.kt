@@ -1,6 +1,7 @@
 package no.kristiania.reverseimagesearch.viewmodel
 
 import android.database.sqlite.SQLiteException
+import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -15,8 +16,8 @@ class SavedSearchesViewModel(private val requestImageDao: RequestImageDao) : Vie
         get() = _navigateToResults
     private var _infoMessage = MutableLiveData<String>("")
     val infoMessage get() = _infoMessage
-    private var _collectionName = ""
-    val collectionName get() = _collectionName
+    private var _collectionName =  MutableLiveData<String>("")
+    val collectionName get() = _collectionName.value
 
     init {
         try {
@@ -26,8 +27,8 @@ class SavedSearchesViewModel(private val requestImageDao: RequestImageDao) : Vie
         }
     }
     fun onRequestClicked(requestId: Long, collectionName: String) {
+        _collectionName.value = collectionName
         _navigateToResults.value = requestId
-        _collectionName = collectionName
     }
 
     fun onNavigated() {

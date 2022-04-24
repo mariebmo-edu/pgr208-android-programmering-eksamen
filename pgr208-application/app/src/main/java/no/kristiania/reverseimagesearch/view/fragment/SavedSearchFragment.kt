@@ -49,7 +49,7 @@ class SavedSearchFragment : Fragment() {
         viewModel.navigateToResults.observe(viewLifecycleOwner, {
             it?.let {
                 Log.d("Navigate to results observer", "Navigating if not null")
-                val action = SavedSearchFragmentDirections.actionSavedSearchesFragmentToSavedSearchesResultFragment(it,viewModel.collectionName )
+                val action = SavedSearchFragmentDirections.actionSavedSearchesFragmentToSavedSearchesResultFragment(it,viewModel.collectionName!! )
                 findNavController().navigate(action)
                 viewModel.onNavigated()
             }
