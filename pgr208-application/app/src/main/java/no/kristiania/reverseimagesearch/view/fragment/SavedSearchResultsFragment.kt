@@ -28,6 +28,7 @@ class SavedSearchResultsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val requestImageId = SavedSearchResultsFragmentArgs.fromBundle(requireArguments()).requestId
+        val collectionName = SavedSearchResultsFragmentArgs.fromBundle(requireArguments()).collectionName
 
         val application = requireNotNull(this.activity).application
         val db = ImageSearchDb.getInstance(application)
@@ -40,7 +41,9 @@ class SavedSearchResultsFragment : Fragment() {
         val adapter = SavedSearchResultsAdapter()
         binding.lifecycleOwner = viewLifecycleOwner
         binding.savedSearchResultsList.adapter = adapter
+        binding.viewModel = viewModel
 
+        viewModel.setCollectionName(collectionName)
         viewModel.resultImages.observe(viewLifecycleOwner, {
             it?.let {
                 Log.d("observer", "Submitting list ${it.size}")

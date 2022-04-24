@@ -37,18 +37,18 @@ class SavedSearchFragment : Fragment() {
         )[SavedSearchesViewModel::class.java]
         _binding = SavedSearchFragmentBinding.inflate(inflater, container, false)
         val view = binding.root
-        val adapter = SavedSearchAdapter { id ->
-            viewModel.onRequestClicked(id)
+        val adapter = SavedSearchAdapter { id, collectionName ->
+            viewModel.onRequestClicked(id, collectionName)
         }
 
         binding.savedSearchList.adapter = adapter
         binding.lifecycleOwner = viewLifecycleOwner
-
+        binding.viewModel = viewModel
 
         viewModel.navigateToResults.observe(viewLifecycleOwner, {
             it?.let {
                 Log.d("Navigate to results observer", "Navigating if not null")
-                val action = SavedSearchFragmentDirections.actionSavedSearchesFragmentToSavedSearchesResultFragment(it)
+                val action = SavedSearchFragmentDirections.actionSavedSearchesFragmentToSavedSearchesResultFragment(it,viewModel.collectionName )
                 findNavController().navigate(action)
                 viewModel.onNavigated()
             }
@@ -56,7 +56,6 @@ class SavedSearchFragment : Fragment() {
 
         viewModel.savedSearchImages.observe(viewLifecycleOwner, {
             it?.let {
-                Log.d("obeserving list", it.size.toString())
                 adapter.submitList(it)
             }
         })
