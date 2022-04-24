@@ -1,6 +1,7 @@
 package no.kristiania.reverseimagesearch.viewmodel
 
 import android.content.Context
+import android.database.sqlite.SQLiteException
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -112,8 +113,14 @@ class ResultViewModel(
         )
         val requestImage = RequestImage(serverPath = hostedImageServerUrl, data = BitmapUtils.bitmapToByteArray(bitmapRequestImage), collectionName = collectionName)
 
-        runBlocking {
-            resultController.saveAll(requestImage, imagesToSave)
+        viewModelScope.launch {
+            try {
+                resultController.saveAll(requestImage, imagesToSave)
+            } catch (e: SQLiteException) {
+                CoroutineScope(Dispatchers.Main).launch {
+                    setInfoText(e.message.toString())
+                }
+            }
         }
 
     }

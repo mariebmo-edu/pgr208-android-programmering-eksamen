@@ -1,21 +1,22 @@
 package no.kristiania.reverseimagesearch.model.db
 
+import android.database.sqlite.SQLiteException
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Update
+import androidx.room.*
 import no.kristiania.reverseimagesearch.model.entity.RequestImage
 
 @Dao
 interface RequestImageDao {
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.ABORT )
+    @Throws(SQLiteException::class)
     suspend fun insert(requestImage: RequestImage): Long
 
-    @Update
+    @Update(onConflict = OnConflictStrategy.ABORT )
+    @Throws(SQLiteException::class)
     suspend fun update(requestImage: RequestImage)
 
     @Query("SELECT * FROM request_image_table ORDER BY request_image_id DESC")
+    @Throws(SQLiteException::class)
     fun getAll(): LiveData<List<RequestImage>>
 
 }

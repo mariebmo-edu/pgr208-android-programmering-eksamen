@@ -1,6 +1,7 @@
 package no.kristiania.reverseimagesearch.model.controller
 
 import android.accounts.NetworkErrorException
+import android.database.sqlite.SQLiteException
 import androidx.lifecycle.LiveData
 import kotlinx.coroutines.*
 import no.kristiania.reverseimagesearch.model.db.RequestImageDao
@@ -13,7 +14,7 @@ class ResultController(
     private val resultImageDao: ResultImageDao,
     private val requestImageDao: RequestImageDao
 ) {
-
+    @Throws(SQLiteException::class)
     fun saveAll(
         requestImage: RequestImage,
         imagesToSave: List<ResultImage>
