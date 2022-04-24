@@ -87,10 +87,9 @@ class ImageSearchFragment : Fragment() {
         }
 
         imagePreview.setOnClickListener{
-
             if(viewModel.uri != null){
                 val bitmap = imagePreview.drawable.toBitmap()
-                ViewUtils().fullSizeImage(bitmap, view, view.context)
+                ViewUtils().fullSizeImage(bitmap, view.context)
             }
         }
 
