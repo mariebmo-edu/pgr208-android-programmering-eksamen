@@ -16,6 +16,7 @@ import no.kristiania.reverseimagesearch.R
 import no.kristiania.reverseimagesearch.databinding.ResultItemBinding
 import no.kristiania.reverseimagesearch.model.entity.ResultImage
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
+import no.kristiania.reverseimagesearch.viewmodel.utils.ViewUtils
 import java.util.logging.Level.INFO
 import kotlin.coroutines.coroutineContext
 
@@ -41,6 +42,10 @@ class ResultItemAdapter :
         Log.i("onBind", "binding item")
         val item = getItem(position)
         val image = holder.binding.image
+
+        image.setOnClickListener {
+            ViewUtils().fullSizeImage((image.drawable as BitmapDrawable).bitmap, it.context)
+        }
 
         holder.binding.saveResult.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {

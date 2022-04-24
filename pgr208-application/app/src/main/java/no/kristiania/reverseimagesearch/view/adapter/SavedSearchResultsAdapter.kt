@@ -1,5 +1,6 @@
 package no.kristiania.reverseimagesearch.view.adapter
 
+import android.graphics.drawable.BitmapDrawable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -9,6 +10,7 @@ import no.kristiania.reverseimagesearch.databinding.SavedSearchResultsItemBindin
 import no.kristiania.reverseimagesearch.model.entity.ResultImage
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
 import no.kristiania.reverseimagesearch.viewmodel.utils.ViewUtils
+import kotlin.coroutines.coroutineContext
 
 class SavedSearchResultsAdapter : ListAdapter<ResultImage, SavedSearchResultsAdapter.SavedSearchResultsItemViewHolder>(SavedSearchResultsDiffItemCallback()) {
 
@@ -23,7 +25,6 @@ class SavedSearchResultsAdapter : ListAdapter<ResultImage, SavedSearchResultsAda
     override fun onBindViewHolder(holder: SavedSearchResultsItemViewHolder, position: Int) {
         val resultImage = getItem(position)
         Log.i("Load image", "Loading result image in binding")
-
 
         holder.bind(resultImage)
     }
@@ -44,6 +45,9 @@ class SavedSearchResultsAdapter : ListAdapter<ResultImage, SavedSearchResultsAda
             resultImage.data?.let {
                 val bitMapImage = BitmapUtils.byteArrayToBitmap(it)
                 binding.savedSearchResultImage.setImageBitmap(bitMapImage)
+                binding.savedSearchResultImage.setOnClickListener {
+                    ViewUtils().fullSizeImage(bitMapImage, binding.root.context)
+                }
             }
         }
     }

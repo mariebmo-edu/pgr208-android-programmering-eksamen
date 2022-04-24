@@ -19,7 +19,11 @@
                 android:id="@+id/saved_search_result_image"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="top" />
+                android:layout_gravity="top"
+                android:adjustViewBounds="true"
+                android:cropToPadding="false"
+                android:scaleType="centerCrop"
+                tools:srcCompat="@tools:sample/avatars" />
 
         </LinearLayout>
 
