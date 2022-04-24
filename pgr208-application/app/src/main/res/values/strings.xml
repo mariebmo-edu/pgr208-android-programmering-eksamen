@@ -15,12 +15,14 @@
     <string name="fragment_search">Upload Image</string>
     <string name="fragment_result">Search Result</string>
     <string name="crop_image">CROP IMAGE</string>
-    <string name="finish_cropping">Finish cropping</string>
+    <string name="finish_cropping">CROP</string>
     <string name="camera">CAMERA</string>
     <string name="save_search_result">Save search result</string>
     <string name="loading">Loading…</string>
     <string name="upload_image">Upload Image</string>
     <string name="saved_collections">Saved Collections</string>
     <string name="search_results">Search Results</string>
+    <string name="back">BACK</string>
+    <string name="gallery">GALLERY</string>
     <string name="saved_collections_images">Saved images in Collection</string>
 </resources>
