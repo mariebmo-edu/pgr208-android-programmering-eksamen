@@ -18,9 +18,11 @@ class CollectionsViewModel(private val requestImageDao: RequestImageDao) : ViewM
     val collectionName get() = _collectionName.value
 
     init {
+        // Sub req. 8
         try {
             savedSearchImages = requestImageDao.getAll()
         } catch (e: SQLiteException) {
+            // Error handling for SqlLite
             _infoMessage.value = e.message.toString()
         }
     }

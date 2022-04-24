@@ -12,8 +12,8 @@ import no.kristiania.reverseimagesearch.model.entity.ResultImage
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
 import no.kristiania.reverseimagesearch.viewmodel.utils.ViewUtils
 
-
-// Denne klassen forteller recyclerview hvordan den skal vise data fra databasen.
+// app.req 1
+// sub.req 4
 class SearchResultItemAdapter :
     ListAdapter<ResultImage, SearchResultItemAdapter.ResultItemViewHolder>(
         SearchResultDiffItemCallback()
@@ -21,8 +21,6 @@ class SearchResultItemAdapter :
     val selectedImagesForSave = mutableListOf<ResultImage>()
 
 
-    // Når den indre klassen under instansieres (dette fungerer som et rot-element for å stappe result_item xml-fila inn i.
-    // Den blir inflatet i den indre klassen
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -30,8 +28,6 @@ class SearchResultItemAdapter :
         ResultItemViewHolder.inflateFrom(parent)
 
 
-    // Denne kalles for hver gang en recyclerview blir opprettet eller brukt på nytt,
-    // for å legge til data i viewet. Dette skjer også i den indre klassen under
     override fun onBindViewHolder(holder: ResultItemViewHolder, position: Int) {
         Log.i("onBind", "binding item")
         val item = getItem(position)
@@ -52,7 +48,6 @@ class SearchResultItemAdapter :
         holder.bind(item)
     }
 
-    // denne klassen har ansvar for å legge til data i hvert result_item.xml som benyttes i recyclerviewet, samt å inflate de
     class ResultItemViewHolder(val binding: SearchResultItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -70,15 +65,7 @@ class SearchResultItemAdapter :
             Glide.with(binding.root)
                 .load(resultImage.serverPath)
                 .into(binding.image)
-            //binding.resultItem = resultImage
+
         }
     }
-
-
 }
-
-/*
-StfalconImageViewer.Builder<Image>(context, images) { view, image ->
-    Picasso.get().load(image.url).into(view)
-}.show()
- */

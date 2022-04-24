@@ -45,9 +45,8 @@ class SearchResultViewModel(
     }
 
     fun getResultFromUrl(url: String, api: FastNetworkingAPI) {
-
+        // app. req. 3
         viewModelScope.launch(Dispatchers.IO) {
-
             val googleReq =
                 async {
                     api.getImageFromProviderSynchronous(
@@ -103,6 +102,7 @@ class SearchResultViewModel(
         }
     }
 
+    // Sub req. 8
     fun saveResult(context: Context, imagesToSave: List<ResultImage>, collectionName: String) {
 
         val bitmapRequestImage = BitmapUtils.getBitmap(
@@ -115,7 +115,8 @@ class SearchResultViewModel(
             collectionName = collectionName
         )
 
-        viewModelScope.launch {
+        // Async save. Sub. req. 7
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 resultController.saveAll(requestImage, imagesToSave)
             } catch (e: SQLiteException) {

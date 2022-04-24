@@ -8,6 +8,8 @@ import no.kristiania.reverseimagesearch.databinding.CollectionItemBinding
 import no.kristiania.reverseimagesearch.model.entity.RequestImage
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
 
+// app.req 1
+// sub.req 4
 class CollectionsAdapter(val clickListener: (id: Long, collectionName: String) -> Unit) :
     ListAdapter<RequestImage, CollectionsAdapter.SavedSearchItemViewHolder>(
         CollectionsDiffItemCallback()

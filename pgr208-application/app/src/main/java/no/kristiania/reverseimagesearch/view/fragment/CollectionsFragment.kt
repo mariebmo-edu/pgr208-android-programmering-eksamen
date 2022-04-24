@@ -35,15 +35,17 @@ class CollectionsFragment : Fragment() {
         )[CollectionsViewModel::class.java]
         _binding = CollectionsFragmentBinding.inflate(inflater, container, false)
         val view = binding.root
+        // app.req 1
         val adapter = CollectionsAdapter { id, collectionName ->
             viewModel.onRequestClicked(id, collectionName)
         }
 
-
+        // app.req 1
         binding.savedSearchList.adapter = adapter
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
 
+        // callback, lambda
         viewModel.navigateToResults.observe(viewLifecycleOwner, {
             it?.let {
                 Log.d("Navigate to results observer", "Navigating if not null")
@@ -56,7 +58,7 @@ class CollectionsFragment : Fragment() {
                 viewModel.onNavigated()
             }
         })
-
+        // callback, lambda
         viewModel.savedSearchImages.observe(viewLifecycleOwner, {
             it?.let {
                 adapter.submitList(it)

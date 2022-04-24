@@ -3,6 +3,7 @@ package no.kristiania.reverseimagesearch.view.adapter
 import androidx.recyclerview.widget.DiffUtil
 import no.kristiania.reverseimagesearch.model.entity.ResultImage
 
+// app.req 1
 class CollectionImagesDiffItemCallback : DiffUtil.ItemCallback<ResultImage>() {
     override fun areItemsTheSame(oldItem: ResultImage, newItem: ResultImage): Boolean =
         (oldItem.id == newItem.id)

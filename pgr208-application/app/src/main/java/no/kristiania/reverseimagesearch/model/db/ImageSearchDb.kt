@@ -7,6 +7,7 @@ import androidx.room.RoomDatabase
 import no.kristiania.reverseimagesearch.model.entity.RequestImage
 import no.kristiania.reverseimagesearch.model.entity.ResultImage
 
+
 @Database(entities = [RequestImage::class, ResultImage::class], version = 3, exportSchema = false)
 abstract class ImageSearchDb : RoomDatabase() {
     abstract val requestImageDao: RequestImageDao
@@ -16,7 +17,7 @@ abstract class ImageSearchDb : RoomDatabase() {
         @Volatile
         private var INSTANCE: ImageSearchDb? = null
 
-        // TODO: Bør nok fjerne fallback destructive greia
+        // App.req. 4
         fun getInstance(context: Context): ImageSearchDb {
             synchronized(this) {
                 var instance = INSTANCE
