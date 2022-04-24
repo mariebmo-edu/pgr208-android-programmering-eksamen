@@ -1,5 +1,6 @@
 package no.kristiania.reverseimagesearch.viewmodel
 
+import android.database.sqlite.SQLiteException
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -15,5 +16,15 @@ class SavedSearchResultsViewModel(
     private val resultImageDao: ResultImageDao,
     private val requestImgId: Long
 ) : ViewModel() {
-    val resultImages = resultImageDao.getByParentId(requestImgId)
+    lateinit var resultImages: LiveData<List<ResultImage>>
+    private var _infoMessage = MutableLiveData<String>("")
+    val infoMessage get() = _infoMessage
+
+    init {
+        try {
+            resultImages = resultImageDao.getByParentId(requestImgId)
+        } catch (e: SQLiteException) {
+            infoMessage.value = e.message.toString()
+        }
+    }
 }
