@@ -21,9 +21,9 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="top"
                 android:adjustViewBounds="true"
-                android:cropToPadding="false"
-                android:scaleType="centerCrop"
                 android:contentDescription="@string/image_of_image_in_collection"
+                android:cropToPadding="true"
+                android:scaleType="centerCrop"
                 tools:srcCompat="@tools:sample/avatars" />
 
         </LinearLayout>
