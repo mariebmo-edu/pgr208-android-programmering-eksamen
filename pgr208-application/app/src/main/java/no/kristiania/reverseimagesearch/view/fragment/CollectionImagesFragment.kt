@@ -1,44 +1,47 @@
 package no.kristiania.reverseimagesearch.view.fragment
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import no.kristiania.reverseimagesearch.viewmodel.SavedSearchResultsViewModel
-import no.kristiania.reverseimagesearch.databinding.SavedSearchResultsFragmentBinding
-import no.kristiania.reverseimagesearch.model.controller.ResultController
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import no.kristiania.reverseimagesearch.databinding.CollectionImagesFragmentBinding
 import no.kristiania.reverseimagesearch.model.db.ImageSearchDb
-import no.kristiania.reverseimagesearch.view.adapter.SavedSearchResultsAdapter
-import no.kristiania.reverseimagesearch.viewmodel.factory.SavedSearchResultsViewModelFactory
+import no.kristiania.reverseimagesearch.view.adapter.CollectionsResultsAdapter
+import no.kristiania.reverseimagesearch.viewmodel.CollectionImagesViewModel
+import no.kristiania.reverseimagesearch.viewmodel.factory.CollectionImagesViewModelFactory
 
-class SavedSearchResultsFragment : Fragment() {
+class CollectionImagesFragment : Fragment() {
 
 
-    private var _binding: SavedSearchResultsFragmentBinding? = null
+    private var _binding: CollectionImagesFragmentBinding? = null
     private val binding get() = _binding!!
 
-    private var _viewModel: SavedSearchResultsViewModel? = null
+    private var _viewModel: CollectionImagesViewModel? = null
     private val viewModel get() = _viewModel!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val requestImageId = SavedSearchResultsFragmentArgs.fromBundle(requireArguments()).requestId
-        val collectionName = SavedSearchResultsFragmentArgs.fromBundle(requireArguments()).collectionName
+        val requestImageId = CollectionImagesFragmentArgs.fromBundle(requireArguments()).requestId
+        val collectionName =
+            CollectionImagesFragmentArgs.fromBundle(requireArguments()).collectionName
 
         val application = requireNotNull(this.activity).application
         val db = ImageSearchDb.getInstance(application)
         val dao = db.resultImageDao
-        _binding = SavedSearchResultsFragmentBinding.inflate(inflater,container,false)
-        _viewModel = ViewModelProvider(this, SavedSearchResultsViewModelFactory(dao,requestImageId))[SavedSearchResultsViewModel::class.java]
+        _binding = CollectionImagesFragmentBinding.inflate(inflater, container, false)
+        _viewModel = ViewModelProvider(
+            this,
+            CollectionImagesViewModelFactory(dao, requestImageId)
+        )[CollectionImagesViewModel::class.java]
 
         val view = binding.root
 
-        val adapter = SavedSearchResultsAdapter()
+        val adapter = CollectionsResultsAdapter()
         binding.lifecycleOwner = viewLifecycleOwner
         binding.savedSearchResultsList.adapter = adapter
         binding.viewModel = viewModel

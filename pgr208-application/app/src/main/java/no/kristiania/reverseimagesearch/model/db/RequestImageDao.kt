@@ -7,11 +7,11 @@ import no.kristiania.reverseimagesearch.model.entity.RequestImage
 
 @Dao
 interface RequestImageDao {
-    @Insert(onConflict = OnConflictStrategy.ABORT )
+    @Insert(onConflict = OnConflictStrategy.ABORT)
     @Throws(SQLiteException::class)
     suspend fun insert(requestImage: RequestImage): Long
 
-    @Update(onConflict = OnConflictStrategy.ABORT )
+    @Update(onConflict = OnConflictStrategy.ABORT)
     @Throws(SQLiteException::class)
     suspend fun update(requestImage: RequestImage)
 

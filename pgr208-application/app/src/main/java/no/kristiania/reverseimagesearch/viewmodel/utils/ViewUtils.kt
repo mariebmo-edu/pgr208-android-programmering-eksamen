@@ -7,28 +7,29 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.widget.Button
 import android.widget.PopupWindow
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
 import com.github.chrisbanes.photoview.PhotoView
 
-import android.util.TypedValue
 import no.kristiania.reverseimagesearch.R
 
 
 class ViewUtils {
 
-    fun fullSizeImage(bitmap: Bitmap, context: Context){
+    fun fullSizeImage(bitmap: Bitmap, context: Context) {
 
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
-        val imageViewer = inflater.inflate(R.layout.fragment_fullscreen_image, null)
+        val imageViewer = inflater.inflate(R.layout.fullscreen_image_fragment, null)
 
         val photoView = imageViewer.findViewById<PhotoView>(R.id.photo_view)
         val closeBtn = imageViewer.findViewById<Button>(R.id.photo_view_close)
 
         photoView.setImageBitmap(bitmap)
 
-        val popUpWindow = PopupWindow(imageViewer, ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT)
+        val popUpWindow = PopupWindow(
+            imageViewer,
+            ActionBar.LayoutParams.MATCH_PARENT,
+            ActionBar.LayoutParams.MATCH_PARENT
+        )
 
         closeBtn.setOnClickListener {
             popUpWindow.dismiss()

@@ -7,7 +7,7 @@
     <item
         android:id="@+id/savedSearchesFragment"
         android:icon="@android:drawable/btn_star_big_on"
-        android:title="@string/saved_collections"/>
+        android:title="@string/saved_collections" />
     <item
         android:id="@+id/resultFragment"
         android:icon="@android:drawable/ic_menu_search"

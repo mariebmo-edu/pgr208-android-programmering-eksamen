@@ -2,13 +2,13 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".view.fragment.SavedSearchFragment">
+    tools:context="no.kristiania.reverseimagesearch.view.fragment.CollectionImagesFragment">
 
     <data>
 
         <variable
             name="viewModel"
-            type="no.kristiania.reverseimagesearch.viewmodel.SavedSearchesViewModel" />
+            type="no.kristiania.reverseimagesearch.viewmodel.CollectionImagesViewModel" />
     </data>
 
     <LinearLayout
@@ -20,12 +20,12 @@
             android:id="@+id/info_panel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#86FFFFFF"
+            android:background="?android:attr/colorBackground"
             android:gravity="center"
             android:visibility="visible">
 
             <TextView
-                android:id="@+id/saved_search_frag_info_bar"
+                android:id="@+id/saved_res_frag_info_bar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@{viewModel.infoMessage}"
@@ -33,7 +33,7 @@
         </RelativeLayout>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/saved_search_list"
+            android:id="@+id/saved_search_results_list"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_gravity="top"
@@ -42,5 +42,4 @@
             app:spanCount="2" />
 
     </LinearLayout>
-
 </layout>

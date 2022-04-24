@@ -3,16 +3,12 @@ package no.kristiania.reverseimagesearch.viewmodel.api
 import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
-import com.jacksonandroidnetworking.JacksonParserFactory
 import com.androidnetworking.AndroidNetworking
-import com.androidnetworking.common.ANResponse
 import com.androidnetworking.common.Priority
-import com.androidnetworking.error.ANError
+import com.jacksonandroidnetworking.JacksonParserFactory
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
 import no.kristiania.reverseimagesearch.viewmodel.utils.Endpoints
 import org.json.JSONArray
-import java.io.File
-import no.kristiania.reverseimagesearch.viewmodel.ResultViewModel
 
 class FastNetworkingAPI(val context: Context) {
 

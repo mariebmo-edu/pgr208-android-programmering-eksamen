@@ -2,13 +2,13 @@ package no.kristiania.reverseimagesearch.view.fragment
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import no.kristiania.reverseimagesearch.R
 
-class FullscreenImage : Fragment() {
+class FullscreenImageFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,7 +21,7 @@ class FullscreenImage : Fragment() {
         // Inflate the layout for this fragment
         Log.d("FULLSCREEN_CREATED", "Fullscreen created")
 
-        return inflater.inflate(R.layout.fragment_fullscreen_image, container, false)
+        return inflater.inflate(R.layout.fullscreen_image_fragment, container, false)
     }
 
 }
