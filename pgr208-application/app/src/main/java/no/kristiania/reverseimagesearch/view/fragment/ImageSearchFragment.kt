@@ -52,7 +52,8 @@ class ImageSearchFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        setHasOptionsMenu(true)
+        deactivateResultMenuItem()
+
         _binding = FragmentImageSearchBinding.inflate(inflater, container, false)
         val view = binding.root
 
@@ -84,18 +85,23 @@ class ImageSearchFragment : Fragment() {
             cropImage(imagePreview.drawable.toBitmap())
         }
 
-        imagePreview.setOnClickListener{
+        imagePreview.setOnClickListener {
 
-            if(viewModel.uri != null){
+            if (viewModel.uri != null) {
                 val bitmap = imagePreview.drawable.toBitmap()
-                ViewUtils().fullSizeImage(bitmap,view, it.context.applicationContext)
+                ViewUtils().fullSizeImage(bitmap, view, it.context.applicationContext)
             }
         }
 
         // Nødvendig for å unngå rot ved navigasjon
         if (viewModel.uri != null) {
             val bitmap =
-                BitmapUtils.getBitmap(requireContext(), null, viewModel.uri.toString(), ::UriToBitmap)
+                BitmapUtils.getBitmap(
+                    requireContext(),
+                    null,
+                    viewModel.uri.toString(),
+                    ::UriToBitmap
+                )
             imagePreview.setImageBitmap(bitmap)
             searchBtn.visibility = View.VISIBLE
             cropBtn.visibility = View.VISIBLE
@@ -112,12 +118,13 @@ class ImageSearchFragment : Fragment() {
         })
         searchBtn.setOnClickListener {
 
-            when(NetworkUtils().isConnected(requireContext())){
+            when (NetworkUtils().isConnected(requireContext())) {
                 true -> {
                     viewModel.shouldNavigate = true
                     viewModel.uploadImageForUrl(imagePreview.drawable.toBitmap(), requireContext())
                 }
-                false -> Toast.makeText(requireContext(), "Connection Error", Toast.LENGTH_LONG).show()
+                false -> Toast.makeText(requireContext(), "Connection Error", Toast.LENGTH_LONG)
+                    .show()
             }
         }
 
@@ -129,6 +136,13 @@ class ImageSearchFragment : Fragment() {
         val navigationView = appCompat.findViewById<BottomNavigationView>(R.id.bottom_nav)
         val results = navigationView.menu.getItem(2)
         results.isEnabled = true
+    }
+
+    private fun deactivateResultMenuItem() {
+        val appCompat = requireActivity() as AppCompatActivity
+        val navigationView = appCompat.findViewById<BottomNavigationView>(R.id.bottom_nav)
+        val results = navigationView.menu.getItem(2)
+        results.isEnabled = false
     }
 
     // Burde flyttes ut til SearchViewModel
@@ -214,7 +228,12 @@ class ImageSearchFragment : Fragment() {
             if (it.resultCode == AppCompatActivity.RESULT_OK && it.data != null) {
                 viewModel.uri = it.data?.data!!
                 val bitmap =
-                    BitmapUtils.getBitmap(requireContext(), null, viewModel.uri.toString(), ::UriToBitmap)
+                    BitmapUtils.getBitmap(
+                        requireContext(),
+                        null,
+                        viewModel.uri.toString(),
+                        ::UriToBitmap
+                    )
                 imagePreview.setImageBitmap(bitmap)
                 searchBtn.visibility = View.VISIBLE
                 cropBtn.visibility = View.VISIBLE
@@ -225,4 +244,8 @@ class ImageSearchFragment : Fragment() {
 
         }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }
