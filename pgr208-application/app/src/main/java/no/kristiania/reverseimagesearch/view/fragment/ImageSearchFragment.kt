@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -42,7 +43,7 @@ class ImageSearchFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         _binding = FragmentImageSearchBinding.inflate(inflater, container, false)
         val view = binding.root
@@ -161,7 +162,7 @@ class ImageSearchFragment : Fragment() {
 
         bitmap?.let { bmp ->
             viewModel.tempImgFile.writeBytes(BitmapUtils.bitmapToByteArray(bmp))
-            viewModel.setUri(Uri.fromFile(viewModel.tempImgFile)) // Mulig dette er big nono, må kanskje endres
+            viewModel.setUri(Uri.fromFile(viewModel.tempImgFile))
             resetCrop()
         } ?: resetCrop()
     }
@@ -177,20 +178,28 @@ class ImageSearchFragment : Fragment() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == AppCompatActivity.RESULT_OK) {
                 val bitmap = BitmapFactory.decodeFile(viewModel.tempImgFile.absolutePath)
-                viewModel.setUri(Uri.fromFile(viewModel.tempImgFile)) // Mulig dette er big nono, må kanskje endres
+                viewModel.setUri(Uri.fromFile(viewModel.tempImgFile))
                 imagePreview.setImageBitmap(bitmap)
             }
         }
 
     private val galleryResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+
+            fun printError() {
+                Toast.makeText(requireContext(), "An error occurred", Toast.LENGTH_SHORT)
+            }
+
             if (it.resultCode == AppCompatActivity.RESULT_OK && it.data != null) {
-                viewModel.setUri(it.data?.data!!) // Mulig dette er big nono, må kanskje endres
-                val bitmap =
-                    BitmapUtils.getBitmap(requireContext(), null, viewModel.uri.value.toString(), ::UriToBitmap)
-                imagePreview.setImageBitmap(bitmap)
+                val uri = it.data!!.data
+                uri?.let {
+                    viewModel.setUri(uri)
+                    val bitmap =
+                        BitmapUtils.getBitmap(requireContext(), null, viewModel.uri.value.toString(), ::UriToBitmap)
+                    imagePreview.setImageBitmap(bitmap)
+                } ?: printError()
             } else {
-                println("error: result is not OK, or data is empty")
+                printError()
             }
         }
 }
