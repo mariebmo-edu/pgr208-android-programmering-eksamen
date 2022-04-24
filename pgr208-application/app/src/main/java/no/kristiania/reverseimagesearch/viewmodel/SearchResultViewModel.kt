@@ -116,8 +116,8 @@ class SearchResultViewModel(
             collectionName = collectionName
         )
 
-        // Async save
-        viewModelScope.launch {
+        // Async save. Sub. req. 7
+        CoroutineScope(Dispatchers.IO).launch {
             try {
                 resultController.saveAll(requestImage, imagesToSave)
             } catch (e: SQLiteException) {
