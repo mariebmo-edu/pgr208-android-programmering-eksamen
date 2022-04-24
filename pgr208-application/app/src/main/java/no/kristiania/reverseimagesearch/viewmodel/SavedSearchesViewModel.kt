@@ -15,6 +15,8 @@ class SavedSearchesViewModel(private val requestImageDao: RequestImageDao) : Vie
         get() = _navigateToResults
     private var _infoMessage = MutableLiveData<String>("")
     val infoMessage get() = _infoMessage
+    private var _collectionName = ""
+    val collectionName get() = _collectionName
 
     init {
         try {
@@ -23,8 +25,9 @@ class SavedSearchesViewModel(private val requestImageDao: RequestImageDao) : Vie
             _infoMessage.value = e.message.toString()
         }
     }
-    fun onRequestClicked(requestId: Long) {
+    fun onRequestClicked(requestId: Long, collectionName: String) {
         _navigateToResults.value = requestId
+        _collectionName = collectionName
     }
 
     fun onNavigated() {

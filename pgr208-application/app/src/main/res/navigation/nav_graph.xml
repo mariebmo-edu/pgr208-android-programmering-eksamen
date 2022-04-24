@@ -53,6 +53,9 @@
         <argument
             android:name="requestId"
             app:argType="long" />
+        <argument
+            android:name="collectionName"
+            app:argType="string" />
         <action
             android:id="@+id/action_savedSearchesResultFragment_to_savedSearchesFragment"
             app:destination="@+id/savedSearchesFragment"

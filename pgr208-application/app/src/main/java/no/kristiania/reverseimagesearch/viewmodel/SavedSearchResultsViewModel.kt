@@ -16,9 +16,15 @@ class SavedSearchResultsViewModel(
     private val resultImageDao: ResultImageDao,
     private val requestImgId: Long
 ) : ViewModel() {
+
+
     lateinit var resultImages: LiveData<List<ResultImage>>
     private var _infoMessage = MutableLiveData<String>("")
     val infoMessage get() = _infoMessage
+
+
+    private var _collectionName = MutableLiveData<String>("")
+    val collectionName get() = _collectionName
 
     init {
         try {
@@ -26,5 +32,10 @@ class SavedSearchResultsViewModel(
         } catch (e: SQLiteException) {
             infoMessage.value = e.message.toString()
         }
+    }
+
+    fun setCollectionName(collectionName: String) {
+        _collectionName.value = collectionName
+        Log.d("Collection name", collectionName)
     }
 }
