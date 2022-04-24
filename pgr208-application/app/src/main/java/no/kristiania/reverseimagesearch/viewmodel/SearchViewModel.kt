@@ -34,14 +34,10 @@ class SearchViewModel : ViewModel() {
         get() = _uri
 
 
-    private val _cropping = MutableLiveData<Boolean>()
+    private val _cropping = MutableLiveData<Boolean>(false)
     val cropping : LiveData<Boolean>
         get() = _cropping
 
-
-    fun initiateCroppingValue() {
-        _cropping.value = false
-    }
 
     fun setUri(uri: Uri) {
         _uri.value = uri

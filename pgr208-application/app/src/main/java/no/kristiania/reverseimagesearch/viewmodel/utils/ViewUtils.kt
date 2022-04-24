@@ -1,10 +1,12 @@
 package no.kristiania.reverseimagesearch.viewmodel.utils
 
+import android.app.ActionBar
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.graphics.Bitmap
 import android.text.Layout
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
@@ -18,7 +20,7 @@ import no.kristiania.reverseimagesearch.R
 
 class ViewUtils {
 
-    fun fullSizeImage(bitmap: Bitmap, view: View, context: Context){
+    fun fullSizeImage(bitmap: Bitmap, context: Context){
 
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
@@ -28,17 +30,16 @@ class ViewUtils {
         val photoView = imageViewer.findViewById<PhotoView>(R.id.photo_view)
         val closeBtn = imageViewer.findViewById<Button>(R.id.photo_view_close)
 
-
         photoView.setImageBitmap(bitmap)
         photoViewContainer.setBackgroundColor(ContextCompat.getColor(context, R.color.lm_background_color))
 
-        val popUpWindow = PopupWindow(imageViewer)
+        val popUpWindow = PopupWindow(imageViewer, ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT)
 
         closeBtn.setOnClickListener {
             popUpWindow.dismiss()
         }
 
-        popUpWindow.showAsDropDown(view)
+        popUpWindow.showAtLocation(imageViewer, Gravity.CENTER, 0, 0)
     }
 
 

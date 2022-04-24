@@ -1,12 +1,10 @@
 package no.kristiania.reverseimagesearch.view.fragment
 
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
-import android.provider.MediaStore
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -17,7 +15,6 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.toBitmap
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -50,13 +47,11 @@ class ImageSearchFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         deactivateResultMenuItem()
-
+        setHasOptionsMenu(true)
         _binding = FragmentImageSearchBinding.inflate(inflater, container, false)
         val view = binding.root
 
         _viewModel = ViewModelProvider(this)[SearchViewModel::class.java]
-
-        viewModel.initiateCroppingValue()
 
         binding.lifecycleOwner = viewLifecycleOwner
         galleryBtn = binding.galleryBtn
@@ -87,10 +82,9 @@ class ImageSearchFragment : Fragment() {
         }
 
         imagePreview.setOnClickListener {
-
-            if (viewModel.uri != null) {
-                val bitmap = imagePreview.drawable.toBitmap()
-                ViewUtils().fullSizeImage(bitmap, view, it.context.applicationContext)
+            viewModel.uri.value?.let {
+                val bitmap = UriToBitmap(requireContext(), null, it.toString())
+                ViewUtils().fullSizeImage(bitmap, view.context)
             }
         }
 
@@ -109,7 +103,7 @@ class ImageSearchFragment : Fragment() {
         viewModel.url.observe(viewLifecycleOwner, { url ->
             if (viewModel.shouldNavigate) {
                 val action = ImageSearchFragmentDirections
-                    .actionSearchFragmentToResultFragment(url, viewModel.uri.toString())
+                    .actionSearchFragmentToResultFragment(url, viewModel.uri.value.toString())
                 this.findNavController().navigate(action)
                 activateResultMenuItem()
                 viewModel.shouldNavigate = false
@@ -153,7 +147,6 @@ class ImageSearchFragment : Fragment() {
         results.isEnabled = false
     }
 
-    // Burde flyttes ut til SearchViewModel
     private fun cropOn() {
         imagePreview.visibility = View.GONE
         galleryBtn.visibility = View.GONE
@@ -188,13 +181,6 @@ class ImageSearchFragment : Fragment() {
         }
     }
 
-
-    // Burde flyttes ut til SearchViewModel
-    private fun pickImageGallery() {
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        galleryResultLauncher.launch(intent)
-    }
-
     private fun cropOff(shouldGetBmp: Boolean) {
 
         var bitmap: Bitmap? = null
@@ -212,17 +198,7 @@ class ImageSearchFragment : Fragment() {
 
 
 
-    // Burde flyttes ut til SearchViewModel
-    private fun getBmpFromCamera() {
-        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        val fileProvider = FileProvider.getUriForFile(
-            requireContext(),
-            "no.kristiania.reverseimagesearch.fileprovider",
-            viewModel.tempImgFile
-        )
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider)
-        cameraResultLauncher.launch(intent)
-    }
+
 
     private val cameraPermissionRequest =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) {
