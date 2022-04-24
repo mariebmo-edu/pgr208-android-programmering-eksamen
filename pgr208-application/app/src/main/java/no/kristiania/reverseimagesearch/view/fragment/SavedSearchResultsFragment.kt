@@ -49,6 +49,7 @@ class SavedSearchResultsFragment : Fragment() {
                 Log.d("observer", "Submitting list ${it.size}")
                 adapter.submitList(it)
                 viewModel.setCollectionName(collectionName)
+                activity?.title = viewModel.collectionName.value
             }
         })
 
