@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import no.kristiania.reverseimagesearch.databinding.SavedSearchResultsItemBinding
 import no.kristiania.reverseimagesearch.model.entity.ResultImage
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
+import no.kristiania.reverseimagesearch.viewmodel.utils.ViewUtils
 
 class SavedSearchResultsAdapter : ListAdapter<ResultImage, SavedSearchResultsAdapter.SavedSearchResultsItemViewHolder>(SavedSearchResultsDiffItemCallback()) {
 
@@ -22,6 +23,7 @@ class SavedSearchResultsAdapter : ListAdapter<ResultImage, SavedSearchResultsAda
     override fun onBindViewHolder(holder: SavedSearchResultsItemViewHolder, position: Int) {
         val resultImage = getItem(position)
         Log.i("Load image", "Loading result image in binding")
+
 
         holder.bind(resultImage)
     }

@@ -1,49 +1,55 @@
 package no.kristiania.reverseimagesearch.viewmodel
 
 import android.content.Context
+import android.database.sqlite.SQLiteException
 import android.util.Log
-import android.view.View
-import android.widget.RelativeLayout
-import android.widget.Toast
-import androidx.core.view.size
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import no.kristiania.reverseimagesearch.R
+import no.kristiania.reverseimagesearch.model.controller.ResultController
 import no.kristiania.reverseimagesearch.model.db.RequestImageDao
 import no.kristiania.reverseimagesearch.model.db.ResultImageDao
 import no.kristiania.reverseimagesearch.model.entity.RequestImage
 import no.kristiania.reverseimagesearch.model.entity.ResultImage
 import no.kristiania.reverseimagesearch.viewmodel.api.FastNetworkingAPI
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
-import no.kristiania.reverseimagesearch.viewmodel.utils.JsonArrUtils
 import org.json.JSONArray
 
 class ResultViewModel(
-    private val requestImageDao: RequestImageDao,
-    private val resultImageDao: ResultImageDao,
+    private val resultController: ResultController
 ) : ViewModel() {
 
+    private var _shouldSearch = MutableLiveData(true)
+    val shouldSearch: LiveData<Boolean> get() = _shouldSearch
+
+    private var _shouldNavigateToSaved = MutableLiveData(false)
+    val shouldNavigateToSaved: LiveData<Boolean> get() = _shouldNavigateToSaved
+    private var _infoMessage = MutableLiveData<String>()
+    val infoMessage get() = _infoMessage
 
     lateinit var requestImageLocalPath: String
     lateinit var hostedImageServerUrl: String
-    private var _resultImages = MutableLiveData<MutableList<ResultImage>>()
+    private var _resultImages = MutableLiveData<MutableList<ResultImage>>(mutableListOf())
+
     val resultImages: LiveData<MutableList<ResultImage>>
         get() = _resultImages
 
-    init {
-        _resultImages.value = ArrayList()
+    fun toggleNavigateToSaved() {
+        _shouldNavigateToSaved.value?.let {
+            _shouldNavigateToSaved.value = !it
+        }
     }
-
+    fun setInfoText(message: String) {
+        _infoMessage.value = message
+    }
     fun getResultFromUrl(url: String, api: FastNetworkingAPI) {
 
         viewModelScope.launch(Dispatchers.IO) {
+
             val googleReq =
                 async {
                     api.getImageFromProviderSynchronous(
@@ -66,31 +72,23 @@ class ResultViewModel(
                     )
                 }
 
-            launch(Dispatchers.Main) {
-                bingReq.await()?.let {
-                    fetchImagesFromSearch(it)
-                }
-                googleReq.await()?.let {
-                    fetchImagesFromSearch(it)
-                }
-                tinEyeReq.await()?.let {
-                    fetchImagesFromSearch(it)
+            withTimeout(20000L){
+                launch(Dispatchers.Main) {
+                    bingReq.await()?.let {
+                        fetchImagesFromSearch(it)
+                    }
+                    googleReq.await()?.let {
+                        fetchImagesFromSearch(it)
+                    }
+                    tinEyeReq.await()?.let {
+                        fetchImagesFromSearch(it)
+                    }
                 }
             }
         }
     }
 
 
-    fun saveAllResultImages(resultImages: List<ResultImage>) {
-        viewModelScope.launch {
-            resultImageDao.insertMany(resultImages)
-        }
-    }
-    fun saveResultImage(resultImage: ResultImage) {
-        viewModelScope.launch {
-            resultImageDao.insert(resultImage)
-        }
-    }
 
     fun fetchImagesFromSearch(response: JSONArray) {
         val imageObjs = mutableListOf<ResultImage>()
@@ -108,22 +106,26 @@ class ResultViewModel(
         }
     }
 
-    fun saveResult(context: Context, imagesToSave: List<ResultImage>) {
+    fun saveResult(context: Context, imagesToSave: List<ResultImage>, collectionName : String) {
 
         val bitmapRequestImage = BitmapUtils.getBitmap(context, null, requestImageLocalPath,
             BitmapUtils.Companion::UriToBitmap
         )
-        val requestImage = RequestImage(serverPath = hostedImageServerUrl, data = BitmapUtils.bitmapToByteArray(bitmapRequestImage))
+        val requestImage = RequestImage(serverPath = hostedImageServerUrl, data = BitmapUtils.bitmapToByteArray(bitmapRequestImage), collectionName = collectionName)
 
         viewModelScope.launch {
-            val reqSave = async {requestImageDao.insert(requestImage)}
-            val reqImgId = reqSave.await()
-
-            imagesToSave.forEach {
-                it.requestImageId = reqImgId
+            try {
+                resultController.saveAll(requestImage, imagesToSave)
+            } catch (e: SQLiteException) {
+                CoroutineScope(Dispatchers.Main).launch {
+                    setInfoText(e.message.toString())
+                }
             }
-            resultImageDao.insertMany(imagesToSave)
         }
 
+    }
+
+    fun searchDone() {
+        _shouldSearch.value = false
     }
 }

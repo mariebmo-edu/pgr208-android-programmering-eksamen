@@ -2,15 +2,18 @@
     <!-- Base application theme. -->
     <style name="Theme.ReverseImageSearch" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_200</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
-        <item name="colorOnPrimary">@color/black</item>
+        <item name="colorPrimary">@color/dm_primary_color</item>
+        <item name="colorPrimaryVariant">@color/dm_primary_color_variant</item>
+        <item name="colorOnPrimary">@color/dm_primary_text_color</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/teal_200</item>
-        <item name="colorSecondaryVariant">@color/teal_200</item>
-        <item name="colorOnSecondary">@color/black</item>
+        <item name="colorSecondary">@color/dm_secondary_color</item>
+        <item name="colorSecondaryVariant">@color/dm_secondary_color_variant</item>
+        <item name="colorOnSecondary">@color/dm_secondary_text_variant</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+
+        <item name="backgroundColor">@color/dm_background_color</item>
+
     </style>
 </resources>

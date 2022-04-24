@@ -1,11 +1,12 @@
 package no.kristiania.reverseimagesearch.view.fragment
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
-import android.util.Log
+import android.provider.MediaStore
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -16,14 +17,18 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.toBitmap
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.theartofdev.edmodo.cropper.CropImageView
 import no.kristiania.reverseimagesearch.R
 import no.kristiania.reverseimagesearch.databinding.FragmentImageSearchBinding
 import no.kristiania.reverseimagesearch.viewmodel.SearchViewModel
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils.Companion.UriToBitmap
+import no.kristiania.reverseimagesearch.viewmodel.utils.NetworkUtils
+import no.kristiania.reverseimagesearch.viewmodel.utils.ViewUtils
 import java.io.File
 
 class ImageSearchFragment : Fragment() {
@@ -44,6 +49,7 @@ class ImageSearchFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        deactivateResultMenuItem()
 
         _binding = FragmentImageSearchBinding.inflate(inflater, container, false)
         val view = binding.root
@@ -80,6 +86,14 @@ class ImageSearchFragment : Fragment() {
             shouldGetBmp = false
         }
 
+        imagePreview.setOnClickListener {
+
+            if (viewModel.uri != null) {
+                val bitmap = imagePreview.drawable.toBitmap()
+                ViewUtils().fullSizeImage(bitmap, view, it.context.applicationContext)
+            }
+        }
+
         viewModel.uri.observe(viewLifecycleOwner, {
             it?.let {
                 val bitmap = BitmapUtils.getBitmap(requireContext(), null, it.toString(), ::UriToBitmap)
@@ -94,10 +108,10 @@ class ImageSearchFragment : Fragment() {
 
         viewModel.url.observe(viewLifecycleOwner, { url ->
             if (viewModel.shouldNavigate) {
-                Log.d("URL OBSERVER", "Should navigate")
                 val action = ImageSearchFragmentDirections
                     .actionSearchFragmentToResultFragment(url, viewModel.uri.toString())
                 this.findNavController().navigate(action)
+                activateResultMenuItem()
                 viewModel.shouldNavigate = false
             }
         })
@@ -111,13 +125,35 @@ class ImageSearchFragment : Fragment() {
         })
 
         searchBtn.setOnClickListener {
-            viewModel.shouldNavigate = true
-            viewModel.uploadImageForUrl(imagePreview.drawable.toBitmap(), requireContext())
+
+            when (NetworkUtils().isConnected(requireContext())) {
+                true -> {
+                    viewModel.shouldNavigate = true
+                    viewModel.uploadImageForUrl(imagePreview.drawable.toBitmap(), requireContext())
+                }
+                false -> Toast.makeText(requireContext(), "Connection Error", Toast.LENGTH_LONG)
+                    .show()
+            }
         }
 
         return view
     }
 
+    private fun activateResultMenuItem() {
+        val appCompat = requireActivity() as AppCompatActivity
+        val navigationView = appCompat.findViewById<BottomNavigationView>(R.id.bottom_nav)
+        val results = navigationView.menu.getItem(2)
+        results.isEnabled = true
+    }
+
+    private fun deactivateResultMenuItem() {
+        val appCompat = requireActivity() as AppCompatActivity
+        val navigationView = appCompat.findViewById<BottomNavigationView>(R.id.bottom_nav)
+        val results = navigationView.menu.getItem(2)
+        results.isEnabled = false
+    }
+
+    // Burde flyttes ut til SearchViewModel
     private fun cropOn() {
         imagePreview.visibility = View.GONE
         galleryBtn.visibility = View.GONE
@@ -152,6 +188,13 @@ class ImageSearchFragment : Fragment() {
         }
     }
 
+
+    // Burde flyttes ut til SearchViewModel
+    private fun pickImageGallery() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        galleryResultLauncher.launch(intent)
+    }
+
     private fun cropOff(shouldGetBmp: Boolean) {
 
         var bitmap: Bitmap? = null
@@ -165,6 +208,20 @@ class ImageSearchFragment : Fragment() {
             viewModel.setUri(Uri.fromFile(viewModel.tempImgFile))
             resetCrop()
         } ?: resetCrop()
+    }
+
+
+
+    // Burde flyttes ut til SearchViewModel
+    private fun getBmpFromCamera() {
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        val fileProvider = FileProvider.getUriForFile(
+            requireContext(),
+            "no.kristiania.reverseimagesearch.fileprovider",
+            viewModel.tempImgFile
+        )
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider)
+        cameraResultLauncher.launch(intent)
     }
 
     private val cameraPermissionRequest =
@@ -202,4 +259,9 @@ class ImageSearchFragment : Fragment() {
                 printError()
             }
         }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }

@@ -1,19 +1,20 @@
 package no.kristiania.reverseimagesearch.view.fragment
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import no.kristiania.reverseimagesearch.SavedSearchResultsFragmentDirections
+import no.kristiania.reverseimagesearch.databinding.SavedSearchFragmentBinding
+import no.kristiania.reverseimagesearch.model.controller.ResultController
+import no.kristiania.reverseimagesearch.model.db.ImageSearchDb
+import no.kristiania.reverseimagesearch.model.db.ResultImageDao
+import no.kristiania.reverseimagesearch.view.adapter.SavedSearchAdapter
 import no.kristiania.reverseimagesearch.viewmodel.SavedSearchesViewModel
 import no.kristiania.reverseimagesearch.viewmodel.factory.SavedSearchesViewModelFactory
-import no.kristiania.reverseimagesearch.databinding.SavedSearchFragmentBinding
-import no.kristiania.reverseimagesearch.model.db.ImageSearchDb
-import no.kristiania.reverseimagesearch.view.adapter.SavedSearchAdapter
 
 class SavedSearchFragment : Fragment() {
 
@@ -29,6 +30,7 @@ class SavedSearchFragment : Fragment() {
         val application = requireNotNull(this.activity).application
         val db = ImageSearchDb.getInstance(application)
         val requestImageDao = db.requestImageDao
+
         viewModel = ViewModelProvider(
             this,
             SavedSearchesViewModelFactory(requestImageDao)

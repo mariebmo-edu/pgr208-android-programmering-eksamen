@@ -1,17 +1,23 @@
 package no.kristiania.reverseimagesearch.view.adapter
 
+import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
+import android.media.Image
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import no.kristiania.reverseimagesearch.R
 import no.kristiania.reverseimagesearch.databinding.ResultItemBinding
 import no.kristiania.reverseimagesearch.model.entity.ResultImage
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
 import java.util.logging.Level.INFO
+import kotlin.coroutines.coroutineContext
 
 
 // Denne klassen forteller recyclerview hvordan den skal vise data fra databasen.
@@ -27,6 +33,7 @@ class ResultItemAdapter :
         viewType: Int
     ): ResultItemViewHolder =
         ResultItemViewHolder.inflateFrom(parent)
+
 
     // Denne kalles for hver gang en recyclerview blir opprettet eller brukt på nytt,
     // for å legge til data i viewet. Dette skjer også i den indre klassen under
@@ -60,6 +67,7 @@ class ResultItemAdapter :
 
         fun bind(resultImage: ResultImage) {
             Log.i("Load image", resultImage.toString())
+
             Glide.with(binding.root)
                 .load(resultImage.serverPath)
                 .into(binding.image)
@@ -69,3 +77,9 @@ class ResultItemAdapter :
 
 
 }
+
+/*
+StfalconImageViewer.Builder<Image>(context, images) { view, image ->
+    Picasso.get().load(image.url).into(view)
+}.show()
+ */

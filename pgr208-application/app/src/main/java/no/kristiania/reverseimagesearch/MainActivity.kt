@@ -1,5 +1,6 @@
 package no.kristiania.reverseimagesearch
 
+import android.content.Context
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -31,6 +32,7 @@ class MainActivity : AppCompatActivity() {
         val bottomNavView = findViewById<BottomNavigationView>(R.id.bottom_nav)
         toolBar.setupWithNavController(navController, appBarConfiguration)
         bottomNavView.setupWithNavController(navController)
+        bottomNavView.menu.getItem(2).isEnabled = false
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -42,4 +44,5 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment)
         return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
     }
+
 }
