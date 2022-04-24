@@ -1,0 +1,46 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class UploadImageFragment {
+    viewModel: UploadImageViewModel
+    binding: UploadImageFragmentBinding
+    buttons: Button[simplified]
+    views: View[simplified]
+    resultLaunchers: ActivityResultLauncher<?>[simplified]
+
+    onCreateView()
+    onDestroyView()
+    privateHelperMethods() (simplified)
+}
+
+class UploadImageViewModel {
+    url: LiveData<String>
+    uri: LiveData<Uri>
+    cropping: LiveData<Boolean>
+    shouldNavigate: Boolean
+
+    uploadImageForUrl()
+    cropImage()
+    finishCropping()
+    abortCropping()
+    pickImageCamera()
+    pickImageGallery()
+    getBmpFromCamera()
+}
+
+class SearchResultFragment {
+    binding: SearchResultFragmentBinding
+
+    onCreateView()
+    onDestroy()
+    toggleViews()
+}
+
+class SearchResultDiffItemCallback {
+    areItemsTheSame()
+    areContentsTheSame()
+}
+
+UploadImageFragment <-- UploadImageViewModel
+
+@enduml
