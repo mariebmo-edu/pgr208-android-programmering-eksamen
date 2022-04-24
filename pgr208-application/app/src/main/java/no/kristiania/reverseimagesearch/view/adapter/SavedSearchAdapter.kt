@@ -41,10 +41,10 @@ class SavedSearchAdapter(val clickListener: (id: Long, collectionName: String) -
                 binding.savedSearchImage.setImageBitmap(bitmapImage)
                 binding.savedSearchText.text = requestImage.collectionName.toString()
                 requestImage.id?.let { id ->
-                    binding.root.setOnClickListener { clickListener(id, requestImage.collectionName!!) }
+                    binding.root.setOnClickListener { clickListener(id, requestImage.collectionName.toString()) }
                 }
             }
-            Log.i("Load image", "Loading image in binding")
+
         }
     }
 }

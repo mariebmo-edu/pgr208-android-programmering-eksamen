@@ -43,11 +43,12 @@ class SavedSearchResultsFragment : Fragment() {
         binding.savedSearchResultsList.adapter = adapter
         binding.viewModel = viewModel
 
-        viewModel.setCollectionName(collectionName)
+
         viewModel.resultImages.observe(viewLifecycleOwner, {
             it?.let {
                 Log.d("observer", "Submitting list ${it.size}")
                 adapter.submitList(it)
+                viewModel.setCollectionName(collectionName)
             }
         })
 
