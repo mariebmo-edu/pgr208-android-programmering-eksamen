@@ -103,6 +103,7 @@ class SearchResultViewModel(
         }
     }
 
+    // Sub req. 8
     fun saveResult(context: Context, imagesToSave: List<ResultImage>, collectionName: String) {
 
         val bitmapRequestImage = BitmapUtils.getBitmap(
@@ -115,7 +116,8 @@ class SearchResultViewModel(
             collectionName = collectionName
         )
 
-        viewModelScope.launch {
+        // Async save. Sub. req. 7
+        CoroutineScope(Dispatchers.IO).launch {
             try {
                 resultController.saveAll(requestImage, imagesToSave)
             } catch (e: SQLiteException) {

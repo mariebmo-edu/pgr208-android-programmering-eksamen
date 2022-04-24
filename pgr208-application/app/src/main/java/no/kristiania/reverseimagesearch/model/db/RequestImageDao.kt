@@ -5,6 +5,8 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 import no.kristiania.reverseimagesearch.model.entity.RequestImage
 
+
+
 @Dao
 interface RequestImageDao {
     @Insert(onConflict = OnConflictStrategy.ABORT)

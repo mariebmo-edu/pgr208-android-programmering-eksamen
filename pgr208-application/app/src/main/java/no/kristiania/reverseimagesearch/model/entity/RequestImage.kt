@@ -12,7 +12,7 @@ data class RequestImage(
 
     @ColumnInfo(name = "request_image_server_path")
     var serverPath: String? = null,
-
+    // Sub req. 8
     @ColumnInfo(name = "request_image_data", typeAffinity = ColumnInfo.BLOB)
     var data: ByteArray? = null,
 

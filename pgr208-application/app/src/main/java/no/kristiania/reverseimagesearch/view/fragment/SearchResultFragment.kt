@@ -57,6 +57,7 @@ class SearchResultFragment : Fragment() {
         Log.d("ResultFragment", viewModel.hostedImageServerUrl)
 
 
+        // One of many callbacks in the app
         viewModel.shouldSearch.observe(viewLifecycleOwner, { shouldSearch ->
             if (shouldSearch && api != null) {
                 viewModel.getResultFromUrl(viewModel.hostedImageServerUrl, api)
@@ -75,7 +76,7 @@ class SearchResultFragment : Fragment() {
         var i = 0
         var timer = true
 
-        viewModel.resultImages.observe(viewLifecycleOwner, Observer {
+        viewModel.resultImages.observe(viewLifecycleOwner, {
 
             Log.d("SHOULD_SEARCH", viewModel.shouldSearch.value.toString())
             if (viewModel.shouldSearch.value!!) {
