@@ -21,6 +21,7 @@ data class ResultImage(
     val id: Long? = null,
     @ColumnInfo(name = "result_item_server_path")
     val serverPath: String? = null,
+    // Sub req. 8
     @ColumnInfo(name = "result_item_data", typeAffinity = ColumnInfo.BLOB)
     var data: ByteArray? = null,
     @ColumnInfo(name = "request_image_id", index = true)

@@ -12,6 +12,7 @@ class ResultController(
     private val resultImageDao: ResultImageDao,
     private val requestImageDao: RequestImageDao
 ) {
+    // Sub req. 8
     @Throws(SQLiteException::class)
     fun saveAll(
         requestImage: RequestImage,
@@ -25,7 +26,7 @@ class ResultController(
         }
         resultImageDao.insertMany(imagesToSave)
     }
-
+    // Sub req. 8
     suspend fun getByParentId(requestImgId: Long): LiveData<List<ResultImage>> {
 
         fun getFromDb() = CoroutineScope(Dispatchers.IO).async {

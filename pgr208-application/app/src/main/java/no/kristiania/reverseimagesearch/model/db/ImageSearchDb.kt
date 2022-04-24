@@ -7,6 +7,7 @@ import androidx.room.RoomDatabase
 import no.kristiania.reverseimagesearch.model.entity.RequestImage
 import no.kristiania.reverseimagesearch.model.entity.ResultImage
 
+
 @Database(entities = [RequestImage::class, ResultImage::class], version = 3, exportSchema = false)
 abstract class ImageSearchDb : RoomDatabase() {
     abstract val requestImageDao: RequestImageDao

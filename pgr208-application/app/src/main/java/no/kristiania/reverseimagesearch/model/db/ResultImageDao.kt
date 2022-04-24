@@ -6,6 +6,8 @@ import androidx.room.*
 import no.kristiania.reverseimagesearch.model.entity.RequestImage
 import no.kristiania.reverseimagesearch.model.entity.ResultImage
 
+
+
 @Dao
 interface ResultImageDao {
     @Insert(onConflict = OnConflictStrategy.ABORT)

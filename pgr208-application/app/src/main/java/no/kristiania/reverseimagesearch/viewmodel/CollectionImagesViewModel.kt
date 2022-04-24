@@ -23,6 +23,7 @@ class CollectionImagesViewModel(
     val collectionName get() = _collectionName
 
     init {
+        // Sub req. 8
         try {
             resultImages = resultImageDao.getByParentId(requestImgId)
         } catch (e: SQLiteException) {
