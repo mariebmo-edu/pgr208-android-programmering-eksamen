@@ -7,7 +7,7 @@ import no.kristiania.reverseimagesearch.model.entity.RequestImage
 import no.kristiania.reverseimagesearch.model.entity.ResultImage
 
 
-
+// App.req. 4
 @Dao
 interface ResultImageDao {
     @Insert(onConflict = OnConflictStrategy.ABORT)

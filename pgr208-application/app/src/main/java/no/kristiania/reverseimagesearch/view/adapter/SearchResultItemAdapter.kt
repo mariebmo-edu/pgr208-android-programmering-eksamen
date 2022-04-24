@@ -12,7 +12,7 @@ import no.kristiania.reverseimagesearch.model.entity.ResultImage
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
 import no.kristiania.reverseimagesearch.viewmodel.utils.ViewUtils
 
-
+// app.req 1
 // sub.req 4
 class SearchResultItemAdapter :
     ListAdapter<ResultImage, SearchResultItemAdapter.ResultItemViewHolder>(

@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-
+// App.req. 4
 @Entity(
     tableName = "result_image_table",
     foreignKeys = arrayOf(

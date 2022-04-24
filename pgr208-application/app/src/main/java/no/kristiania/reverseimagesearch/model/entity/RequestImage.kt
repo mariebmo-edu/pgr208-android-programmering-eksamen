@@ -3,7 +3,7 @@ package no.kristiania.reverseimagesearch.model.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-
+// App.req. 4
 @Entity(tableName = "request_image_table")
 data class RequestImage(
     @ColumnInfo(name = "request_image_id")

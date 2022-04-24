@@ -67,15 +67,13 @@ class SearchResultFragment : Fragment() {
 
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
-        //binding.resultItemsList.
-        // Til databinding med livedata
         val adapter = SearchResultItemAdapter()
+        // app.req 1
         binding.resultItemsList.adapter = adapter
-        // Observer endringer i view modellens liste av resultitems
 
         var i = 0
         var timer = true
-
+        // callback
         viewModel.resultImages.observe(viewLifecycleOwner, {
 
             Log.d("SHOULD_SEARCH", viewModel.shouldSearch.value.toString())
@@ -106,7 +104,7 @@ class SearchResultFragment : Fragment() {
 
 
         })
-
+        // callback
         viewModel.shouldNavigateToSaved.observe(viewLifecycleOwner, {
             if (it) {
                 val action =
@@ -116,6 +114,7 @@ class SearchResultFragment : Fragment() {
             }
         })
 
+        // callback
         binding.saveResultButton.setOnClickListener {
             val dialogueBuilder = AlertDialog.Builder(context)
             val popUpView = layoutInflater.inflate(R.layout.popup_fragment, null)

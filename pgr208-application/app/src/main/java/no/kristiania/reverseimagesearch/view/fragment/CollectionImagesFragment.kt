@@ -40,13 +40,13 @@ class CollectionImagesFragment : Fragment() {
         )[CollectionImagesViewModel::class.java]
 
         val view = binding.root
-
+        // app.req 1
         val adapter = CollectionsResultsAdapter()
         binding.lifecycleOwner = viewLifecycleOwner
         binding.savedSearchResultsList.adapter = adapter
         binding.viewModel = viewModel
 
-
+        // callback, lambda
         viewModel.resultImages.observe(viewLifecycleOwner, {
             it?.let {
                 Log.d("observer", "Submitting list ${it.size}")

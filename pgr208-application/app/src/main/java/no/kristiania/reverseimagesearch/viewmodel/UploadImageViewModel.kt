@@ -15,11 +15,9 @@ import androidx.core.content.FileProvider
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.theartofdev.edmodo.cropper.CropImageView
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import no.kristiania.reverseimagesearch.viewmodel.api.FastNetworkingAPI
 import java.io.File
 
@@ -48,7 +46,8 @@ class UploadImageViewModel : ViewModel() {
     fun uploadImageForUrl(bitmap: Bitmap, context: Context) {
         val http = FastNetworkingAPI(context)
 
-        GlobalScope.launch(Dispatchers.IO) {
+        // app. req. 3
+        viewModelScope.launch(Dispatchers.IO) {
             val res = async { http.uploadImageSynchronous(bitmap) }
             val url = res.await()
 

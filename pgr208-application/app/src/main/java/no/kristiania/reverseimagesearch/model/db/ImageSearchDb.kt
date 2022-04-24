@@ -17,7 +17,7 @@ abstract class ImageSearchDb : RoomDatabase() {
         @Volatile
         private var INSTANCE: ImageSearchDb? = null
 
-        // TODO: Bør nok fjerne fallback destructive greia
+        // App.req. 4
         fun getInstance(context: Context): ImageSearchDb {
             synchronized(this) {
                 var instance = INSTANCE
