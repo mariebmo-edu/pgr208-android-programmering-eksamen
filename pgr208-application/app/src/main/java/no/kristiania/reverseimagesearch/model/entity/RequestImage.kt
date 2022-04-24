@@ -13,11 +13,11 @@ data class RequestImage(
     @ColumnInfo(name = "request_image_server_path")
     var serverPath: String? = null,
 
-    @ColumnInfo(name = "request_image_data",typeAffinity = ColumnInfo.BLOB)
+    @ColumnInfo(name = "request_image_data", typeAffinity = ColumnInfo.BLOB)
     var data: ByteArray? = null,
 
     @ColumnInfo(name = "request_image_collection_name")
-    var collectionName : String? = null,
+    var collectionName: String? = null,
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

@@ -1,6 +1,5 @@
 package no.kristiania.reverseimagesearch.model.controller
 
-import android.accounts.NetworkErrorException
 import android.database.sqlite.SQLiteException
 import androidx.lifecycle.LiveData
 import kotlinx.coroutines.*
@@ -8,7 +7,6 @@ import no.kristiania.reverseimagesearch.model.db.RequestImageDao
 import no.kristiania.reverseimagesearch.model.db.ResultImageDao
 import no.kristiania.reverseimagesearch.model.entity.RequestImage
 import no.kristiania.reverseimagesearch.model.entity.ResultImage
-import java.lang.Exception
 
 class ResultController(
     private val resultImageDao: ResultImageDao,

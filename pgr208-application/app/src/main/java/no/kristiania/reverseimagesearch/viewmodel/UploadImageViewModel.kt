@@ -16,18 +16,20 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.theartofdev.edmodo.cropper.CropImageView
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import no.kristiania.reverseimagesearch.viewmodel.api.FastNetworkingAPI
-import no.kristiania.reverseimagesearch.viewmodel.utils.JsonArrUtils
 import java.io.File
 
-class SearchViewModel : ViewModel() {
+class UploadImageViewModel : ViewModel() {
     private val _url = MutableLiveData<String>()
     val url: LiveData<String>
         get() = _url
 
     var shouldNavigate = true
-    lateinit var tempImgFile : File
+    lateinit var tempImgFile: File
 
     private val _uri = MutableLiveData<Uri?>()
     val uri: LiveData<Uri?>
@@ -35,7 +37,7 @@ class SearchViewModel : ViewModel() {
 
 
     private val _cropping = MutableLiveData<Boolean>(false)
-    val cropping : LiveData<Boolean>
+    val cropping: LiveData<Boolean>
         get() = _cropping
 
 
@@ -80,7 +82,11 @@ class SearchViewModel : ViewModel() {
         galleryResultLauncher.launch(intent)
     }
 
-    fun pickImageCamera(context: Context, cameraResultLauncher: ActivityResultLauncher<Intent>, cameraPermissionRequest: ActivityResultLauncher<String>) {
+    fun pickImageCamera(
+        context: Context,
+        cameraResultLauncher: ActivityResultLauncher<Intent>,
+        cameraPermissionRequest: ActivityResultLauncher<String>
+    ) {
         if (ContextCompat.checkSelfPermission(
                 context,
                 Manifest.permission.CAMERA

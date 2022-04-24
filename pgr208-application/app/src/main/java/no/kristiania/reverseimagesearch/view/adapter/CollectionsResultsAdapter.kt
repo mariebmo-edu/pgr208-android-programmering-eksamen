@@ -1,43 +1,44 @@
 package no.kristiania.reverseimagesearch.view.adapter
 
-import android.graphics.drawable.BitmapDrawable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import no.kristiania.reverseimagesearch.databinding.SavedSearchResultsItemBinding
+import no.kristiania.reverseimagesearch.databinding.CollectionImageItemBinding
 import no.kristiania.reverseimagesearch.model.entity.ResultImage
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
 import no.kristiania.reverseimagesearch.viewmodel.utils.ViewUtils
-import kotlin.coroutines.coroutineContext
 
-class SavedSearchResultsAdapter : ListAdapter<ResultImage, SavedSearchResultsAdapter.SavedSearchResultsItemViewHolder>(SavedSearchResultsDiffItemCallback()) {
+class CollectionsResultsAdapter :
+    ListAdapter<ResultImage, CollectionsResultsAdapter.CollectionImagesItemViewHolder>(
+        CollectionImagesDiffItemCallback()
+    ) {
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): SavedSearchResultsItemViewHolder {
+    ): CollectionImagesItemViewHolder {
         Log.d("onCreate", "Inflating")
-        return SavedSearchResultsItemViewHolder.inflateFrom(parent)
+        return CollectionImagesItemViewHolder.inflateFrom(parent)
     }
 
-    override fun onBindViewHolder(holder: SavedSearchResultsItemViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: CollectionImagesItemViewHolder, position: Int) {
         val resultImage = getItem(position)
         Log.i("Load image", "Loading result image in binding")
 
         holder.bind(resultImage)
     }
 
-    class SavedSearchResultsItemViewHolder(val binding: SavedSearchResultsItemBinding) :
+    class CollectionImagesItemViewHolder(val binding: CollectionImageItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         companion object {
-            fun inflateFrom(parent: ViewGroup): SavedSearchResultsItemViewHolder {
+            fun inflateFrom(parent: ViewGroup): CollectionImagesItemViewHolder {
                 Log.d("inflater", "Inflating!")
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val binding = SavedSearchResultsItemBinding.inflate(layoutInflater, parent, false)
-                return SavedSearchResultsItemViewHolder(binding)
+                val binding = CollectionImageItemBinding.inflate(layoutInflater, parent, false)
+                return CollectionImagesItemViewHolder(binding)
             }
         }
 

@@ -1,18 +1,16 @@
 package no.kristiania.reverseimagesearch.view.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import no.kristiania.reverseimagesearch.databinding.SavedSearchItemBinding
+import no.kristiania.reverseimagesearch.databinding.CollectionItemBinding
 import no.kristiania.reverseimagesearch.model.entity.RequestImage
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
-import no.kristiania.reverseimagesearch.viewmodel.utils.ViewUtils
 
-class SavedSearchAdapter(val clickListener: (id: Long, collectionName: String) -> Unit) :
-    ListAdapter<RequestImage, SavedSearchAdapter.SavedSearchItemViewHolder>(
-        SavedSearchDiffItemCallback()
+class CollectionsAdapter(val clickListener: (id: Long, collectionName: String) -> Unit) :
+    ListAdapter<RequestImage, CollectionsAdapter.SavedSearchItemViewHolder>(
+        CollectionsDiffItemCallback()
     ) {
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -24,24 +22,32 @@ class SavedSearchAdapter(val clickListener: (id: Long, collectionName: String) -
         holder.bind(item, clickListener)
     }
 
-    class SavedSearchItemViewHolder(val binding: SavedSearchItemBinding) :
+    class SavedSearchItemViewHolder(val binding: CollectionItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         companion object {
             fun inflateFrom(parent: ViewGroup): SavedSearchItemViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val binding = SavedSearchItemBinding.inflate(layoutInflater, parent, false)
+                val binding = CollectionItemBinding.inflate(layoutInflater, parent, false)
                 return SavedSearchItemViewHolder(binding)
             }
         }
 
-        fun bind(requestImage: RequestImage, clickListener: (id: Long, collectionName: String) -> Unit) {
+        fun bind(
+            requestImage: RequestImage,
+            clickListener: (id: Long, collectionName: String) -> Unit
+        ) {
             requestImage.data?.let { it ->
                 val bitmapImage = BitmapUtils.byteArrayToBitmap(it)
                 binding.savedSearchImage.setImageBitmap(bitmapImage)
                 binding.savedSearchText.text = requestImage.collectionName.toString()
                 requestImage.id?.let { id ->
-                    binding.root.setOnClickListener { clickListener(id, requestImage.collectionName.toString()) }
+                    binding.root.setOnClickListener {
+                        clickListener(
+                            id,
+                            requestImage.collectionName.toString()
+                        )
+                    }
                 }
             }
 

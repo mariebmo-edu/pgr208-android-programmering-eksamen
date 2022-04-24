@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/overlayColor"
-    tools:context=".view.fragment.FullscreenImage">
+    tools:context=".view.fragment.FullscreenImageFragment">
 
 
     <com.github.chrisbanes.photoview.PhotoView

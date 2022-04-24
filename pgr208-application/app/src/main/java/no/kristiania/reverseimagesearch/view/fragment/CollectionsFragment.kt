@@ -8,18 +8,16 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import no.kristiania.reverseimagesearch.databinding.SavedSearchFragmentBinding
-import no.kristiania.reverseimagesearch.model.controller.ResultController
+import no.kristiania.reverseimagesearch.databinding.CollectionsFragmentBinding
 import no.kristiania.reverseimagesearch.model.db.ImageSearchDb
-import no.kristiania.reverseimagesearch.model.db.ResultImageDao
-import no.kristiania.reverseimagesearch.view.adapter.SavedSearchAdapter
-import no.kristiania.reverseimagesearch.viewmodel.SavedSearchesViewModel
-import no.kristiania.reverseimagesearch.viewmodel.factory.SavedSearchesViewModelFactory
+import no.kristiania.reverseimagesearch.view.adapter.CollectionsAdapter
+import no.kristiania.reverseimagesearch.viewmodel.CollectionsViewModel
+import no.kristiania.reverseimagesearch.viewmodel.factory.CollectionsViewModelFactory
 
-class SavedSearchFragment : Fragment() {
+class CollectionsFragment : Fragment() {
 
-    private lateinit var viewModel: SavedSearchesViewModel
-    private var _binding: SavedSearchFragmentBinding? = null
+    private lateinit var viewModel: CollectionsViewModel
+    private var _binding: CollectionsFragmentBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -33,15 +31,15 @@ class SavedSearchFragment : Fragment() {
 
         viewModel = ViewModelProvider(
             this,
-            SavedSearchesViewModelFactory(requestImageDao)
-        )[SavedSearchesViewModel::class.java]
-        _binding = SavedSearchFragmentBinding.inflate(inflater, container, false)
+            CollectionsViewModelFactory(requestImageDao)
+        )[CollectionsViewModel::class.java]
+        _binding = CollectionsFragmentBinding.inflate(inflater, container, false)
         val view = binding.root
-        val adapter = SavedSearchAdapter { id, collectionName ->
+        val adapter = CollectionsAdapter { id, collectionName ->
             viewModel.onRequestClicked(id, collectionName)
         }
 
-        
+
         binding.savedSearchList.adapter = adapter
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
@@ -49,7 +47,11 @@ class SavedSearchFragment : Fragment() {
         viewModel.navigateToResults.observe(viewLifecycleOwner, {
             it?.let {
                 Log.d("Navigate to results observer", "Navigating if not null")
-                val action = SavedSearchFragmentDirections.actionSavedSearchesFragmentToSavedSearchesResultFragment(it,viewModel.collectionName!! )
+                val action =
+                    CollectionsFragmentDirections.actionSavedSearchesFragmentToSavedSearchesResultFragment(
+                        it,
+                        viewModel.collectionName!!
+                    )
                 findNavController().navigate(action)
                 viewModel.onNavigated()
             }

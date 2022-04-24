@@ -2,13 +2,13 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="no.kristiania.reverseimagesearch.view.fragment.ResultFragment">
+    tools:context="no.kristiania.reverseimagesearch.view.fragment.SearchResultFragment">
 
     <data>
 
         <variable
             name="viewModel"
-            type="no.kristiania.reverseimagesearch.viewmodel.ResultViewModel" />
+            type="no.kristiania.reverseimagesearch.viewmodel.SearchResultViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -40,6 +40,7 @@
                 tools:text="Dette er tekst" />
 
         </RelativeLayout>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/result_items_list"
             android:layout_width="0dp"

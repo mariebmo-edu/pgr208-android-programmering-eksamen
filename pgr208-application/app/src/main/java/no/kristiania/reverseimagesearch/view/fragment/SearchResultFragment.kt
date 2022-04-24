@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,23 +12,22 @@ import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.RelativeLayout
 import android.widget.Toast
-import androidx.core.view.size
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.RecyclerView
 import no.kristiania.reverseimagesearch.R
-import no.kristiania.reverseimagesearch.viewmodel.ResultViewModel
-import no.kristiania.reverseimagesearch.databinding.FragmentResultBinding
+import no.kristiania.reverseimagesearch.databinding.SearchResultFragmentBinding
 import no.kristiania.reverseimagesearch.model.controller.ResultController
 import no.kristiania.reverseimagesearch.model.db.ImageSearchDb
-import no.kristiania.reverseimagesearch.view.adapter.ResultItemAdapter
-import no.kristiania.reverseimagesearch.viewmodel.factory.ResultViewModelFactory
+import no.kristiania.reverseimagesearch.view.adapter.SearchResultItemAdapter
+import no.kristiania.reverseimagesearch.viewmodel.SearchResultViewModel
 import no.kristiania.reverseimagesearch.viewmodel.api.FastNetworkingAPI
+import no.kristiania.reverseimagesearch.viewmodel.factory.SearchResultViewModelFactory
 
-class ResultFragment : Fragment() {
+class SearchResultFragment : Fragment() {
 
-    private var _binding: FragmentResultBinding? = null
+    private var _binding: SearchResultFragmentBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -37,7 +35,7 @@ class ResultFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         // Dette er "dataBinding/ViewBinding. Erstatter findById og er mer minne-effektiv
-        _binding = FragmentResultBinding.inflate(inflater, container, false)
+        _binding = SearchResultFragmentBinding.inflate(inflater, container, false)
         val view = binding.root
 
 
@@ -49,12 +47,13 @@ class ResultFragment : Fragment() {
         val requestImageDao = db.requestImageDao
         val resultImageDao = db.resultImageDao
         val resultController = ResultController(resultImageDao, requestImageDao)
-        val resultViewModelFactory = ResultViewModelFactory(resultController)
-        val viewModel = ViewModelProvider(this, resultViewModelFactory)[ResultViewModel::class.java]
+        val resultViewModelFactory = SearchResultViewModelFactory(resultController)
+        val viewModel =
+            ViewModelProvider(this, resultViewModelFactory)[SearchResultViewModel::class.java]
         viewModel.hostedImageServerUrl =
-            ResultFragmentArgs.fromBundle(requireArguments()).responseUrl
+            SearchResultFragmentArgs.fromBundle(requireArguments()).responseUrl
         viewModel.requestImageLocalPath =
-            ResultFragmentArgs.fromBundle(requireArguments()).requestImagePath
+            SearchResultFragmentArgs.fromBundle(requireArguments()).requestImagePath
         Log.d("ResultFragment", viewModel.hostedImageServerUrl)
 
 
@@ -69,7 +68,7 @@ class ResultFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
         //binding.resultItemsList.
         // Til databinding med livedata
-        val adapter = ResultItemAdapter()
+        val adapter = SearchResultItemAdapter()
         binding.resultItemsList.adapter = adapter
         // Observer endringer i view modellens liste av resultitems
 
@@ -79,7 +78,7 @@ class ResultFragment : Fragment() {
         viewModel.resultImages.observe(viewLifecycleOwner, Observer {
 
             Log.d("SHOULD_SEARCH", viewModel.shouldSearch.value.toString())
-            if(viewModel.shouldSearch.value!!){
+            if (viewModel.shouldSearch.value!!) {
                 toggleViews(true, view)
             } else {
                 viewModel.searchDone()
@@ -109,7 +108,8 @@ class ResultFragment : Fragment() {
 
         viewModel.shouldNavigateToSaved.observe(viewLifecycleOwner, {
             if (it) {
-                val action = ResultFragmentDirections.actionResultFragmentToSavedSearchesFragment()
+                val action =
+                    SearchResultFragmentDirections.actionResultFragmentToSavedSearchesFragment()
                 this.findNavController().navigate(action)
                 viewModel.toggleNavigateToSaved()
             }
@@ -117,7 +117,7 @@ class ResultFragment : Fragment() {
 
         binding.saveResultButton.setOnClickListener {
             val dialogueBuilder = AlertDialog.Builder(context)
-            val popUpView = layoutInflater.inflate(R.layout.fragment_popup__text_w_button, null)
+            val popUpView = layoutInflater.inflate(R.layout.popup_fragment, null)
 
             val selectedName =
                 popUpView.findViewById<AutoCompleteTextView>(R.id.autoCompleteCollectionNameTextView).text
@@ -153,9 +153,9 @@ class ResultFragment : Fragment() {
         _binding = null
     }
 
-    fun toggleViews(loading: Boolean, view: View){
+    fun toggleViews(loading: Boolean, view: View) {
 
-        when(loading){
+        when (loading) {
             true -> {
                 view.findViewById<RelativeLayout>(R.id.loading_panel).visibility = View.VISIBLE
                 view.findViewById<Button>(R.id.save_result_button).visibility = View.GONE

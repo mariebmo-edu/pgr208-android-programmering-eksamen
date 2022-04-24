@@ -1,21 +1,17 @@
 package no.kristiania.reverseimagesearch.viewmodel.utils
 
 import android.content.Context
-import android.content.ContextWrapper
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.drawable.VectorDrawable
 import android.net.Uri
 import android.provider.MediaStore
-import android.util.Base64.DEFAULT
-import android.util.Base64.encodeToString
 import android.util.Log
 import androidx.core.content.ContextCompat
-import java.io.*
-import java.util.*
-import java.util.zip.Deflater
-import java.util.zip.Inflater
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
@@ -60,25 +56,30 @@ class BitmapUtils {
         fun bitmapToByteArray(bitmap: Bitmap): ByteArray {
             val outputStream = ByteArrayOutputStream()
 
-            val compressedBitmap = compressBitmap(bitmap, (640*480))
+            val compressedBitmap = compressBitmap(bitmap, (640 * 480))
 
             compressedBitmap.compress(Bitmap.CompressFormat.PNG, 0, outputStream)
             return outputStream.toByteArray()
         }
 
         //From https://github.com/Vysh01/AndroidImageResizer/blob/master/ImageResizer.java
-        fun compressBitmap(bitmap: Bitmap, MAX_SIZE : Int): Bitmap {
+        fun compressBitmap(bitmap: Bitmap, MAX_SIZE: Int): Bitmap {
 
-            val ratioSquare = ((bitmap.height * bitmap.width)/ MAX_SIZE).toDouble()
+            val ratioSquare = ((bitmap.height * bitmap.width) / MAX_SIZE).toDouble()
 
-            if(ratioSquare <= 1){
+            if (ratioSquare <= 1) {
                 return bitmap
             }
 
             val ratio = sqrt(ratioSquare)
             Log.d("RATIO", ratio.toString())
 
-            return Bitmap.createScaledBitmap(bitmap, (bitmap.width / ratio).roundToInt(), (bitmap.height/ratio).roundToInt(), true)
+            return Bitmap.createScaledBitmap(
+                bitmap,
+                (bitmap.width / ratio).roundToInt(),
+                (bitmap.height / ratio).roundToInt(),
+                true
+            )
         }
 
 

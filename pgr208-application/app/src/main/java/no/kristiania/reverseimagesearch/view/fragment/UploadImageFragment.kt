@@ -5,7 +5,6 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,25 +13,26 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.core.graphics.drawable.toBitmap
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.theartofdev.edmodo.cropper.CropImageView
 import no.kristiania.reverseimagesearch.R
-import no.kristiania.reverseimagesearch.databinding.FragmentImageSearchBinding
-import no.kristiania.reverseimagesearch.viewmodel.SearchViewModel
+import no.kristiania.reverseimagesearch.databinding.UploadImageFragmentBinding
+import no.kristiania.reverseimagesearch.viewmodel.UploadImageViewModel
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils.Companion.UriToBitmap
 import no.kristiania.reverseimagesearch.viewmodel.utils.NetworkUtils
 import no.kristiania.reverseimagesearch.viewmodel.utils.ViewUtils
 import java.io.File
 
-class ImageSearchFragment : Fragment() {
+class UploadImageFragment : Fragment() {
 
-    private var _binding: FragmentImageSearchBinding? = null
+    private var _binding: UploadImageFragmentBinding? = null
     private val binding get() = _binding!!
-    private var _viewModel: SearchViewModel? = null
+    private var _viewModel: UploadImageViewModel? = null
     private val viewModel get() = _viewModel!!
     private lateinit var galleryBtn: Button
     private lateinit var cameraBtn: Button
@@ -48,10 +48,10 @@ class ImageSearchFragment : Fragment() {
     ): View {
         deactivateResultMenuItem()
         setHasOptionsMenu(true)
-        _binding = FragmentImageSearchBinding.inflate(inflater, container, false)
+        _binding = UploadImageFragmentBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        _viewModel = ViewModelProvider(this)[SearchViewModel::class.java]
+        _viewModel = ViewModelProvider(this)[UploadImageViewModel::class.java]
 
         binding.lifecycleOwner = viewLifecycleOwner
         galleryBtn = binding.galleryBtn
@@ -72,7 +72,11 @@ class ImageSearchFragment : Fragment() {
         }
 
         cameraBtn.setOnClickListener {
-            viewModel.pickImageCamera(requireContext(), cameraResultLauncher, cameraPermissionRequest)
+            viewModel.pickImageCamera(
+                requireContext(),
+                cameraResultLauncher,
+                cameraPermissionRequest
+            )
         }
 
         cropBtn.setOnClickListener {
@@ -90,7 +94,8 @@ class ImageSearchFragment : Fragment() {
 
         viewModel.uri.observe(viewLifecycleOwner, {
             it?.let {
-                val bitmap = BitmapUtils.getBitmap(requireContext(), null, it.toString(), ::UriToBitmap)
+                val bitmap =
+                    BitmapUtils.getBitmap(requireContext(), null, it.toString(), ::UriToBitmap)
                 imagePreview.setImageBitmap(bitmap)
                 searchBtn.visibility = View.VISIBLE
                 cropBtn.visibility = View.VISIBLE
@@ -102,7 +107,7 @@ class ImageSearchFragment : Fragment() {
 
         viewModel.url.observe(viewLifecycleOwner, { url ->
             if (viewModel.shouldNavigate) {
-                val action = ImageSearchFragmentDirections
+                val action = UploadImageFragmentDirections
                     .actionSearchFragmentToResultFragment(url, viewModel.uri.value.toString())
                 this.findNavController().navigate(action)
                 activateResultMenuItem()
@@ -197,9 +202,6 @@ class ImageSearchFragment : Fragment() {
     }
 
 
-
-
-
     private val cameraPermissionRequest =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) {
             if (it) {
@@ -228,7 +230,12 @@ class ImageSearchFragment : Fragment() {
                 uri?.let {
                     viewModel.setUri(uri)
                     val bitmap =
-                        BitmapUtils.getBitmap(requireContext(), null, viewModel.uri.value.toString(), ::UriToBitmap)
+                        BitmapUtils.getBitmap(
+                            requireContext(),
+                            null,
+                            viewModel.uri.value.toString(),
+                            ::UriToBitmap
+                        )
                     imagePreview.setImageBitmap(bitmap)
                 } ?: printError()
             } else {

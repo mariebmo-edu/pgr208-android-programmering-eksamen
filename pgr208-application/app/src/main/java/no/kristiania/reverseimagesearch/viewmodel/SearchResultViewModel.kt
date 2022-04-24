@@ -7,19 +7,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.*
-import no.kristiania.reverseimagesearch.R
 import no.kristiania.reverseimagesearch.model.controller.ResultController
-import no.kristiania.reverseimagesearch.model.db.RequestImageDao
-import no.kristiania.reverseimagesearch.model.db.ResultImageDao
 import no.kristiania.reverseimagesearch.model.entity.RequestImage
 import no.kristiania.reverseimagesearch.model.entity.ResultImage
 import no.kristiania.reverseimagesearch.viewmodel.api.FastNetworkingAPI
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
 import org.json.JSONArray
 
-class ResultViewModel(
+class SearchResultViewModel(
     private val resultController: ResultController
 ) : ViewModel() {
 
@@ -43,9 +39,11 @@ class ResultViewModel(
             _shouldNavigateToSaved.value = !it
         }
     }
+
     fun setInfoText(message: String) {
         _infoMessage.value = message
     }
+
     fun getResultFromUrl(url: String, api: FastNetworkingAPI) {
 
         viewModelScope.launch(Dispatchers.IO) {
@@ -64,7 +62,7 @@ class ResultViewModel(
                         FastNetworkingAPI.ImageProvider.Bing
                     )
                 }
-           val tinEyeReq =
+            val tinEyeReq =
                 async {
                     api.getImageFromProviderSynchronous(
                         url,
@@ -72,7 +70,7 @@ class ResultViewModel(
                     )
                 }
 
-            withTimeout(20000L){
+            withTimeout(20000L) {
                 launch(Dispatchers.Main) {
                     bingReq.await()?.let {
                         fetchImagesFromSearch(it)
@@ -87,7 +85,6 @@ class ResultViewModel(
             }
         }
     }
-
 
 
     fun fetchImagesFromSearch(response: JSONArray) {
@@ -106,12 +103,17 @@ class ResultViewModel(
         }
     }
 
-    fun saveResult(context: Context, imagesToSave: List<ResultImage>, collectionName : String) {
+    fun saveResult(context: Context, imagesToSave: List<ResultImage>, collectionName: String) {
 
-        val bitmapRequestImage = BitmapUtils.getBitmap(context, null, requestImageLocalPath,
+        val bitmapRequestImage = BitmapUtils.getBitmap(
+            context, null, requestImageLocalPath,
             BitmapUtils.Companion::UriToBitmap
         )
-        val requestImage = RequestImage(serverPath = hostedImageServerUrl, data = BitmapUtils.bitmapToByteArray(bitmapRequestImage), collectionName = collectionName)
+        val requestImage = RequestImage(
+            serverPath = hostedImageServerUrl,
+            data = BitmapUtils.bitmapToByteArray(bitmapRequestImage),
+            collectionName = collectionName
+        )
 
         viewModelScope.launch {
             try {
