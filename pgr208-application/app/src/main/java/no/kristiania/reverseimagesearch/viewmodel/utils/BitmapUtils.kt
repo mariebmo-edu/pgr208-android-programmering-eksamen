@@ -10,11 +10,14 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.util.Base64.DEFAULT
 import android.util.Base64.encodeToString
+import android.util.Log
 import androidx.core.content.ContextCompat
 import java.io.*
 import java.util.*
 import java.util.zip.Deflater
 import java.util.zip.Inflater
+import kotlin.math.roundToInt
+import kotlin.math.sqrt
 
 class BitmapUtils {
 
@@ -57,32 +60,25 @@ class BitmapUtils {
         fun bitmapToByteArray(bitmap: Bitmap): ByteArray {
             val outputStream = ByteArrayOutputStream()
 
-            bitmap.compress(Bitmap.CompressFormat.PNG, 0, outputStream)
+            val compressedBitmap = compressBitmap(bitmap, (640*480))
+
+            compressedBitmap.compress(Bitmap.CompressFormat.PNG, 0, outputStream)
             return outputStream.toByteArray()
         }
 
-        fun compressByteArray(byteArray: ByteArray): ByteArray {
-            val deflater = Deflater()
+        //From https://github.com/Vysh01/AndroidImageResizer/blob/master/ImageResizer.java
+        fun compressBitmap(bitmap: Bitmap, MAX_SIZE : Int): Bitmap {
 
-            deflater.setInput(byteArray)
-            deflater.finish()
-            val output = byteArrayOf()
-            deflater.deflate(output)
-            deflater.end()
+            val ratioSquare = ((bitmap.height * bitmap.width)/ MAX_SIZE).toDouble()
 
-            return output
-        }
+            if(ratioSquare <= 1){
+                return bitmap
+            }
 
-        fun decompressByteArray(byteArray: ByteArray): ByteArray {
-            val inflater = Inflater()
+            val ratio = sqrt(ratioSquare)
+            Log.d("RATIO", ratio.toString())
 
-            inflater.setInput(byteArray, 0, byteArray.size)
-            val output = byteArrayOf()
-            inflater.inflate(output)
-
-            inflater.end()
-
-            return output
+            return Bitmap.createScaledBitmap(bitmap, (bitmap.width / ratio).roundToInt(), (bitmap.height/ratio).roundToInt(), true)
         }
 
 
