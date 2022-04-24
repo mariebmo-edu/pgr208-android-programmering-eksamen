@@ -14,6 +14,8 @@
         <!-- Customize your theme here. -->
 
         <item name="backgroundColor">@color/dm_background_color</item>
+        <item name="overlayColor">@color/dm_overlay_color</item>
+
 
     </style>
 </resources>

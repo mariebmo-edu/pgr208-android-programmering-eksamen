@@ -29,7 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_gravity="bottom"
-            android:background="#BCFFFEFE"
+            android:background="?attr/overlayColor"
             android:backgroundTintMode="multiply"
             android:buttonTint="@color/lm_primary_color"
             android:checked="false"

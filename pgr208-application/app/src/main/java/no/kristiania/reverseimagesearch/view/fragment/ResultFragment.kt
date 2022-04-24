@@ -80,10 +80,10 @@ class ResultFragment : Fragment() {
 
             Log.d("SHOULD_SEARCH", viewModel.shouldSearch.value.toString())
             if(viewModel.shouldSearch.value!!){
-                view.findViewById<RelativeLayout>(R.id.loading_panel).visibility = View.VISIBLE
+                toggleViews(true, view)
             } else {
                 viewModel.searchDone()
-                view.findViewById<RelativeLayout>(R.id.loading_panel).visibility = View.GONE
+                toggleViews(false, view)
                 timer = false
             }
 
@@ -96,7 +96,7 @@ class ResultFragment : Fragment() {
             //Turns off the loading bar if there is a timeout - 20 seconds
             Handler(Looper.getMainLooper()).postDelayed({
                 if (timer) {
-                    view.findViewById<RelativeLayout>(R.id.loading_panel).visibility = View.GONE
+                    toggleViews(false, view)
                     Log.i("RESPONSE_TIMEOUT", "The response from the server took too long.")
                     viewModel.setInfoText("Response Timeout")
                     viewModel.searchDone()
@@ -151,6 +151,21 @@ class ResultFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    fun toggleViews(loading: Boolean, view: View){
+
+        when(loading){
+            true -> {
+                view.findViewById<RelativeLayout>(R.id.loading_panel).visibility = View.VISIBLE
+                view.findViewById<Button>(R.id.save_result_button).visibility = View.GONE
+            }
+            false -> {
+                view.findViewById<RelativeLayout>(R.id.loading_panel).visibility = View.GONE
+                view.findViewById<Button>(R.id.save_result_button).visibility = View.VISIBLE
+            }
+        }
+
     }
 
 }

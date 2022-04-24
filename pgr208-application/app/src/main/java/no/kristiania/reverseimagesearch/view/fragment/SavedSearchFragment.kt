@@ -41,6 +41,7 @@ class SavedSearchFragment : Fragment() {
             viewModel.onRequestClicked(id, collectionName)
         }
 
+        
         binding.savedSearchList.adapter = adapter
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel

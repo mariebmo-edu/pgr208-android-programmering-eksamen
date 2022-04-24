@@ -22,4 +22,5 @@
     <string name="upload_image">Upload Image</string>
     <string name="saved_collections">Saved Collections</string>
     <string name="search_results">Search Results</string>
+    <string name="saved_collections_images">Saved images in Collection</string>
 </resources>

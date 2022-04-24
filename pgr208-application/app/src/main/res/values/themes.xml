@@ -14,5 +14,7 @@
         <!-- Customize your theme here. -->
 
         <item name="backgroundColor">@color/lm_background_color</item>
+        <item name="overlayColor">@color/lm_overlay_color</item>
+
     </style>
 </resources>
