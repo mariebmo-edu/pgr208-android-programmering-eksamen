@@ -19,6 +19,7 @@
             android:adjustViewBounds="true"
             android:cropToPadding="true"
             android:scaleType="fitCenter"
+            android:contentDescription="@string/image_of_collection"
             tools:srcCompat="@tools:sample/avatars" />
 
         <TextView
@@ -29,7 +30,6 @@
             android:backgroundTintMode="multiply"
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
-            android:text="TextView"
             android:textAlignment="center"
             android:textAllCaps="false"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"

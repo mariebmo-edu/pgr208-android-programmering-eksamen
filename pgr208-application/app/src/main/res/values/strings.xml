@@ -25,4 +25,7 @@
     <string name="back">BACK</string>
     <string name="gallery">GALLERY</string>
     <string name="saved_collections_images">Saved images in Collection</string>
+    <string name="image_of_collection">Image of collection</string>
+    <string name="image_of_search_result">Image of search result</string>
+    <string name="image_of_image_in_collection">Image of image in collection</string>
 </resources>
