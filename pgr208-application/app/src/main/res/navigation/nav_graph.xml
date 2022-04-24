@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/searchFragment"
         android:name="no.kristiania.reverseimagesearch.view.fragment.ImageSearchFragment"
-        android:label="@string/fragment_search"
+        android:label="@string/upload_image"
         tools:layout="@layout/fragment_image_search">
         <action
             android:id="@+id/action_searchFragment_to_resultFragment"
@@ -17,7 +17,7 @@
     <fragment
         android:id="@+id/resultFragment"
         android:name="no.kristiania.reverseimagesearch.view.fragment.ResultFragment"
-        android:label="@string/fragment_result"
+        android:label="@string/search_results"
         tools:layout="@layout/fragment_result">
         <argument
             android:name="responseUrl"
@@ -30,28 +30,32 @@
             app:destination="@+id/searchFragment"
             app:popUpTo="@id/searchFragment"
              />
+        <action android:id="@+id/action_resultFragment_to_savedSearchesFragment"
+            app:destination="@+id/savedSearchesFragment"
+            app:popUpTo="@id/savedSearchesFragment" />
 
     </fragment>
 
     <fragment
         android:id="@+id/savedSearchesFragment"
         android:name="no.kristiania.reverseimagesearch.view.fragment.SavedSearchFragment"
-        android:label="Saved searches"
+        android:label="@string/saved_collections"
         tools:layout="@layout/saved_search_fragment">
         <action
             android:id="@+id/action_savedSearchesFragment_to_savedSearchesResultFragment"
-            app:destination="@+id/savedSearchesResultFragment"
-            app:popUpTo="@id/savedSearchesResultFragment"
-            app:popUpToInclusive="true" />
+            app:destination="@+id/savedSearchesResultFragment" />
     </fragment>
     <fragment
         android:id="@+id/savedSearchesResultFragment"
-        android:name="no.kristiania.reverseimagesearch.SavedSearchResultsFragment"
+        android:name="no.kristiania.reverseimagesearch.view.fragment.SavedSearchResultsFragment"
         android:label="Saved results"
         tools:layout="@layout/saved_search_fragment">
         <argument
             android:name="requestId"
             app:argType="long" />
+        <argument
+            android:name="collectionName"
+            app:argType="string" />
         <action
             android:id="@+id/action_savedSearchesResultFragment_to_savedSearchesFragment"
             app:destination="@+id/savedSearchesFragment"

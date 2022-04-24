@@ -2,7 +2,8 @@ package no.kristiania.reverseimagesearch.viewmodel.factory
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import no.kristiania.reverseimagesearch.SavedSearchResultsViewModel
+import no.kristiania.reverseimagesearch.model.controller.ResultController
+import no.kristiania.reverseimagesearch.viewmodel.SavedSearchResultsViewModel
 import no.kristiania.reverseimagesearch.model.db.ResultImageDao
 import java.lang.IllegalArgumentException
 

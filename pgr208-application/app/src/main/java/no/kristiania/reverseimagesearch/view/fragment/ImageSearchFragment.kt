@@ -12,6 +12,9 @@ import android.provider.MediaStore
 import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
@@ -42,26 +45,29 @@ class ImageSearchFragment : Fragment() {
     private val binding get() = _binding!!
     private var _viewModel: SearchViewModel? = null
     private val viewModel get() = _viewModel!!
-    private lateinit var uploadBtn: Button
+    private lateinit var galleryBtn: Button
     private lateinit var cameraBtn: Button
     private lateinit var searchBtn: Button
     private lateinit var cropBtn: Button
     private lateinit var imagePreview: ImageView
     private lateinit var cropImageView: CropImageView
-
+    private var shouldGetBmp: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        deactivateResultMenuItem()
         setHasOptionsMenu(true)
         _binding = FragmentImageSearchBinding.inflate(inflater, container, false)
         val view = binding.root
 
         _viewModel = ViewModelProvider(this)[SearchViewModel::class.java]
 
+        viewModel.initiateCroppingValue()
+
         binding.lifecycleOwner = viewLifecycleOwner
-        uploadBtn = binding.uploadBtn
+        galleryBtn = binding.galleryBtn
         cameraBtn = binding.cameraBtn
         searchBtn = binding.searchBtn
         cropBtn = binding.cropBtn
@@ -74,33 +80,38 @@ class ImageSearchFragment : Fragment() {
             this.context?.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         )
 
-        uploadBtn.setOnClickListener {
-            pickImageGallery()
+        galleryBtn.setOnClickListener {
+            viewModel.pickImageGallery(galleryResultLauncher)
         }
 
         cameraBtn.setOnClickListener {
-            pickImageCamera()
+            viewModel.pickImageCamera(requireContext(), cameraResultLauncher, cameraPermissionRequest)
         }
 
         cropBtn.setOnClickListener {
-            cropImage(imagePreview.drawable.toBitmap())
+            shouldGetBmp = true
+            viewModel.cropImage(imagePreview.drawable.toBitmap(), cropImageView)
+            shouldGetBmp = false
         }
 
-        imagePreview.setOnClickListener{
-            if(viewModel.uri != null){
+        imagePreview.setOnClickListener {
+            if (viewModel.uri != null) {
                 val bitmap = imagePreview.drawable.toBitmap()
                 ViewUtils().fullSizeImage(bitmap, view.context)
             }
         }
 
-        // Nødvendig for å unngå rot ved navigasjon
-        if (viewModel.uri != null) {
-            val bitmap =
-                BitmapUtils.getBitmap(requireContext(), null, viewModel.uri.toString(), ::UriToBitmap)
-            imagePreview.setImageBitmap(bitmap)
-            searchBtn.visibility = View.VISIBLE
-            cropBtn.visibility = View.VISIBLE
-        }
+        viewModel.uri.observe(viewLifecycleOwner, {
+            it?.let {
+                val bitmap = BitmapUtils.getBitmap(requireContext(), null, it.toString(), ::UriToBitmap)
+                imagePreview.setImageBitmap(bitmap)
+                searchBtn.visibility = View.VISIBLE
+                cropBtn.visibility = View.VISIBLE
+            } ?: run {
+                searchBtn.visibility = View.GONE
+                cropBtn.visibility = View.GONE
+            }
+        })
 
         viewModel.url.observe(viewLifecycleOwner, { url ->
             if (viewModel.shouldNavigate) {
@@ -111,14 +122,24 @@ class ImageSearchFragment : Fragment() {
                 viewModel.shouldNavigate = false
             }
         })
+
+        viewModel.cropping.observe(viewLifecycleOwner, {
+            if (it) {
+                cropOn()
+            } else if (viewModel.uri.value != null && !it) {
+                cropOff(shouldGetBmp)
+            }
+        })
+
         searchBtn.setOnClickListener {
 
-            when(NetworkUtils().isConnected(requireContext())){
+            when (NetworkUtils().isConnected(requireContext())) {
                 true -> {
                     viewModel.shouldNavigate = true
                     viewModel.uploadImageForUrl(imagePreview.drawable.toBitmap(), requireContext())
                 }
-                false -> Toast.makeText(requireContext(), "Connection Error", Toast.LENGTH_LONG).show()
+                false -> Toast.makeText(requireContext(), "Connection Error", Toast.LENGTH_LONG)
+                    .show()
             }
         }
 
@@ -132,98 +153,104 @@ class ImageSearchFragment : Fragment() {
         results.isEnabled = true
     }
 
-    // Burde flyttes ut til SearchViewModel
-    private fun cropImage(bitmap: Bitmap) {
+    private fun deactivateResultMenuItem() {
+        val appCompat = requireActivity() as AppCompatActivity
+        val navigationView = appCompat.findViewById<BottomNavigationView>(R.id.bottom_nav)
+        val results = navigationView.menu.getItem(2)
+        results.isEnabled = false
+    }
+
+    private fun cropOn() {
         imagePreview.visibility = View.GONE
-        searchBtn.visibility = View.GONE
+        galleryBtn.visibility = View.GONE
+        cameraBtn.visibility = View.GONE
         cropImageView.visibility = View.VISIBLE
-        cropImageView.setImageBitmap(bitmap)
         cropBtn.text = getString(R.string.finish_cropping)
         cropBtn.setOnClickListener {
-            finishCropping(cropImageView.croppedImage)
+            shouldGetBmp = true
+            viewModel.finishCropping(cropImageView.croppedImage, imagePreview)
+            shouldGetBmp = false
+        }
+        searchBtn.text = getString(R.string.back)
+        searchBtn.setOnClickListener {
+            viewModel.abortCropping()
+            resetCrop()
         }
     }
 
-    // Burde flyttes ut til SearchViewModel
-    private fun finishCropping(bitmap: Bitmap) {
-        imagePreview.setImageBitmap(bitmap)
-        viewModel.tempImgFile = BitmapUtils.bitmapToFile(bitmap, "tempImg.jpg", requireContext())
-        viewModel.uri = Uri.fromFile(viewModel.tempImgFile)
+    private fun resetCrop() {
         cropImageView.visibility = View.GONE
         imagePreview.visibility = View.VISIBLE
-        searchBtn.visibility = View.VISIBLE
+        galleryBtn.visibility = View.VISIBLE
+        cameraBtn.visibility = View.VISIBLE
         cropBtn.text = getString(R.string.crop_image)
+        searchBtn.text = getString(R.string.search)
         cropBtn.setOnClickListener {
-            cropImage(imagePreview.drawable.toBitmap())
+            viewModel.cropImage(imagePreview.drawable.toBitmap(), cropImageView)
+        }
+        searchBtn.setOnClickListener {
+            viewModel.shouldNavigate = true
+            viewModel.uploadImageForUrl(imagePreview.drawable.toBitmap(), requireContext())
         }
     }
 
-    // Burde flyttes ut til SearchViewModel
-    private fun pickImageGallery() {
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        galleryResultLauncher.launch(intent)
-    }
+    private fun cropOff(shouldGetBmp: Boolean) {
 
-    // Burde flyttes ut til SearchViewModel
-    private fun pickImageCamera() {
-        if (ContextCompat.checkSelfPermission(
-                this.context!!,
-                Manifest.permission.CAMERA
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            getBmpFromCamera()
-        } else {
-            cameraPermissionRequest.launch(Manifest.permission.CAMERA)
+        var bitmap: Bitmap? = null
+
+        if (shouldGetBmp) {
+            bitmap = cropImageView.croppedImage
         }
+
+        bitmap?.let { bmp ->
+            viewModel.tempImgFile.writeBytes(BitmapUtils.bitmapToByteArray(bmp))
+            viewModel.setUri(Uri.fromFile(viewModel.tempImgFile))
+            resetCrop()
+        } ?: resetCrop()
     }
 
-    // Burde flyttes ut til SearchViewModel
-    private fun getBmpFromCamera() {
-        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        val fileProvider = FileProvider.getUriForFile(
-            requireContext(),
-            "no.kristiania.reverseimagesearch.fileprovider",
-            viewModel.tempImgFile
-        )
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider)
-        cameraResultLauncher.launch(intent)
-    }
 
-    // Må ligge her; callback kan kanskje flyttes ut
+
+
+
     private val cameraPermissionRequest =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) {
             if (it) {
-                getBmpFromCamera()
+                viewModel.getBmpFromCamera(requireContext(), cameraResultLauncher)
             }
         }
 
-    // Må ligge her; callback kan kanskje flyttes ut
     private val cameraResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == AppCompatActivity.RESULT_OK) {
                 val bitmap = BitmapFactory.decodeFile(viewModel.tempImgFile.absolutePath)
-                viewModel.uri = Uri.fromFile(viewModel.tempImgFile)
+                viewModel.setUri(Uri.fromFile(viewModel.tempImgFile))
                 imagePreview.setImageBitmap(bitmap)
-                searchBtn.visibility = View.VISIBLE
-                cropBtn.visibility = View.VISIBLE
             }
         }
 
-    // Må ligge her; callback kan kanskje flyttes ut
     private val galleryResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            if (it.resultCode == AppCompatActivity.RESULT_OK && it.data != null) {
-                viewModel.uri = it.data?.data!!
-                val bitmap =
-                    BitmapUtils.getBitmap(requireContext(), null, viewModel.uri.toString(), ::UriToBitmap)
-                imagePreview.setImageBitmap(bitmap)
-                searchBtn.visibility = View.VISIBLE
-                cropBtn.visibility = View.VISIBLE
 
-            } else {
-                println("error: result is not OK, or data is empty")
+            fun printError() {
+                Toast.makeText(requireContext(), "An error occurred", Toast.LENGTH_SHORT)
             }
 
+            if (it.resultCode == AppCompatActivity.RESULT_OK && it.data != null) {
+                val uri = it.data!!.data
+                uri?.let {
+                    viewModel.setUri(uri)
+                    val bitmap =
+                        BitmapUtils.getBitmap(requireContext(), null, viewModel.uri.value.toString(), ::UriToBitmap)
+                    imagePreview.setImageBitmap(bitmap)
+                } ?: printError()
+            } else {
+                printError()
+            }
         }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }

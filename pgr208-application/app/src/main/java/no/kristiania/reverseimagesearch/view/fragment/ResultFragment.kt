@@ -16,10 +16,12 @@ import android.widget.Toast
 import androidx.core.view.size
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import no.kristiania.reverseimagesearch.R
 import no.kristiania.reverseimagesearch.viewmodel.ResultViewModel
 import no.kristiania.reverseimagesearch.databinding.FragmentResultBinding
+import no.kristiania.reverseimagesearch.model.controller.ResultController
 import no.kristiania.reverseimagesearch.model.db.ImageSearchDb
 import no.kristiania.reverseimagesearch.view.adapter.ResultItemAdapter
 import no.kristiania.reverseimagesearch.viewmodel.factory.ResultViewModelFactory
@@ -46,7 +48,8 @@ class ResultFragment : Fragment() {
         val db = ImageSearchDb.getInstance(application)
         val requestImageDao = db.requestImageDao
         val resultImageDao = db.resultImageDao
-        val resultViewModelFactory = ResultViewModelFactory(requestImageDao, resultImageDao)
+        val resultController = ResultController(resultImageDao, requestImageDao)
+        val resultViewModelFactory = ResultViewModelFactory(resultController)
         val viewModel = ViewModelProvider(this, resultViewModelFactory)[ResultViewModel::class.java]
         viewModel.hostedImageServerUrl =
             ResultFragmentArgs.fromBundle(requireArguments()).responseUrl
@@ -58,7 +61,6 @@ class ResultFragment : Fragment() {
         viewModel.shouldSearch.observe(viewLifecycleOwner, { shouldSearch ->
             if (shouldSearch && api != null) {
                 viewModel.getResultFromUrl(viewModel.hostedImageServerUrl, api)
-                viewModel.searchDone()
             }
         })
 
@@ -75,24 +77,42 @@ class ResultFragment : Fragment() {
         var timer = true
 
         viewModel.resultImages.observe(viewLifecycleOwner, Observer {
+
+            Log.d("SHOULD_SEARCH", viewModel.shouldSearch.value.toString())
+            if(viewModel.shouldSearch.value!!){
+                view.findViewById<RelativeLayout>(R.id.loading_panel).visibility = View.VISIBLE
+            } else {
+                viewModel.searchDone()
+                view.findViewById<RelativeLayout>(R.id.loading_panel).visibility = View.GONE
+                timer = false
+            }
+
             Log.i("ResultFragment", "Submitting list")
             it?.let {
                 adapter.submitList(it)
-                Toast.makeText(activity, "${++i}/3 results added", Toast.LENGTH_SHORT).show()
-            }
-            if (view.findViewById<RecyclerView>(R.id.result_items_list).size > 0) {
-                view.findViewById<RelativeLayout>(R.id.loading_panel).visibility = View.GONE
+                viewModel.setInfoText("${i++}/3 results added")
             }
 
             //Turns off the loading bar if there is a timeout - 20 seconds
             Handler(Looper.getMainLooper()).postDelayed({
-            if (timer){
-                view.findViewById<RelativeLayout>(R.id.loading_panel).visibility = View.GONE
-                Log.i("RESPONSE_TIMEOUT", "The response from the server took too long.")
-                Toast.makeText(activity, "Response Timeout", Toast.LENGTH_SHORT).show()
-                timer = false
-            }
+                if (timer) {
+                    view.findViewById<RelativeLayout>(R.id.loading_panel).visibility = View.GONE
+                    Log.i("RESPONSE_TIMEOUT", "The response from the server took too long.")
+                    viewModel.setInfoText("Response Timeout")
+                    viewModel.searchDone()
+                    timer = false
+                }
             }, 20000)
+
+
+        })
+
+        viewModel.shouldNavigateToSaved.observe(viewLifecycleOwner, {
+            if (it) {
+                val action = ResultFragmentDirections.actionResultFragmentToSavedSearchesFragment()
+                this.findNavController().navigate(action)
+                viewModel.toggleNavigateToSaved()
+            }
         })
 
         binding.saveResultButton.setOnClickListener {
@@ -109,9 +129,14 @@ class ResultFragment : Fragment() {
             dialog.show()
 
             submitBtn.setOnClickListener {
-                viewModel.saveResult(requireContext(), adapter.selectedImagesForSave, selectedName.toString())
+                viewModel.saveResult(
+                    requireContext(),
+                    adapter.selectedImagesForSave,
+                    selectedName.toString()
+                )
                 dialog.dismiss()
                 Toast.makeText(context, "Collection Saved!", Toast.LENGTH_LONG).show()
+                viewModel.toggleNavigateToSaved()
             }
 
             cancelBtn.setOnClickListener {

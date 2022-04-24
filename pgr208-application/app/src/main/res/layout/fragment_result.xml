@@ -20,38 +20,26 @@
         <!-- Sjekk ut andre layout managers! -->
 
         <RelativeLayout
-            android:id="@+id/error_panel"
+            android:id="@+id/info_panel"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:background="#86FFFFFF"
             android:gravity="center"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:visibility="visible"
+            app:layout_constraintBottom_toTopOf="@id/result_items_list"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
-                android:id="@+id/error_text"
+                android:id="@+id/res_frag_info_bar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/error_icon"
-                android:layout_alignParentStart="false"
-                android:layout_alignParentEnd="false"
-                android:text="ERROR"
-                android:textAlignment="textStart" />
-
-            <ImageView
-                android:id="@+id/error_icon"
-                android:layout_width="48dp"
-                android:layout_height="47dp"
-                android:background="@color/lm_primary_color"
-                android:src="@android:drawable/stat_notify_error"
-                app:srcCompat="@android:drawable/stat_notify_error"
-                tools:visibility="visible" />
+                android:textSize="12dp"
+                android:text="@{viewModel.infoMessage}"
+                />
 
         </RelativeLayout>
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/result_items_list"
             android:layout_width="0dp"
@@ -66,7 +54,7 @@
             app:layout_constraintBottom_toTopOf="@+id/save_result_button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/info_panel"
             app:spanCount="2" />
 
         <RelativeLayout
@@ -75,7 +63,7 @@
             android:layout_height="match_parent"
             android:background="#86FFFFFF"
             android:gravity="center"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

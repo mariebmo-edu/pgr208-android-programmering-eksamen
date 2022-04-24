@@ -10,7 +10,7 @@ import no.kristiania.reverseimagesearch.model.entity.RequestImage
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
 import no.kristiania.reverseimagesearch.viewmodel.utils.ViewUtils
 
-class SavedSearchAdapter(val clickListener: (id: Long) -> Unit) :
+class SavedSearchAdapter(val clickListener: (id: Long, collectionName: String) -> Unit) :
     ListAdapter<RequestImage, SavedSearchAdapter.SavedSearchItemViewHolder>(
         SavedSearchDiffItemCallback()
     ) {
@@ -35,14 +35,13 @@ class SavedSearchAdapter(val clickListener: (id: Long) -> Unit) :
             }
         }
 
-        fun bind(requestImage: RequestImage, clickListener: (id: Long) -> Unit) {
+        fun bind(requestImage: RequestImage, clickListener: (id: Long, collectionName: String) -> Unit) {
             requestImage.data?.let { it ->
                 val bitmapImage = BitmapUtils.byteArrayToBitmap(it)
                 binding.savedSearchImage.setImageBitmap(bitmapImage)
                 binding.savedSearchText.text = requestImage.collectionName.toString()
-                binding.savedSearchImage.setOnClickListener {}
                 requestImage.id?.let { id ->
-                    binding.root.setOnClickListener { clickListener(id) }
+                    binding.root.setOnClickListener { clickListener(id, requestImage.collectionName!!) }
                 }
             }
             Log.i("Load image", "Loading image in binding")

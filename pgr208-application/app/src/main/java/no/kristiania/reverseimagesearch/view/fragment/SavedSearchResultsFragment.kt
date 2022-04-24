@@ -1,4 +1,4 @@
-package no.kristiania.reverseimagesearch
+package no.kristiania.reverseimagesearch.view.fragment
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
@@ -7,7 +7,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import no.kristiania.reverseimagesearch.viewmodel.SavedSearchResultsViewModel
 import no.kristiania.reverseimagesearch.databinding.SavedSearchResultsFragmentBinding
+import no.kristiania.reverseimagesearch.model.controller.ResultController
 import no.kristiania.reverseimagesearch.model.db.ImageSearchDb
 import no.kristiania.reverseimagesearch.view.adapter.SavedSearchResultsAdapter
 import no.kristiania.reverseimagesearch.viewmodel.factory.SavedSearchResultsViewModelFactory
@@ -26,6 +28,7 @@ class SavedSearchResultsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val requestImageId = SavedSearchResultsFragmentArgs.fromBundle(requireArguments()).requestId
+        val collectionName = SavedSearchResultsFragmentArgs.fromBundle(requireArguments()).collectionName
 
         val application = requireNotNull(this.activity).application
         val db = ImageSearchDb.getInstance(application)
@@ -38,7 +41,9 @@ class SavedSearchResultsFragment : Fragment() {
         val adapter = SavedSearchResultsAdapter()
         binding.lifecycleOwner = viewLifecycleOwner
         binding.savedSearchResultsList.adapter = adapter
+        binding.viewModel = viewModel
 
+        viewModel.setCollectionName(collectionName)
         viewModel.resultImages.observe(viewLifecycleOwner, {
             it?.let {
                 Log.d("observer", "Submitting list ${it.size}")
