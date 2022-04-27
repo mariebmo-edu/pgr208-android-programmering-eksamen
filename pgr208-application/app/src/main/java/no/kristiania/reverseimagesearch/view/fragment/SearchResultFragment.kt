@@ -50,8 +50,9 @@ class SearchResultFragment : Fragment() {
         val resultViewModelFactory = SearchResultViewModelFactory(resultController)
         val viewModel =
             ViewModelProvider(this, resultViewModelFactory)[SearchResultViewModel::class.java]
-        viewModel.hostedImageServerUrl =
-            SearchResultFragmentArgs.fromBundle(requireArguments()).responseUrl
+        val requestImgDto = SearchResultFragmentArgs.fromBundle(requireArguments()).requestImgDto
+
+        viewModel.hostedImageServerUrl = requestImgDto.url
         viewModel.requestImageLocalPath =
             SearchResultFragmentArgs.fromBundle(requireArguments()).requestImagePath
         Log.d("ResultFragment", viewModel.hostedImageServerUrl)

@@ -19,12 +19,6 @@
         android:name="no.kristiania.reverseimagesearch.view.fragment.SearchResultFragment"
         android:label="@string/search_results"
         tools:layout="@layout/search_result_fragment">
-        <argument
-            android:name="responseUrl"
-            app:argType="string" />
-        <argument
-            android:name="requestImagePath"
-            app:argType="string" />
         <action
             android:id="@+id/action_resultFragment_to_searchFragment"
             app:destination="@+id/searchFragment"
@@ -33,6 +27,9 @@
             android:id="@+id/action_resultFragment_to_savedSearchesFragment"
             app:destination="@+id/savedSearchesFragment"
             app:popUpTo="@id/savedSearchesFragment" />
+        <argument
+            android:name="RequestImgDto"
+            app:argType="no.kristiania.reverseimagesearch.view.RequestImageDto" />
 
     </fragment>
 

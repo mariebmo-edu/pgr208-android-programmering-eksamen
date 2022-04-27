@@ -21,6 +21,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.theartofdev.edmodo.cropper.CropImageView
 import no.kristiania.reverseimagesearch.R
 import no.kristiania.reverseimagesearch.databinding.UploadImageFragmentBinding
+import no.kristiania.reverseimagesearch.view.RequestImageDto
 import no.kristiania.reverseimagesearch.viewmodel.UploadImageViewModel
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils
 import no.kristiania.reverseimagesearch.viewmodel.utils.BitmapUtils.Companion.UriToBitmap
@@ -108,7 +109,7 @@ class UploadImageFragment : Fragment() {
         viewModel.url.observe(viewLifecycleOwner, { url ->
             if (viewModel.shouldNavigate) {
                 val action = UploadImageFragmentDirections
-                    .actionSearchFragmentToResultFragment(url, viewModel.uri.value.toString())
+                    .actionSearchFragmentToResultFragment(RequestImageDto(url = url, uri= viewModel.uri.value.toString()))
                 this.findNavController().navigate(action)
                 activateResultMenuItem()
                 viewModel.shouldNavigate = false
