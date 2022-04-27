@@ -279,20 +279,56 @@ ResultController *-- ResultImageDao
 ResultController ..> ResultImage
 ResultImageDao ..> RequestImage
 ResultController *-- RequestImageDao
-ImageSearchDb <-- ResultImageDao
-ImageSearchDb <-- RequestImageDao
+ImageSearchDb --> ResultImageDao
+ImageSearchDb --> RequestImageDao
 RequestImageDao ..> RequestImage
 ResultImageDao ..> ResultImage
 ResultImageDao ..> RequestImage
 CollectionImagesDiffItemCallback ..> ResultImage
-
-
-
+CollectionsAdapter ..> SavedSearchItemViewHolder
+SavedSearchItemViewHolder ..> RequestImage
+CollectionsDiffItemCallback ..> RequestImage
+CollectionsResultAdapter ..> CollectionImagesItemViewHolder
+CollectionImagesItemViewHolder ..> ResultImage
+CollectionImagesItemViewHolder o.. BitmapUtils
+SearchResultDiffItemCallback ..> ResultImage
+SearchResultItemAdapter ..> ResultImage
+SearchResultItemAdapter ..> ResultItemViewHolder
+SearchResultItemAdapter o.. ViewUtils
+CollectionImagesFragment o.. ImageSearchDb
+CollectionImagesFragment o.. ResultImageDao
+CollectionImagesFragment ..> CollectionImagesViewModelFactory
+CollectionImagesFragment --> CollectionsResultAdapter
+CollectionsFragment --> CollectionsViewModel
+CollectionsFragment o.. ImageSearchDb
+CollectionsFragment o.. RequestImageDao
+CollectionsFragment ..> CollectionsViewModelFactory
+CollectionsFragment --> CollectionsAdapter
+SearchResultViewModel --> ResultController
+SearchResultFragment o.. SearchResultViewModel
+SearchResultFragment ..> SearchResultViewModelFactory
+SearchResultFragment ..> PopupFragment
+SearchResultFragment ..> FastNetworkingAPI
 UploadImageViewModel ..> FastNetworkingAPI
-UploadImageFragment <-- UploadImageViewModel
-
-SearchResultViewModel <-- ResultController
-SearchResultFragment *-- SearchResultViewModel
-
+UploadImageFragment o--> UploadImageViewModel
+UploadImageFragment ..> BitmapUtils
+UploadImageFragment ..> ViewUtils
+UploadImageFragment ..> NetworkUtils
+FastNetworkingAPI ..> BitmapUtils
+FastNetworkingAPI ..> ImageProvider
+CollectionImagesViewModelFactory *-- ResultImageDao
+CollectionImagesViewModelFactory ..> CollectionImagesViewModel
+CollectionsViewModelFactory *-- RequestImageDao
+CollectionsViewModelFactory ..> CollectionsViewModel
+SearchResultViewModelFactory *-- ResultController
+SearchResultViewModelFactory ..> SearchResultViewModel
+CollectionImagesViewModel *-- ResultImageDao
+CollectionImagesViewModel ..> ResultImage
+CollectionsViewModel *-- RequestImageDao
+CollectionsViewModel ..> RequestImage
+SearchResultViewModel *-- ResultController
+SearchResultViewModel --> ResultImage
+SearchResultViewModel ..> FastNetworkingAPI
+SearchResultViewModel ..> BitmapUtils
 
 @enduml
