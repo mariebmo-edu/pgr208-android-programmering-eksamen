@@ -1,0 +1,335 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class UploadImageFragment {
+    - viewModel: UploadImageViewModel
+    - binding: UploadImageFragmentBinding
+    - galleryButton: Button
+    - cameraButton: Button
+    - searchButton: Button
+    - cropButton: Button
+    - imagePreview: ImageView
+    - cropImageView: CropImageView
+    - galleryResultLauncher: ActivityResultLauncher<Intent>
+    - cameraResultLauncher: ActivityResultLauncher<Intent>
+    - cameraPermissionRequest: ActivityResultLauncher<String>
+    - shouldGetBmp: Boolean
+
+    + onCreateView(): View
+    + onDestroyView()
+    - activateResultMenuItem()
+    - deactivateResultMenuItem()
+    - cropOn()
+    - resetCrop()
+    - cropOff()
+}
+
+class UploadImageViewModel {
+    + url: LiveData<String>
+    + uri: LiveData<Uri>
+    + cropping: LiveData<Boolean>
+    + shouldNavigate: Boolean
+    + tempImgFile: File
+
+    + serUri(Uri)
+    + uploadImageForUrl(Bitmap, Context)
+    + cropImage(Bitmap, CropImageView)
+    + finishCropping(Bitmap, ImageView)
+    + abortCropping()
+    + pickImageCamera(Context, ActivityResultLauncher<Intent>, ActivityResultLauncher<String>)
+    + pickImageGallery(ActivityResultLauncher<Intent>)
+    + getBmpFromCamera(Context, ActivityResultLauncher<Intent>)
+}
+
+class SearchResultFragment {
+    - binding: SearchResultFragmentBinding
+
+    + onCreateView(): View
+    + onDestroy()
+    + toggleViews(Boolean, View)
+}
+
+class SearchResultViewModel {
+    - resultController: ResultController
+    + shouldSearch: LiveData<Boolean>
+    + shouldNavigateToSaved: LiveData<Boolean>
+    + infoMessage: Mutable: LiveData<String>
+    + requestImageLocalPath: String
+    + hostedImageServerUrl: String
+    + resultImages: LiveData<MutableList<ResultImage>>
+
+    + toggleNavigateToSaved()
+    + setInfoText(String)
+    + getResultFromUrl(String, FastNetworkingAPI)
+    + fetchImagesFromSearch(JSONArray)
+    + saveResult(Context, List<ResultImage>, String)
+    + searchDone()
+}
+
+class ResultController {
+    + resultImageDao: ResultImageDao
+    + requestImageDao: RequestImageDao
+
+    + saveAll(RequestImage, List<ResultImage>)
+    + getByParentId(Long)
+}
+
+interface ResultImageDao {
+    + insert(ResultImage): Long
+    + insertMany(List<ResultImage>)
+    + update(ResultImage)
+    + delete(ResultImage)
+    + getSearchResultById(): Map<RequestImage, List<ResultImage>>
+    + getByParentId(Long): LiveData<List<ResultImage>>
+}
+
+interface RequestImageDao {
+    + insert(RequestImage): Long
+    + update(RequestImage)
+    + getAll(): LiveData<List<RequestImage>>
+}
+
+abstract class ImageSearchDb {
+    + requestImageDao: RequestImageDao
+    + resultImageDao: ResultImageDao
+    - INSTANCE: ImageSearchDb
+    + {static} getInstance(Context): ImageSearchDb
+}
+
+class SearchResultDiffItemCallback {
+    + areItemsTheSame(ResultImage, ResultImage): Boolean
+    + areContentsTheSame(ResultImage, ResultImage): Boolean
+}
+
+class CollectionImagesDiffItemCallback {
+    + areItemsTheSame(ResultImage, ResultImage): Boolean
+    + areContentsTheSame(ResultImage, ResultImage): Boolean
+}
+
+class RequestImage {
+    + id: Long
+    + serverPath: String
+    + data: ByteArray
+    + collectionName: String
+
+    + equals(Any): Boolean
+    + hashCode(): Int
+}
+
+class ResultImage {
+    + id: Long
+    + serverPath: String
+    + data: ByteArray
+    + requestImageId: Long
+
+    + equals(Any): Boolean
+    + hashCode(): Int
+}
+
+class CollectionsAdapter {
+    + {field} clickListener: (Lambda)
+    + onCreateViewHolder(ViewGroup, Int): SavedSearchItemViewHolder
+    + onBindViewHolder(SavedSearchItemViewHolder, Int)
+}
+
+class SavedSearchItemViewHolder {
+    + binding: CollectionItemBinding
+    + {static} inflateFrom(ViewGroup): SavedSearchItemViewHolder
+    + bind(RequestImage, callback)
+}
+
+class CollectionsResultAdapter {
+    + onCreateViewHolder(ViewGroup, Int): CollectionImagesItemViewHolder
+    + onBindViewHolder(CollectionImagesItemViewHolder, Int)
+}
+
+class CollectionImagesItemViewHolder {
+    + binding: CollectionImageItemBinding
+    + {static} inflateFrom(ViewGroup): CollectionImagesItemViewHolder
+    + bind(ResultImage)
+}
+
+class SearchResultItemAdapter {
+    + selectedImageForSave: MutableList<ResultImage>
+    + onCreateViewHolder(ViewGroup, Int): ResultItemViewHolder
+    + onBindViewHolder(ResultItemViewHolder, Int)
+}
+
+class ResultItemViewHolder {
+    + binding: SearchResultItemBinding
+
+    + {static} inflateFrom(ViewGroup): ResultItemViewHolder
+    + bind(ResultImage)
+}
+
+class CollectionImagesFragment {
+    - binding: CollectionImagesFragmentBinding
+    - viewModel: CollectionImagesViewModel
+
+    + onCreateView(LayoutInflater, ViewGroup, Bundle): View
+    + onDestroyView()
+}
+
+class CollectionsFragment {
+    - viewModel: CollectionsViewModel
+    - binding: CollectionsFragmentBinding
+
+    + onCreateView(LayoutInflater, ViewGroup, Bundle): View
+    + onDestroyView()
+}
+
+class FullscreenImageFragment {
+    + onCreateView(LayoutInflater, ViewGroup, Bundle): View
+}
+
+class PopupFragment {
+    + onCreateView(LayoutInflater, ViewGroup, Bundle): View
+}
+
+class FastNetworkingAPI {
+    + context: Context
+
+    + uploadImageSynchronous(Bitmap): String
+    + getImageFromProviderSynchronous(String, ImageProvider): JSONArray
+}
+
+enum ImageProvider {
+    Google
+    Bing
+    TinEye
+}
+
+class CollectionImagesViewModelFactory {
+    - resultImageDao: ResultImageDao
+    - requestImage: Long
+
+    + create(Class<ViewModel>): CollectionImagesViewModel
+}
+
+class CollectionsViewModelFactory {
+    - requestImageDao: RequestImageDao
+
+    + create(Class<ViewModel>): CollectionsViewModel
+}
+
+class SearchResultViewModelFactory {
+    - resultController: ResultController
+
+    + create(Class<ViewModel>): SearchResultViewModel
+}
+
+class BitmapUtils {
+    + {static} VectorDrawableToBitmap(Context, Int, String): Bitmap
+    + {static} UriToBitmap(Context, Int, String): Bitmap
+    + {static} getBitmap(Context, Int, String, Lambda): Bitmap
+    + {static} byteArrayToBitmap(ByteArray): Bitmap
+    + {static} bitmapToByteArray(Bitmap): ByteArray
+    + {static} compressBitmap(Bitmap, Int): Bimap
+    + {static} bitmapToFile(Bitmap, String, Context): File
+}
+
+object Endpoints {
+    - base_url: String
+    + upload_url: String
+    + get_google_url: String
+    + get_bing_url: String
+    + get_tinEye_url: String
+}
+
+class JsonArrUtils {
+    + multipleJsonArraysToOne(JSONArray...): JSONArray
+}
+
+class NetworkUtils {
+    + isConnected(Context): Boolean
+}
+
+class ViewUtils {
+    + fullSizeImage(Bitmap, Context)
+}
+
+class CollectionImagesViewModel {
+    - resultImageDao: ResultImageDao
+    - requestImgId: Long
+    + resultImages: LiveData<List<ResultImage>>
+    + infoMessage: MutableLiveData<String>
+    + collectionName: MutableLiveData<String>
+
+    + setCollectionName(String)
+}
+
+class CollectionsViewModel {
+    - requestImageDao: RequestImageDao
+    + savedSearchImages: LiveData<List<RequestImage>>
+    + navigateToResults: LiveData<Long>
+    + infoMessage: MutableLiveData<String>
+    + collectionName: MutableLiveData<String>
+
+    + onRequestClicked(Long, String)
+    + onNavigated()
+}
+
+class MainActivity {
+    + onCreate(Bundle)
+    + onCreateOptionsMenu(Menu): Boolean
+    + onOptionsItemSelected(MenuItem): Boolean
+}
+
+ResultController *-- ResultImageDao
+ResultController ..> ResultImage
+ResultImageDao ..> RequestImage
+ResultController *-- RequestImageDao
+ImageSearchDb --> ResultImageDao
+ImageSearchDb --> RequestImageDao
+RequestImageDao ..> RequestImage
+ResultImageDao ..> ResultImage
+ResultImageDao ..> RequestImage
+CollectionImagesDiffItemCallback ..> ResultImage
+CollectionsAdapter ..> SavedSearchItemViewHolder
+SavedSearchItemViewHolder ..> RequestImage
+CollectionImagesDiffItemCallback ..> RequestImage
+CollectionsResultAdapter ..> CollectionImagesItemViewHolder
+CollectionImagesItemViewHolder ..> ResultImage
+CollectionImagesItemViewHolder o.. BitmapUtils
+SearchResultDiffItemCallback ..> ResultImage
+SearchResultItemAdapter ..> ResultImage
+SearchResultItemAdapter ..> ResultItemViewHolder
+SearchResultItemAdapter o.. ViewUtils
+CollectionImagesFragment o.. ImageSearchDb
+CollectionImagesFragment o.. ResultImageDao
+CollectionImagesFragment ..> CollectionImagesViewModelFactory
+CollectionImagesFragment --> CollectionsResultAdapter
+CollectionsFragment --> CollectionsViewModel
+CollectionsFragment o.. ImageSearchDb
+CollectionsFragment o.. RequestImageDao
+CollectionsFragment ..> CollectionsViewModelFactory
+CollectionsFragment --> CollectionsAdapter
+SearchResultViewModel --> ResultController
+SearchResultFragment o.. SearchResultViewModel
+SearchResultFragment ..> SearchResultViewModelFactory
+SearchResultFragment ..> PopupFragment
+SearchResultFragment ..> FastNetworkingAPI
+UploadImageViewModel ..> FastNetworkingAPI
+UploadImageFragment o--> UploadImageViewModel
+UploadImageFragment ..> BitmapUtils
+UploadImageFragment ..> ViewUtils
+UploadImageFragment ..> NetworkUtils
+FastNetworkingAPI ..> BitmapUtils
+FastNetworkingAPI ..> ImageProvider
+CollectionImagesViewModelFactory *-- ResultImageDao
+CollectionImagesViewModelFactory ..> CollectionImagesViewModel
+CollectionsViewModelFactory *-- RequestImageDao
+CollectionsViewModelFactory ..> CollectionsViewModel
+SearchResultViewModelFactory *-- ResultController
+SearchResultViewModelFactory ..> SearchResultViewModel
+CollectionImagesViewModel *-- ResultImageDao
+CollectionImagesViewModel ..> ResultImage
+CollectionsViewModel *-- RequestImageDao
+CollectionsViewModel ..> RequestImage
+SearchResultViewModel *-- ResultController
+SearchResultViewModel --> ResultImage
+SearchResultViewModel ..> FastNetworkingAPI
+SearchResultViewModel ..> BitmapUtils
+FastNetworkingAPI ..> Endpoints
+
+@enduml
