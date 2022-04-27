@@ -330,5 +330,6 @@ SearchResultViewModel *-- ResultController
 SearchResultViewModel --> ResultImage
 SearchResultViewModel ..> FastNetworkingAPI
 SearchResultViewModel ..> BitmapUtils
+FastNetworkingAPI ..> Endpoints
 
 @enduml
