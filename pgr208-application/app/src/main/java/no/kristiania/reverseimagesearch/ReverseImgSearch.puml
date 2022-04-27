@@ -287,7 +287,7 @@ ResultImageDao ..> RequestImage
 CollectionImagesDiffItemCallback ..> ResultImage
 CollectionsAdapter ..> SavedSearchItemViewHolder
 SavedSearchItemViewHolder ..> RequestImage
-CollectionsDiffItemCallback ..> RequestImage
+CollectionImagesDiffItemCallback ..> RequestImage
 CollectionsResultAdapter ..> CollectionImagesItemViewHolder
 CollectionImagesItemViewHolder ..> ResultImage
 CollectionImagesItemViewHolder o.. BitmapUtils
